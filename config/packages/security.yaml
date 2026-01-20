@@ -5,16 +5,31 @@ security:
 
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
+        # ICI : On dit à Symfony de chercher les utilisateurs dans l'entité Respo via le champ 'mail'
+        app_user_provider:
+            entity:
+                class: App\Entity\Respo
+                property: mail
 
     firewalls:
         dev:
-            # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler|_wdt|assets|build)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider # On lie le firewall au provider défini au-dessus
+
+            # Configuration pour le formulaire de connexion
+            form_login:
+                login_path: app_login  # La route vers la page de login (à créer)
+                check_path: app_login  # La route qui traite le formulaire
+                enable_csrf: true
+            
+            # Configuration de la déconnexion
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                # target: app_any_route
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
