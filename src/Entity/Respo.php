@@ -28,86 +28,67 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $mail = null;
 
     #[ORM\Column]
-    private ?string $mdp = null; // Le mot de passe hashé
+    private ?string $mdp = null;
 
-    // Clé étrangère #id_pole
     #[ORM\ManyToOne(inversedBy: 'respos')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Pole $pole = null;
 
-    public function getPassword(): ?string { return $this->mdp; }
-    public function getRoles(): array { return ['ROLE_RESPO']; }
-    public function eraseCredentials(): void {}
-    public function getUserIdentifier(): string { return $this->mail; }
+    // --- LOGIQUE DE SÉCURITÉ ---
 
-    public function getId(): ?int
+    /**
+     * Identifiant visuel unique (ici l'email)
+     */
+    public function getUserIdentifier(): string
     {
-        return $this->id;
+        return (string) $this->mail;
     }
 
-    public function getNom(): ?string
+    /**
+     * Les rôles de l'utilisateur.
+     * Important : on garantit que chaque utilisateur a au moins ROLE_USER
+     */
+    public function getRoles(): array
     {
-        return $this->nom;
+        $roles = ['ROLE_RESPO'];
+        // Garantie que tout le monde a au moins ce rôle de base
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
     }
 
-    public function setNom(string $nom): static
-    {
-        $this->nom = $nom;
-        return $this;
-    }
-
-    public function getPrenom(): ?string
-    {
-        return $this->prenom;
-    }
-
-    public function setPrenom(string $prenom): static
-    {
-        $this->prenom = $prenom;
-        return $this;
-    }
-
-    public function getTel(): ?string
-    {
-        return $this->tel;
-    }
-
-    public function setTel(?string $tel): static
-    {
-        $this->tel = $tel;
-        return $this;
-    }
-
-    public function getMail(): ?string
-    {
-        return $this->mail;
-    }
-
-    public function setMail(string $mail): static
-    {
-        $this->mail = $mail;
-        return $this;
-    }
-
-    public function getMdp(): ?string
+    /**
+     * Retourne le mot de passe hashé
+     */
+    public function getPassword(): ?string
     {
         return $this->mdp;
     }
 
-    public function setMdp(string $mdp): static
+    public function eraseCredentials(): void
     {
-        $this->mdp = $mdp;
-        return $this;
+        // Utile si vous stockez des données sensibles temporaires sur l'objet
     }
 
-    public function getPole(): ?Pole
-    {
-        return $this->pole;
-    }
+    // --- GETTERS & SETTERS CLASSIQUES ---
 
-    public function setPole(?Pole $pole): static
-    {
-        $this->pole = $pole;
-        return $this;
-    }
+    public function getId(): ?int { return $this->id; }
+
+    public function getNom(): ?string { return $this->nom; }
+    public function setNom(string $nom): static { $this->nom = $nom; return $this; }
+
+    public function getPrenom(): ?string { return $this->prenom; }
+    public function setPrenom(string $prenom): static { $this->prenom = $prenom; return $this; }
+
+    public function getTel(): ?string { return $this->tel; }
+    public function setTel(?string $tel): static { $this->tel = $tel; return $this; }
+
+    public function getMail(): ?string { return $this->mail; }
+    public function setMail(string $mail): static { $this->mail = $mail; return $this; }
+
+    public function getMdp(): ?string { return $this->mdp; }
+    public function setMdp(string $mdp): static { $this->mdp = $mdp; return $this; }
+
+    public function getPole(): ?Pole { return $this->pole; }
+    public function setPole(?Pole $pole): static { $this->pole = $pole; return $this; }
 }
