@@ -10,7 +10,13 @@ security:
             entity:
                 class: App\Entity\Respo
                 property: mail
-
+    role_hierarchy:
+        # Le ROLE_RESPO possède aussi les droits du ROLE_USER
+        ROLE_RESPO:       [ROLE_USER]
+        
+        # Le ROLE_ADMIN possède les droits du RESPO (et donc du USER aussi)
+        ROLE_ADMIN:       [ROLE_RESPO]
+        
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\RespoRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -10,56 +11,70 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\Entity(repositoryClass: RespoRepository::class)]
 class Respo implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // 1. ID (id_respo)
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: 'id_respo', type: 'integer')]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, name: 'nom')]
     private ?string $nom = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(length: 50, name: 'prenom')]
     private ?string $prenom = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 50, nullable: true, name: 'tel')]
     private ?string $tel = null;
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, unique: true, name: 'mail')]
     private ?string $mail = null;
 
-    #[ORM\Column]
+    #[ORM\Column(name: 'mdp')]
     private ?string $mdp = null;
 
+    // 2. RELATION POLE (id_pole)
     #[ORM\ManyToOne(inversedBy: 'respos')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'id_pole', referencedColumnName: 'id_pole', nullable: false)]
     private ?Pole $pole = null;
+
+    // 3. RELATION ROLE (id_role) - C'est celle qui vous manquait !
+    #[ORM\ManyToOne(inversedBy: 'respos')]
+    #[ORM\JoinColumn(name: 'id_role', referencedColumnName: 'id_role', nullable: false)]
+    private ?Role $role = null;
 
     // --- LOGIQUE DE SÉCURITÉ ---
 
-    /**
-     * Identifiant visuel unique (ici l'email)
-     */
-    public function getUserIdentifier(): string
-    {
-        return (string) $this->mail;
-    }
-
-    /**
-     * Les rôles de l'utilisateur.
-     * Important : on garantit que chaque utilisateur a au moins ROLE_USER
-     */
     public function getRoles(): array
     {
-        $roles = ['ROLE_RESPO'];
-        // Garantie que tout le monde a au moins ce rôle de base
+        // Maintenant $this->role existe, donc ça ne plantera plus
+        $roleString = $this->role?->getRoleString();
+
+        $roles = [];
+        if ($roleString) {
+            $roles[] = $roleString;
+        }
+
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * Retourne le mot de passe hashé
-     */
+    public function getRole(): ?Role
+    {
+        return $this->role;
+    }
+
+    public function setRole(?Role $role): static
+    {
+        $this->role = $role;
+        return $this;
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return (string) $this->mail;
+    }
+
     public function getPassword(): ?string
     {
         return $this->mdp;
@@ -67,7 +82,6 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function eraseCredentials(): void
     {
-        // Utile si vous stockez des données sensibles temporaires sur l'objet
     }
 
     // --- GETTERS & SETTERS CLASSIQUES ---

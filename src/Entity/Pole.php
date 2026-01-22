@@ -12,7 +12,7 @@ class Pole
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: 'id_pole', type: 'integer')] // <-- Vérifiez cette ligne
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
