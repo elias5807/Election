@@ -12,39 +12,40 @@ class Pole
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(name: 'id_pole', type: 'integer')] // <-- Vérifiez cette ligne
+    #[ORM\Column(name: 'id_pole', type: 'integer')] 
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
+    #[ORM\Column(name: 'nom_pole', type: 'string', length: 50)] 
     private ?string $nomPole = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(name: 'adresse', type: 'string', length: 50)]
     private ?string $adresse = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'lattitude', type: 'float')]
     private ?float $lattitude = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'longitude', type: 'float')]
     private ?float $longitude = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'tract', type: 'integer')]
     private ?int $tract = null;
 
     #[ORM\Column(nullable: true)]
     private ?int $afluence = null;
 
     // J'ai gardé string car ton schéma disait VARCHAR, même si ça ressemble à des scores
-    //changer le type string en INT
-    #[ORM\Column(nullable: true)]
+    //changer le type string en 
+    
+    #[ORM\Column(name: 'faep', type: 'integer')]
     private ?int $faep = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'uni', type: 'integer')]
     private ?int $uni = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'ue', type: 'integer')]
     private ?int $ue = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'unef', type: 'integer')]
     private ?int $unef = null;
 
     // Relation inverse de "Respo" (Un pôle a plusieurs responsables)
