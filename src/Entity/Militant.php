@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: MilitantRepository::class)]
+#[ORM\Table(name: 'militant')]
 class Militant
 {
     #[ORM\Id]
@@ -49,10 +50,13 @@ class Militant
     #[ORM\OneToMany(mappedBy: 'militant', targetEntity: Horaire::class)]
     private Collection $horaires;
 
-    // Relation pour la table "Milite" (Many-To-Many avec Pole)
-    #[ORM\ManyToMany(targetEntity: Pole::class, inversedBy: 'militants')]
-    #[ORM\JoinTable(name: 'milite')] // Nom forcé de la table de jointure
-    private Collection $poles;
+    #[ORM\ManyToOne(targetEntity: Pole::class, inversedBy: 'militants')]
+    #[ORM\JoinColumn(
+        name: 'id_pole',             // Nom de la colonne dans la table "Militant"
+        referencedColumnName: 'id_pole', // <--- TRES IMPORTANT : Nom de la colonne ID dans la table "Pole"
+        nullable: true
+    )]
+    private ?Pole $pole = null;
 
     public function __construct()
     {
@@ -206,9 +210,15 @@ class Militant
     /**
      * @return Collection<int, Pole>
      */
-    public function getPoles(): Collection
+    public function getPole(): ?Pole
     {
-        return $this->poles;
+        return $this->pole;
+    }
+
+    public function setPole(?Pole $pole): static
+    {
+        $this->pole = $pole;
+        return $this;
     }
 
     public function addPole(Pole $pole): static

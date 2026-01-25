@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PoleRepository::class)]
+#[ORM\Table(name: 'pole')]
 class Pole
 {
     #[ORM\Id]
@@ -53,7 +54,7 @@ class Pole
     private Collection $respos;
 
     // Relation inverse de "Militant"
-    #[ORM\ManyToMany(targetEntity: Militant::class, mappedBy: 'poles')]
+    #[ORM\OneToMany(mappedBy: 'pole', targetEntity: Militant::class)]
     private Collection $militants;
 
     public function __construct()
@@ -219,7 +220,8 @@ class Pole
     {
         if (!$this->militants->contains($militant)) {
             $this->militants->add($militant);
-            $militant->addPole($this);
+            // CORRECTION ICI : On définit le pôle du militant
+            $militant->setPole($this);
         }
         return $this;
     }
@@ -227,7 +229,11 @@ class Pole
     public function removeMilitant(Militant $militant): static
     {
         if ($this->militants->removeElement($militant)) {
-            $militant->removePole($this);
+            // set the owning side to null (unless already changed)
+            // CORRECTION ICI : On vérifie et on met à null
+            if ($militant->getPole() === $this) {
+                $militant->setPole(null);
+            }
         }
         return $this;
     }

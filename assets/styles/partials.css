@@ -118,3 +118,255 @@ nav a:hover {
         justify-content: center;
     }
 }
+
+/***************************************
+*      style des militants             *
+*      tout les militants              *
+****************************************/
+/* --- Variables de couleurs (Facile à modifier) --- */
+:root {
+  --bg-card: #ffffff;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --primary: #3b82f6;       /* Bleu standard */
+  --success: #10b981;       /* Vert pour le statut/appel */
+  --danger: #ef4444;        /* Rouge (au cas où) */
+  --border-radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* --- 1. La Grille Principale --- */
+.dashboard-grid {
+  display: grid;
+  /* Crée des colonnes automatiques (min 280px de large) */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Fait en sorte que le titre H1 prenne toute la largeur de la première ligne */
+.dashboard-grid h1 {
+  grid-column: 1 / -1;
+  font-size: 1.8rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.5rem;
+}
+
+/* --- 2. La Mini-Carte --- */
+.mini-card {
+  background-color: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  position: relative; /* Pour positionner le point de statut */
+  border: 1px solid #f3f4f6;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.mini-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- 3. Point de statut (Présent) --- */
+.status-dot {
+  width: 12px;
+  height: 12px;
+  background-color: var(--success);
+  border-radius: 50%;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  box-shadow: 0 0 0 2px white; /* Petit contour blanc pour séparer */
+}
+
+/* --- 4. Contenu de la carte --- */
+.card-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+  padding-right: 20px; /* Évite que le texte passe sous le point vert */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Ajoute "..." si le nom est trop long */
+}
+
+.card-pole, 
+.card-time {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espace entre l'icône et le texte */
+}
+
+.card-pole i, 
+.card-time i {
+  color: var(--primary); /* Couleur des icônes */
+  width: 16px;
+  text-align: center;
+}
+
+/* --- 5. Boutons d'action --- */
+.card-actions {
+  margin-top: 1.25rem;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-mini {
+  flex: 1; /* Les boutons prennent la même largeur */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0.5rem 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+/* Bouton Appeler */
+.btn-call {
+  background-color: #ecfdf5; /* Fond vert très clair */
+  color: var(--success);
+  border: 1px solid #d1fae5;
+}
+
+.btn-call:hover {
+  background-color: var(--success);
+  color: white;
+}
+
+/* Bouton Info */
+.btn-info-card {
+  background-color: #f3f4f6;
+  color: var(--text-main);
+  border: 1px solid #e5e7eb;
+}
+
+.btn-info-card:hover {
+  background-color: #e5e7eb;
+}
+
+/* État désactivé */
+.btn-mini.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: #f9fafb;
+  color: #9ca3af;
+  border-color: #f3f4f6;
+}
+
+/***************************************
+*      style des militants             *
+*      tout les poles                  *
+****************************************/
+/* --- Structure Globale --- */
+.dashboard-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Titre principal de la page */
+.page-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  color: var(--text-main);
+}
+
+/* --- Section par Pôle --- */
+.pole-section {
+  margin-bottom: 3rem; /* Espace entre les pôles */
+  background-color: #f9fafb; /* Fond très léger pour délimiter le pôle */
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+}
+
+/* Titre du pôle (ex: Communication, Terrain...) */
+.pole-title {
+  font-size: 1.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pole-title::before {
+  content: '';
+  display: block;
+  width: 6px;
+  height: 24px;
+  background-color: var(--primary);
+  border-radius: 4px;
+}
+
+/* Badge de compteur (Optionnel : pour afficher le nombre de militants) */
+.pole-count {
+  font-size: 0.9rem;
+  background: #e0e7ff;
+  color: var(--primary);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-left: auto; /* Pousse le compteur à droite */
+}
+
+/* --- La Grille (Réutilisable pour chaque pôle) --- */
+.dashboard-grid {
+  display: grid;
+  /* Grille responsive automatique */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* --- (Garde ici tout le CSS des cartes 'mini-card' de la réponse précédente) --- */
+/* ... */
+
+
+/* Le conteneur principal */
+.split-view {
+  display: flex;       /* Active le mode "ligne" */
+  gap: 2rem;           /* Espace entre les deux blocs (environ 32px) */
+  align-items: start;  /* Aligne les éléments en haut (évite qu'ils s'étirent bizarrement) */
+  width: 100%;
+}
+
+/* Les colonnes */
+.split-column {
+  flex: 1;             /* Force les deux colonnes à prendre la même largeur (50/50) */
+  min-width: 0;        /* Astuce importante pour éviter que la grille interne ne déborde */
+}
+
+/* --- RESPONSIVE (Pour mobile) --- */
+/* Si l'écran est plus petit que 1024px (tablette/mobile), on les met l'un sous l'autre */
+@media (max-width: 1024px) {
+  .split-view {
+    flex-direction: column;
+  }
+}
+
+.split-column.main-content {
+  flex: 1; /* Prend 3 parts de l'espace */
+}
+
+.split-column.sidebar {
+  flex: 4; /* Prend 1 part de l'espace */
+}

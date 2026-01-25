@@ -32,9 +32,8 @@ class MilitantRepository extends ServiceEntityRepository
             // On sélectionne ("addSelect") les horaires et les pôles directement.
             // Cela évite que Symfony refasse 50 requêtes SQL quand vous ferez la boucle dans le HTML.
             ->addSelect('h') 
-            ->leftJoin('m.poles', 'p') 
+            ->leftJoin('m.pole', 'p')
             ->addSelect('p')
-
             // 3. Conditions temporelles
             ->where('h.debut <= :now')
             ->andWhere('h.fin >= :now')

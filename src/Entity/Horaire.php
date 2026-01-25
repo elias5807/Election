@@ -7,11 +7,13 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: HoraireRepository::class)]
+#[ORM\Table(name: 'horaire')]
 class Horaire
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    // C'EST CETTE LIGNE QU'IL FAUT CORRIGER :
+    #[ORM\Column(name: 'id_horaire', type: 'integer')] 
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
