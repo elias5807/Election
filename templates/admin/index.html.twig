@@ -5,13 +5,61 @@
 {% block body %}
     {% include 'partials/_navbar.html.twig' %}
     <meta http-equiv="refresh" content="60">
-    <article>
-        <div>   
-            <h1>Militants disponibles</h1>
-            <div>
+    <h3 class="mb-3">Répartition des militants actifs</h3>
+
+    <div class="row">
+        {# On boucle sur le tableau trié dans le Contrôleur #}
+        {% for nomGroupe, listeMilitants in militantsTries %}
             
-            <div>
-        
-        </div>
-    </article>
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 bg-light">
+                    
+                    {# Header : Vert si c'est les "Disponibles", Gris foncé sinon #}
+                    <div class="card-header py-3 {{ nomGroupe == 'Militants Disponibles' ? 'bg-success text-white' : 'bg-dark text-white' }}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0 text-uppercase fs-6">{{ nomGroupe }}</h5>
+                            <span class="badge bg-white text-dark rounded-pill">
+                                {{ listeMilitants|length }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="card-body p-0">
+                        {% if listeMilitants is empty %}
+                            <div class="text-center text-muted py-4">
+                                <small>Aucun militant actif</small>
+                            </div>
+                        {% else %}
+                            <ul class="list-group list-group-flush">
+                                {% for militant in listeMilitants %}
+                                    <li class="list-group-item bg-transparent d-flex justify-content-between align-items-center">
+                                        <div>
+                                            {# Nom en gras #}
+                                            <div class="fw-bold">
+                                                {{ militant.prenom|capitalize }} {{ militant.nom|upper }}
+                                            </div>
+                                            {# Numéro de téléphone cliquable #}
+                                            <a href="tel:{{ militant.tel }}" class="text-decoration-none small text-muted">
+                                                <i class="bi bi-telephone"></i> {{ militant.tel }}
+                                            </a>
+                                        </div>
+
+                                        {# Heure de fin de service #}
+                                        {% if militant.horaireActuel %}
+                                            <div class="text-end">
+                                                <span class="badge bg-warning text-dark" title="Fin de service">
+                                                    Fin : {{ militant.horaireActuel.fin|date('H:i') }}
+                                                </span>
+                                            </div>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+        {% endfor %}
+    </div>
 {% endblock %}

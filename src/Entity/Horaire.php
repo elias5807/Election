@@ -20,9 +20,8 @@ class Horaire
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $fin = null;
 
-    // Clé étrangère #id_militant
-    #[ORM\ManyToOne(inversedBy: 'horaires')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\ManyToOne(targetEntity: Militant::class, inversedBy: 'horaires')]
+    #[ORM\JoinColumn(name: 'id_militant', referencedColumnName: 'id_militant', nullable: false)]
     private ?Militant $militant = null;
 
     public function getId(): ?int
