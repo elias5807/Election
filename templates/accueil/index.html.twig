@@ -5,28 +5,31 @@
     
     {# On ajoute notre fichier perso #}
     <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
 {% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h1>Espace Responsable</h1>
+    <div class="formulaire">
+        <h1>Espace Responsable</h1>
 
-    {% if pole and monFormulaire %}
-        <div class="card p-4">
-            
-            {# 1. Début du formulaire (avec l'ID pour l'auto-save) #}
-            {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
-            
-                {# 2. LA LIGNE MAGIQUE : Affiche TOUS les champs d'un coup #}
-                {{ form_widget(monFormulaire) }}
-                <div class="d-none">
-                    <button type="submit">Sauvegarder</button>
-                </div>
-            {{ form_end(monFormulaire) }}
-            
-        </div>
-    {% endif %}
-</div>
+        {% if pole and monFormulaire %}
+            <div class="card p-4">
+                
+                {# 1. Début du formulaire (avec l'ID pour l'auto-save) #}
+                {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
+                
+                    {# 2. LA LIGNE MAGIQUE : Affiche TOUS les champs d'un coup #}
+                    {{ form_widget(monFormulaire) }}
+                    <div class="d-none">
+                        <button type="submit">Sauvegarder</button>
+                    </div>
+                {{ form_end(monFormulaire) }}
+                
+            </div>
+        {% endif %}
+    </div>
+    {% include 'partials/_menuTel.html.twig' %}
+
 {% endblock %}
 {% block javascripts %}
     {{ parent() }}    

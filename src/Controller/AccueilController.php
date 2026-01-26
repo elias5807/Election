@@ -46,8 +46,7 @@ final class AccueilController extends AbstractController
         return $this->render('accueil/index.html.twig', [
             'controller_name' => 'AccueilController',
             'pole' => $pole,
-            // C'est cette ligne qui corrige votre erreur :
             'monFormulaire' => $form->createView(), 
         ]);
-    }
+    }   
 }
