@@ -1,7 +1,34 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello AccueilController!{% endblock %}
+{% block stylesheets %}
+    {# On garde les styles de base (Bootstrap, etc.) #}
+    {{ parent() }}
+    
+    {# On ajoute notre fichier perso #}
+    <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}">
+{% endblock %}
 
 {% block body %}
+<div class="container mt-4">
+    <h1>Espace Responsable</h1>
 
+    {% if pole and monFormulaire %}
+        <div class="card p-4">
+            
+            {# 1. Début du formulaire (avec l'ID pour l'auto-save) #}
+            {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
+            
+                {# 2. LA LIGNE MAGIQUE : Affiche TOUS les champs d'un coup #}
+                {{ form_widget(monFormulaire) }}
+                <div class="d-none">
+                    <button type="submit">Sauvegarder</button>
+                </div>
+            {{ form_end(monFormulaire) }}
+            
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}    
+    <script src="{{ asset('controllers/sauvegarder.js') }}"></script>
 {% endblock %}

@@ -1,0 +1,137 @@
+/* public/styles/responsable.css */
+
+/* 1. VARIABLES & BASE */
+:root {
+    --faep-green: #1a4d2e;       /* Vert principal */
+    --faep-green-light: #25613c; /* Vert au survol */
+    --faep-bg: #f4f6f5;          /* Fond gris/vert très clair */
+    --white: #ffffff;
+    --grey-border: #e0e0e0;
+}
+
+body {
+    background-color: var(--faep-bg);
+}
+
+/* 2. LA CARTE (Conteneur) */
+.card {
+    border: none;
+    border-top: 5px solid var(--faep-green); /* Petite touche "Institutionnelle" en haut */
+    box-shadow: 0 10px 25px rgba(26, 77, 46, 0.08); /* Ombre douce verte */
+    border-radius: 12px;
+    background-color: var(--white);
+}
+
+h1 {
+    color: var(--faep-green);
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* 3. STRUCTURE DU FORMULAIRE (Géré par form_widget) */
+/* On cible les divs générées par Symfony autour de chaque champ */
+form > div {
+    margin-bottom: 1.5rem; /* Espace entre chaque question */
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0; /* Ligne de séparation subtile */
+}
+
+/* On enlève la bordure pour le dernier élément */
+form > div:last-child {
+    border-bottom: none;
+}
+
+/* 4. LES LABELS (Titres des questions) */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--faep-green);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* 5. LES INPUTS CLASSIQUES (Texte & Nombre) */
+input[type="text"], 
+input[type="number"], 
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--grey-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #fafafa;
+}
+
+/* Effet quand on clique dans un champ */
+input[type="text"]:focus, 
+input[type="number"]:focus, 
+select:focus {
+    border-color: var(--faep-green);
+    outline: none;
+    background-color: var(--white);
+    box-shadow: 0 0 0 4px rgba(26, 77, 46, 0.1); /* Halo vert */
+}
+
+/* 6. LES SLIDERS (Range) - LE PLUS IMPORTANT */
+input[type="range"] {
+    /*-webkit-appearance: none;*/ /* Supprime le style par défaut */
+    width: 100%;
+    margin: 10px 0;
+    background: transparent;
+}
+
+input[type="range"]:focus {
+    outline: none;
+}
+
+/* La barre (Le rail) */
+input[type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: #dde6e0;
+    border-radius: 4px;
+}
+
+/* Le rond (Le curseur) */
+input[type="range"]::-webkit-slider-thumb {
+    height: 24px;
+    width: 24px;
+    border-radius: 50%;
+    background: var(--faep-green);
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -8px; /* Pour centrer le rond sur la barre */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    transition: transform 0.1s, background-color 0.2s;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: var(--faep-green-light);
+    transform: scale(1.2); /* Grossit un peu au survol */
+}
+
+/* 7. MESSAGE DE SAUVEGARDE (Optionnel si ton JS l'ajoute) */
+.saving-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--faep-green);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    font-size: 0.9rem;
+    animation: fadeIn 0.5s;
+    z-index: 1000;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
