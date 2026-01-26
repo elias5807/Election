@@ -41,4 +41,12 @@ class PoleRepository extends ServiceEntityRepository
             ->getSingleResult(); 
             // Retournera un tableau : ['totalUni' => 120, 'totalFaep' => 45, ...]
     }
+
+    public function localisationPoles(): array
+    {
+        return $this->createQueryBuilder('p')
+            ->select('p.nomPole, p.lattitude, p.longitude, p.unef, p.ue, p.uni,p.tract,p.afluence')
+            ->getQuery()
+            ->getResult();
+    }
 }

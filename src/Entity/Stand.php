@@ -6,31 +6,35 @@ use App\Repository\StandRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: StandRepository::class)]
+#[ORM\Table(name: 'stand')]
 class Stand
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(name: 'id_stand')] // Mapping sur votre colonne SQL spécifique
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?bool $crepe = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $crepe = false;
 
-    #[ORM\Column]
-    private ?bool $lait = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $lait = false;
 
-    #[ORM\Column]
-    private ?bool $oeuf = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $oeuf = false;
 
-    #[ORM\Column]
-    private ?bool $rhum = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $rhum = false;
 
-    #[ORM\Column]
-    private ?bool $farine = null;
+    #[ORM\Column(options: ['default' => false])]
+    private ?bool $farine = false;
 
-    // Pour #id_stand_1 (Relation sur soi-même, optionnelle)
-    #[ORM\ManyToOne(targetEntity: self::class)]
-    private ?self $parentStand = null;
+    // Relation avec POLE
+    // On suppose qu'un Pôle peut avoir plusieurs stands (ou un seul), 
+    // mais techniquement c'est Stand qui porte la clé étrangère.
+    #[ORM\ManyToOne(targetEntity: Pole::class)]
+    #[ORM\JoinColumn(name: 'id_pole', referencedColumnName: 'id_pole', nullable: true)]
+    private ?Pole $pole = null;
 
     public function getId(): ?int
     {
@@ -45,6 +49,7 @@ class Stand
     public function setCrepe(bool $crepe): static
     {
         $this->crepe = $crepe;
+
         return $this;
     }
 
@@ -56,6 +61,7 @@ class Stand
     public function setLait(bool $lait): static
     {
         $this->lait = $lait;
+
         return $this;
     }
 
@@ -67,6 +73,7 @@ class Stand
     public function setOeuf(bool $oeuf): static
     {
         $this->oeuf = $oeuf;
+
         return $this;
     }
 
@@ -78,6 +85,7 @@ class Stand
     public function setRhum(bool $rhum): static
     {
         $this->rhum = $rhum;
+
         return $this;
     }
 
@@ -89,17 +97,19 @@ class Stand
     public function setFarine(bool $farine): static
     {
         $this->farine = $farine;
+
         return $this;
     }
 
-    public function getParentStand(): ?self
+    public function getPole(): ?Pole
     {
-        return $this->parentStand;
+        return $this->pole;
     }
 
-    public function setParentStand(?self $parentStand): static
+    public function setPole(?Pole $pole): static
     {
-        $this->parentStand = $parentStand;
+        $this->pole = $pole;
+
         return $this;
     }
 }

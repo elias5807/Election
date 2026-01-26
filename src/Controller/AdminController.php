@@ -24,4 +24,34 @@ class AdminController extends AbstractController
             'stats' => $stats,
         ]);
     }
+
+    #[Route('/militant/update-pole', name: 'militant_update_pole', methods: ['POST'])]
+    public function updatePole(Request $request, EntityManagerInterface $em): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+        
+        $militantId = $data['id'] ?? null;
+        $poleName = $data['pole'] ?? null;
+
+        $militant = $em->getRepository(Militant::class)->find($militantId);
+
+        if (!$militant) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Militant non trouvé'], 404);
+        }
+
+        // Gestion du cas "Non assigné" (si poleName est 'null' ou vide)
+        if ($poleName === 'null' || empty($poleName)) {
+            $militant->setPole(null);
+        } else {
+            // Trouver le pôle par son nom
+            $pole = $em->getRepository(Pole::class)->findOneBy(['nomPole' => $poleName]);
+            if ($pole) {
+                $militant->setPole($pole);
+            }
+        }
+
+        $em->flush();
+
+        return new JsonResponse(['status' => 'success']);
+    }
 }

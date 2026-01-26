@@ -273,100 +273,207 @@ nav a:hover {
 *      style des militants             *
 *      tout les poles                  *
 ****************************************/
-/* --- Structure Globale --- */
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
+:root {
+  --primary: #3b82f6;
+  --success: #10b981;
+  --bg-page: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-section: #f9fafb;
+  --text-main: #1f2937;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --radius: 12px;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* =========================================
+   2. CONTENEUR HORIZONTAL (Scrollable)
+   ========================================= */
 .dashboard-container {
-  max-width: 1400px;
-  margin: 0 auto;
+  display: flex;            /* Alignement horizontal */
+  flex-direction: row;
+  overflow-x: auto;         /* Scroll horizontal si ça dépasse */
+  overflow-y: hidden;
+  gap: 1.5rem;              /* Espace standard entre les colonnes */
   padding: 1.5rem;
-  font-family: 'Segoe UI', system-ui, sans-serif;
+  align-items: flex-start;  /* Aligne tout en haut */
+  height: calc(100vh - 100px); /* Prend la hauteur de l'écran */
 }
 
-/* Titre principal de la page */
-.page-title {
-  font-size: 2rem;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e5e7eb;
-  color: var(--text-main);
+/* Barre de scroll horizontale plus jolie */
+.dashboard-container::-webkit-scrollbar {
+  height: 8px;
 }
-
-/* --- Section par Pôle --- */
-.pole-section {
-  margin-bottom: 3rem; /* Espace entre les pôles */
-  background-color: #f9fafb; /* Fond très léger pour délimiter le pôle */
-  border-radius: 16px;
-  padding: 1.5rem;
-  border: 1px solid #e5e7eb;
-}
-
-/* Titre du pôle (ex: Communication, Terrain...) */
-.pole-title {
-  font-size: 1.5rem;
-  color: var(--primary);
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pole-title::before {
-  content: '';
-  display: block;
-  width: 6px;
-  height: 24px;
-  background-color: var(--primary);
+.dashboard-container::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
   border-radius: 4px;
 }
 
-/* Badge de compteur (Optionnel : pour afficher le nombre de militants) */
-.pole-count {
-  font-size: 0.9rem;
-  background: #e0e7ff;
+/* =========================================
+   3. COLONNES (Pôles)
+   ========================================= */
+.pole-section {
+  min-width: 320px;         /* Largeur fixe pour chaque colonne */
+  max-width: 320px;
+  flex-shrink: 0;           /* Empêche la colonne de s'écraser */
+  background-color: var(--bg-section);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1rem;
+  
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+
+.pole-title {
+  font-size: 1.2rem;
   color: var(--primary);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-weight: 600;
-  margin-left: auto; /* Pousse le compteur à droite */
+  margin-bottom: 1rem;
+  font-weight: 700;
+  padding-left: 0.5rem;
+  border-left: 4px solid var(--primary);
 }
 
-/* --- La Grille (Réutilisable pour chaque pôle) --- */
+/* =========================================
+   4. GRILLE INTERNE & CARTES
+   ========================================= */
 .dashboard-grid {
-  display: grid;
-  /* Grille responsive automatique */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  overflow-y: auto;         /* Scroll vertical DANS la colonne */
+  padding-right: 5px;       /* Petit espace pour la scrollbar */
+  flex-grow: 1;
 }
 
-/* --- (Garde ici tout le CSS des cartes 'mini-card' de la réponse précédente) --- */
-/* ... */
+.dashboard-grid::-webkit-scrollbar {
+  width: 5px;
+}
+.dashboard-grid::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}
 
+/* --- La Mini Carte --- */
+.mini-card {
+  background-color: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  position: relative;
+  border: 1px solid transparent;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
 
-/* Le conteneur principal */
+.mini-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Détails internes de la carte --- */
+.status-dot {
+  width: 10px; height: 10px;
+  background-color: var(--success);
+  border-radius: 50%;
+  position: absolute; top: 12px; right: 12px;
+}
+
+.card-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+  padding-right: 15px;
+}
+
+.card-pole, .card-time {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 0.25rem;
+}
+
+.card-pole i, .card-time i {
+  color: var(--primary);
+  width: 16px; text-align: center;
+}
+
+/* --- Boutons --- */
+.card-actions {
+  margin-top: 1rem;
+  display: flex; gap: 8px;
+}
+
+.btn-mini {
+  flex: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-call { background: #ecfdf5; color: var(--success); }
+.btn-call:hover { background: var(--success); color: white; }
+
+.btn-info-card { background: #e5e7eb; color: var(--text-main); }
+.btn-info-card:hover { background: #d1d5db; }
+
+.btn-mini.disabled {
+  opacity: 0.5; pointer-events: none;
+  background: #f3f4f6; color: #9ca3af;
+}
+
+/* --- LE CONTENEUR PRINCIPAL --- */
 .split-view {
-  display: flex;       /* Active le mode "ligne" */
-  gap: 2rem;           /* Espace entre les deux blocs (environ 32px) */
-  align-items: start;  /* Aligne les éléments en haut (évite qu'ils s'étirent bizarrement) */
+  display: flex;        /* Active l'alignement côte à côte */
   width: 100%;
+  height: calc(100vh - 80px); /* Prend toute la hauteur (moins la navbar) */
+  gap: 1.5rem;          /* Espace entre les deux blocs */
+  padding: 1rem;
+  overflow: hidden;     /* Empêche la page entière de scroller */
 }
 
-/* Les colonnes */
-.split-column {
-  flex: 1;             /* Force les deux colonnes à prendre la même largeur (50/50) */
-  min-width: 0;        /* Astuce importante pour éviter que la grille interne ne déborde */
+/* --- COLONNE DE GAUCHE (1/5) --- */
+.split-column.main-content {
+  flex: 1;              /* Prend 1 part */
+  min-width: 0;         /* Indispensable pour éviter les bugs de largeur */
+  
+  /* Optionnel : rendre cette partie scrollable verticalement si besoin */
+  overflow-y: auto;     
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
 
-/* --- RESPONSIVE (Pour mobile) --- */
-/* Si l'écran est plus petit que 1024px (tablette/mobile), on les met l'un sous l'autre */
+/* --- COLONNE DE DROITE (4/5) --- */
+.split-column.sidebar {
+  flex: 4;              /* Prend 4 parts */
+  min-width: 0;         /* Indispensable pour que le scroll horizontal fonctionne dedans */
+  
+  /* C'est ici que tes pôles vont s'afficher */
+  position: relative;
+}
+
+/* --- RESPONSIVE (MOBILE) --- */
+/* Sur petit écran, on repasse l'un sous l'autre */
 @media (max-width: 1024px) {
   .split-view {
     flex-direction: column;
+    height: auto; /* La hauteur s'adapte au contenu */
+    overflow: visible;
   }
-}
-
-.split-column.main-content {
-  flex: 1; /* Prend 3 parts de l'espace */
-}
-
-.split-column.sidebar {
-  flex: 4; /* Prend 1 part de l'espace */
+  
+  .split-column.main-content,
+  .split-column.sidebar {
+    flex: none;   /* On désactive le ratio 1/5 4/5 */
+    width: 100%;  /* On force 100% de largeur */
+  }
 }

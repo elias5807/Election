@@ -31,7 +31,7 @@ class Pole
     #[ORM\Column(name: 'tract', type: 'integer')]
     private ?int $tract = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(name: 'afluence', type: 'integer')]
     private ?int $afluence = null;
 
     // J'ai gardé string car ton schéma disait VARCHAR, même si ça ressemble à des scores

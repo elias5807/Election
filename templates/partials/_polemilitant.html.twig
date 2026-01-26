@@ -1,4 +1,4 @@
-{# 1. On crée une liste des noms de pôles uniques #}
+{# 1. On crée la liste des noms de pôles uniques #}
 {% set poleNames = [] %}
 {% for m in militants %}
     {% if m.pole and m.pole.nomPole not in poleNames %}
@@ -7,43 +7,59 @@
 {% endfor %}
 
 <div class="dashboard-container">
-    <h1 class="page-title">Militants par Pôle</h1>
-
-    {# 2. On boucle sur chaque nom de pôle #}
+    {# Tu peux remettre un titre général ici si tu veux #}
+    
+    {# 2. BOUCLE DES PÔLES (Colonnes) #}
     {% for currentPoleName in poleNames %}
         
         <div class="pole-section">
-            <h2 class="pole-title">{{ currentPoleName }}</h2>
+            <h3 class="pole-title">{{ currentPoleName }}</h3>
             
             <div class="dashboard-grid">
-                {# 3. On repasse sur tous les militants pour afficher ceux du pôle actuel #}
+                {# 3. BOUCLE DES MILITANTS (Cartes) #}
                 {% for militant in militants %}
                     {% if militant.pole and militant.pole.nomPole == currentPoleName %}
                         
                         <div class="mini-card">
-                            <div class="card-name">
+                            <div class="status-dot" title="Présent"></div>
+
+                            <div class="card-name" title="{{ militant.prenom }} {{ militant.nom }}">
                                 {{ militant.prenom }} {{ militant.nom|upper }}
                             </div>
+
+                            <div class="card-pole">
+                                <i class="fas fa-map-marker-alt"></i> {{ militant.pole.nomPole }}
                             </div>
+
+                            <div class="card-time">
+                                <i class="far fa-clock"></i>
+                                {% for horaire in militant.horaires %}
+                                    {% if horaire.debut <= date() and horaire.fin >= date() %}
+                                        {{ horaire.debut|date('H:i') }} - {{ horaire.fin|date('H:i') }}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <div class="card-actions">
+                                {% if militant.tel %}
+                                    <a href="tel:{{ militant.tel }}" class="btn-mini btn-call">
+                                        <i class="fas fa-phone"></i> Appeler
+                                    </a>
+                                {% else %}
+                                    <span class="btn-mini btn-call disabled">
+                                        <i class="fas fa-phone-slash"></i>
+                                    </span>
+                                {% endif %}
+                                <a href="#" class="btn-mini btn-info-card">
+                                    <i class="fas fa-eye"></i> Info
+                                </a>
+                            </div>
+                        </div>
 
                     {% endif %}
                 {% endfor %}
             </div>
         </div>
-    {% endfor %}
 
-    
-    {# 4. Gestion des "Non assignés" (Optionnel) 
-    <div class="pole-section">
-        <h2 class="pole-title" style="color: #6b7280;">Non assignés</h2>
-        <div class="dashboard-grid">
-            {% for militant in militants %}
-                {% if not militant.pole %}
-                     <div class="mini-card">
-                        <div class="card-name">{{ militant.prenom }} {{ militant.nom|upper }}</div>
-                        </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-    </div>#}
+    {% endfor %}
 </div>
