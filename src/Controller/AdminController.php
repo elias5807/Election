@@ -2,11 +2,16 @@
 
 namespace App\Controller;
 
-use App\Repository\MilitantRepository;
-use App\Repository\PoleRepository;
+use App\Entity\Militant;              // Pour l'entité Militant
+use App\Entity\Pole;                  // (Optionnel selon ton code, mais utile)
+use App\Repository\PoleRepository;    // Pour trouver le pôle
+use App\Repository\MilitantRepository; // Pour trouver les militants
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route; 
+use Doctrine\ORM\EntityManagerInterface; // Pour sauvegarder
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
 class AdminController extends AbstractController
 {
@@ -17,11 +22,12 @@ class AdminController extends AbstractController
         $tousMilitants = $militantRepository->militantDispo();
 
         $stats = $poleRepository->getGlobalStats();
-
+        $poles = $poleRepository->findAll();
 
         return $this->render('admin/index.html.twig', [
             'militants' => $tousMilitants,
             'stats' => $stats,
+            'poles' => $poles,
         ]);
     }
 
@@ -52,6 +58,42 @@ class AdminController extends AbstractController
 
         $em->flush();
 
+        return new JsonResponse(['status' => 'success']);
+    }
+    
+    /**
+     * C'est cette route qui est appelée par le JavaScript 'fetch'
+     */
+    #[Route('/militant/{id}/change-pole', name: 'app_militant_change_pole', methods: ['POST'])]
+    public function changePole(
+        Militant $militant, 
+        Request $request, 
+        PoleRepository $poleRepository, 
+        EntityManagerInterface $em
+    ): JsonResponse
+    {
+        // 1. On récupère les données envoyées par le JS (le JSON)
+        $data = json_decode($request->getContent(), true);
+        $nouveauNomPole = $data['poleNom'] ?? null;
+
+        if (!$nouveauNomPole) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Nom du pôle manquant'], 400);
+        }
+
+        // 2. On cherche l'entité du nouveau Pôle en base de données
+        $nouveauPole = $poleRepository->findOneBy(['nomPole' => $nouveauNomPole]);
+
+        if (!$nouveauPole) {
+            return new JsonResponse(['status' => 'error', 'message' => 'Pôle introuvable'], 404);
+        }
+
+        // 3. On met à jour le militant
+        $militant->setPole($nouveauPole);
+
+        // 4. On sauvegarde (C'est ici que la BDD est modifiée !)
+        $em->flush();
+
+        // 5. On répond au JS que tout s'est bien passé
         return new JsonResponse(['status' => 'success']);
     }
 }

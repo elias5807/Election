@@ -1,38 +1,55 @@
-{# 1. On crée la liste des noms de pôles uniques #}
-{% set poleNames = [] %}
-{% for m in militants %}
-    {% if m.pole and m.pole.nomPole not in poleNames %}
-        {% set poleNames = poleNames|merge([m.pole.nomPole]) %}
-    {% endif %}
-{% endfor %}
+<div class="dashboard-container" data-controller="native-board">
 
-<div class="dashboard-container">
-    {# Tu peux remettre un titre général ici si tu veux #}
-    
-    {# 2. BOUCLE DES PÔLES (Colonnes) #}
-    {% for currentPoleName in poleNames %}
+    {# 
+       NOUVELLE BOUCLE : 
+       On boucle sur l'entité 'poles' passée par le contrôleur PHP 
+    #}
+    {% for pole in poles %}
         
         <div class="pole-section">
-            <h3 class="pole-title">{{ currentPoleName }}</h3>
+            <h3 class="pole-title">{{ pole.nomPole }}</h3>
             
-            <div class="dashboard-grid">
-                {# 3. BOUCLE DES MILITANTS (Cartes) #}
+            {# 
+               IMPORTANT :
+               Le style "min-height" est CRUCIAL ici.
+               Si le pôle est vide, sans min-height, la div fera 0px de haut 
+               et tu ne pourras rien déposer dedans.
+            #}
+            <div class="dashboard-grid" 
+                 data-pole="{{ pole.nomPole }}"
+                 data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
+                 style="min-height: 150px; transition: background 0.2s;">
+                
+                {# BOUCLE DES MILITANTS #}
                 {% for militant in militants %}
-                    {% if militant.pole and militant.pole.nomPole == currentPoleName %}
+                    
+                    {# 
+                       CONDITION DE TRI :
+                       On vérifie si le militant appartient au pôle actuel de la boucle
+                       (On compare les ID pour être sûr, ou les noms)
+                    #}
+                    {% if militant.pole and militant.pole.id == pole.id %}
                         
-                        <div class="mini-card">
+                        <div class="mini-card" 
+                             draggable="true" 
+                             data-id="{{ militant.id }}"
+                             data-action="dragstart->native-board#onDragStart dragend->native-board#onDragEnd"
+                             style="cursor: grab;">
+
                             <div class="status-dot" title="Présent"></div>
 
-                            <div class="card-name" title="{{ militant.prenom }} {{ militant.nom }}">
+                            <div class="card-name">
                                 {{ militant.prenom }} {{ militant.nom|upper }}
                             </div>
-
+                                
                             <div class="card-pole">
-                                <i class="fas fa-map-marker-alt"></i> {{ militant.pole.nomPole }}
+                                <i class="fas fa-map-marker-alt"></i> 
+                                <span class="pole-text">{{ militant.pole.nomPole }}</span>
                             </div>
 
                             <div class="card-time">
                                 <i class="far fa-clock"></i>
+                                {# ... Tes horaires ... #}
                                 {% for horaire in militant.horaires %}
                                     {% if horaire.debut <= date() and horaire.fin >= date() %}
                                         {{ horaire.debut|date('H:i') }} - {{ horaire.fin|date('H:i') }}
@@ -41,23 +58,20 @@
                             </div>
 
                             <div class="card-actions">
-                                {% if militant.tel %}
-                                    <a href="tel:{{ militant.tel }}" class="btn-mini btn-call">
-                                        <i class="fas fa-phone"></i> Appeler
-                                    </a>
-                                {% else %}
-                                    <span class="btn-mini btn-call disabled">
-                                        <i class="fas fa-phone-slash"></i>
-                                    </span>
-                                {% endif %}
-                                <a href="#" class="btn-mini btn-info-card">
-                                    <i class="fas fa-eye"></i> Info
-                                </a>
+                                {# ... Tes boutons ... #}
+                                <a href="#" class="btn-mini btn-info-card"><i class="fas fa-eye"></i> Info</a>
                             </div>
                         </div>
 
                     {% endif %}
                 {% endfor %}
+                
+                {# 
+                   Astuce UX : Tu peux ajouter un message si vide
+                   (Visible uniquement si aucun enfant .mini-card n'est présent, via CSS :empty)
+                #}
+                {# <div class="empty-state">Aucun militant</div> #}
+                
             </div>
         </div>
 

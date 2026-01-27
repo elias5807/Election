@@ -477,3 +477,16 @@ nav a:hover {
     width: 100%;  /* On force 100% de largeur */
   }
 }
+
+/* Quand une carte est en train d'être déplacée (l'originale reste semi-transparente) */
+.dragging {
+    opacity: 0.4;
+    border: 2px dashed #999;
+}
+
+/* Quand on survole une colonne valide pour lâcher la carte */
+.drag-over-active {
+    background-color: rgba(0, 0, 0, 0.05); /* Gris léger */
+    border-radius: 8px;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+}
