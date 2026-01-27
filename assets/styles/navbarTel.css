@@ -1,156 +1,26 @@
-/* public/styles/navbar.css */
-
-:root {
-    --nav-width: 245px;       /* Largeur sur PC */
-    --nav-mobile-height: 60px; /* Hauteur sur Mobile */
-    --faep-green: #1a4d2e;
-    --grey-hover: #f2f2f2;
-    --border-color: #dbdbdb;
+nav {
+  bottom: 0;
+  margin: 0;
+  padding: 0%;
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  background-color: #333333;
+  display: flex;
+  position: fixed;
+  bottom: 4%;
+  width: 100%;
 }
 
-/* --- STRUCTURE GÉNÉRALE (Desktop First) --- */
-.insta-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: var(--nav-width);
-    background-color: white;
-    border-right: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    padding: 20px 12px;
-    z-index: 1000;
+ul li a {
+  display: block;
+  color: white;
+  padding: 14px 16px;
+  text-decoration: none;
 }
 
-/* Ajustement du contenu principal pour ne pas être caché par la nav */
-/* À ajouter à votre div principale ou body */
-body {
-    padding-left: var(--nav-width); /* Pousse le contenu à droite */
-}
-
-/* --- LOGO --- */
-.nav-brand {
-    margin-bottom: 40px;
-    padding: 0 12px;
-}
-
-.nav-brand a {
-    text-decoration: none;
-    color: var(--faep-green);
-    font-size: 24px;
-    font-weight: bold;
-    font-family: 'Segoe UI', cursive; /* Police style Insta */
-}
-.brand-icon { display: none; } /* On cache l'icône sur PC */
-
-/* --- LISTE DES LIENS --- */
-.nav-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    flex-grow: 1; /* Prend tout l'espace disponible */
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    color: #000;
-    padding: 12px;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-}
-
-.nav-link:hover {
-    background-color: var(--grey-hover);
-}
-
-.nav-link i {
-    font-size: 24px;
-    width: 30px; /* Largeur fixe pour aligner le texte */
-    margin-right: 16px;
-    transition: transform 0.2s;
-}
-
-/* Petit effet de zoom sur l'icône au survol */
-.nav-link:hover i {
-    transform: scale(1.1);
-}
-
-.link-text {
-    font-size: 16px;
-    font-weight: 400;
-}
-
-/* Style gras pour le lien actif (optionnel) */
-.nav-link.active {
-    font-weight: bold;
-}
-
-.nav-footer {
-    margin-top: auto;
-}
-
-
-/* ============================================================
-   RESPONSIVE : VERSION MOBILE (TABLETTE ET SMARTPHONE)
-   ============================================================ */
-@media (max-width: 768px) {
-    
-    body {
-        padding-left: 0;      /* On enlève la marge gauche */
-        padding-bottom: var(--nav-mobile-height); /* On ajoute une marge en bas */
-    }
-
-    .insta-nav {
-        /* On transforme la sidebar verticale en barre horizontale en bas */
-        top: auto;
-        bottom: 0;
-        width: 100%;
-        height: var(--nav-mobile-height);
-        flex-direction: row;
-        border-right: none;
-        border-top: 1px solid var(--border-color);
-        padding: 0;
-        justify-content: space-around; /* Espacement égal entre les icônes */
-        align-items: center;
-    }
-
-    /* On cache le Logo et le Footer (Déconnexion) sur mobile pour gagner de la place */
-    .nav-brand, .nav-footer {
-        display: none;
-    }
-
-    .nav-list {
-        flex-direction: row; /* Liste horizontale */
-        justify-content: space-around;
-        width: 100%;
-        gap: 0;
-    }
-
-    .nav-item {
-        flex: 1; /* Chaque item prend la même largeur */
-        display: flex;
-        justify-content: center;
-    }
-
-    .nav-link {
-        flex-direction: column; /* Icônes au dessus (si on gardait le texte) */
-        padding: 10px;
-        justify-content: center;
-    }
-
-    .nav-link i {
-        margin-right: 0; /* Plus de marge à droite */
-        font-size: 24px;
-    }
-
-    /* SUR MOBILE : ON CACHE LE TEXTE (Comme Insta) */
-    .link-text {
-        display: none;
-    }
+ul li a:hover {
+  background-color: #111111;
 }

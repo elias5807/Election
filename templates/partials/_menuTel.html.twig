@@ -1,54 +1,9 @@
-<nav class="insta-nav">
-    <div class="nav-brand">
-        <a href="{{ path('app_home') }}">
-            <span class="brand-text">FAEP</span>
-            <i class="fa-solid fa-leaf brand-icon"></i>
-        </a>
-    </div>
-
-    <ul class="nav-list">
-        
-        <li class="nav-item">
-            <a href="{{ path('app_home') }}" class="nav-link">
-                <i class="fa-solid fa-house"></i>
-                <span class="link-text">Accueil</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <span class="link-text">Recherche</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="{{ path('app_gestion_pole') }}" class="nav-link add-btn">
-                <i class="fa-regular fa-square-plus"></i>
-                <span class="link-text">Mon Pôle</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="{{ path('app_carte') }}" class="nav-link">
-                <i class="fa-regular fa-map"></i>
-                <span class="link-text">Carte</span>
-            </a>
-        </li>
-
-        <li class="nav-item">
-            <a href="#" class="nav-link">
-                {# Image de profil ronde si dispo, sinon icône user #}
-                <i class="fa-regular fa-user"></i>
-                <span class="link-text">Profil</span>
-            </a>
-        </li>
+<nav>
+    <ul>
+        <li><a href="#">info</a></li>
+        <li><a href="#">stand</a></li>
+        <li><a href="#">accueil</a></li>
+        <li><a href="#">militant</a></li>
+        <li><a href="#">deconnexion</a></li>
     </ul>
-
-    <div class="nav-footer">
-        <a href="{{ path('app_logout') }}" class="nav-link text-danger">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            <span class="link-text">Déconnexion</span>
-        </a>
-    </div>
 </nav>
