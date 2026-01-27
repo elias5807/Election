@@ -1,68 +1,62 @@
-/* --- GLOBAL : RESET TOTAL --- */
+/* =========================================================
+   STYLE : ESPACE RESPONSABLE - MODE "GÉANT" (FILL SCREEN)
+   ========================================================= */
+
+/* 1. RESET & FULL WIDTH */
 html, body {
-    margin: 0;
-    padding: 0;
+    margin: 0 !important;
+    padding: 0 !important;
     width: 100%;
-    height: 100%;
-    background-color: #f0f2f5; /* Fond un peu plus contrasté */
+    min-height: 100vh;
+    background-color: #ffffff !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     overflow-x: hidden;
 }
 
-/* --- CONTENEUR PRINCIPAL --- */
 .mobile-container {
-    width: 100%;
-    min-height: 100vh;
-    padding: 15px; /* Marges externes légèrement réduites pour laisser place aux cartes */
-    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important; /* On force le plein écran sans limite */
+    padding-bottom: 120px; /* Espace menu bas */
     display: flex;
     flex-direction: column;
-    padding-bottom: 100px; /* Plus d'espace en bas */
 }
 
+/* 2. HEADER & SECTIONS */
 .header-section {
-    text-align: center;
-    margin-bottom: 35px;
-    margin-top: 15px;
+    padding: 30px 25px 10px 25px; /* Plus d'espace */
+    background: #fff;
 }
 
 .header-section h1 {
-    font-size: 2.2rem; /* Titre plus imposant */
+    font-size: 2rem; /* Titre plus gros */
+    font-weight: 800;
     margin: 0;
     color: #111;
-    font-weight: 800;
 }
 
-.subtitle {
-    color: #666;
-    font-size: 1.1rem;
-    margin-top: 8px;
-}
-
-/* --- CARTES (SECTIONS) --- */
 .card-section {
-    background: white;
-    border-radius: 28px; /* Coins encore plus arrondis */
-    padding: 30px 25px; /* Plus d'espace interne */
-    margin-bottom: 30px;
     width: 100%;
+    padding: 30px 25px; /* Marges internes agrandies */
+    background: #fff;
+    border-bottom: 15px solid #f1f5f9; /* Séparation plus épaisse */
     box-sizing: border-box;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
 }
 
 .card-section h2 {
-    font-size: 1.4rem; /* Sous-titres plus gros */
+    font-size: 1rem;
+    text-transform: uppercase;
+    color: #94a3b8;
     font-weight: 700;
-    color: #333;
-    margin-top: 0;
+    letter-spacing: 1.5px;
     margin-bottom: 30px;
-    border-bottom: 2px solid #f1f1f1;
-    padding-bottom: 15px;
 }
 
-/* --- SLIDERS (RANGES) --- */
+/* =========================================================
+   SLIDERS (TRACTS / AFFLUENCE) - VERSION EXTRA LARGE
+   ========================================================= */
+
 .input-group-range {
-    margin-bottom: 35px; /* Plus d'espace entre les sliders */
+    margin-bottom: 50px; /* On aère au maximum */
 }
 
 .range-header {
@@ -73,122 +67,241 @@ html, body {
 }
 
 .range-header label {
+    font-size: 1.2rem;
     font-weight: 700;
-    font-size: 1.2rem; /* Label plus gros */
-    color: #222;
+    color: #334155;
 }
 
 .range-value {
-    background-color: #e0e7ff;
-    color: #4338ca;
-    padding: 8px 18px; /* Badge plus gros */
-    border-radius: 14px;
+    background-color: #eff6ff;
+    color: #2563eb;
+    padding: 8px 16px; /* Badge plus gros */
+    border-radius: 10px;
     font-weight: 800;
-    font-size: 1.3rem; /* Chiffre plus gros */
-    min-width: 50px;
-    text-align: center;
+    font-size: 1.2rem;
 }
 
-/* --- SLIDER MODIFIÉ POUR GROS DOIGTS --- */
+/* La Barre */
 .custom-range {
     width: 100%;
-    height: 16px; /* Barre plus épaisse */
-    background: #e5e7eb;
-    border-radius: 10px;
+    height: 16px; /* Barre très épaisse */
+    background: #e2e8f0;
+    border-radius: 20px;
     outline: none;
     /*-webkit-appearance: none;*/
     cursor: pointer;
-    display: block;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
 }
 
-/* La "boule" du slider (Enorme pour le tactile) */
+/* Le Curseur (Rond) */
 .custom-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 44px; /* Taille standard Apple tactile (44px) */
-    height: 44px;
+    width: 40px; /* Très gros rond */
+    height: 40px;
     border-radius: 50%;
-    background: #4f46e5; 
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.6);
-    border: 4px solid white;
-    margin-top: -14px; /* Centrage vertical recalculé */
+    background: #2563eb;
+    border: 5px solid white;
+    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
+    margin-top: -12px;
 }
 
-.divider {
-    border: 0;
-    height: 2px;
-    background: #f3f4f6;
-    margin: 30px 0;
-}
+/* =========================================================
+   SCORES - DISPOSITION VERTICALE (POUR REMPLIR L'ÉCRAN)
+   ========================================================= */
 
-/* --- INPUTS SCORES (Modifications majeures ici) --- */
 .scores-grid {
     display: flex;
     flex-direction: column;
-    gap: 25px; /* Espace augmenté entre les lignes */
+    gap: 35px; /* Gros écart entre les blocs */
 }
 
 .score-item {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #f9fafb;
-    padding: 20px 25px; /* Hauteur de ligne augmentée significativement */
-    border-radius: 20px;
-    border: 2px solid transparent;
-    transition: all 0.2s;
-}
-
-.score-item:focus-within {
-    background: white;
-    border-color: #4f46e5;
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
-    transform: scale(1.02); /* Petit effet de zoom pour confirmer la sélection */
+    flex-direction: column; /* IMPORTANT : On empile verticalement */
+    align-items: flex-start; /* Aligné à gauche */
+    gap: 15px; /* Espace entre le titre et les boutons */
+    width: 100%;
 }
 
 .score-item label {
-    font-weight: 700;
-    margin: 0;
-    font-size: 1.25rem; /* Texte plus grand */
-    color: #333;
-}
-
-.score-input {
-    width: 110px;  /* Case plus large */
-    height: 55px;  /* Case plus haute */
-    padding: 0 10px;
-    font-size: 1.6rem; /* Chiffres TRES lisibles */
-    text-align: center;
-    border: 2px solid #e5e7eb; /* Bordure plus visible */
-    border-radius: 14px;
+    font-size: 1.3rem; /* Titre du syndicat bien visible */
     font-weight: 800;
-    outline: none;
-    background: white;
-    color: #4f46e5; /* Chiffre en couleur */
+    color: #1e293b;
+    margin-left: 5px; /* Petit alignement visuel */
 }
 
-/* --- STATUS --- */
-.save-badge {
-    position: fixed;
-    bottom: 40px; /* Remonté un peu */
-    left: 50%;
-    transform: translateX(-50%);
-    background: #10b981;
-    color: white;
-    padding: 15px 30px; /* Badge plus gros */
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    z-index: 1000;
+/* Conteneur des boutons qui prend TOUTE LA LARGEUR */
+.stepper {
+    display: flex;
+    width: 100%; /* Force la largeur totale */
+    justify-content: space-between; /* Écarte les boutons aux extrémités */
+    align-items: center;
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 8px;
+    box-sizing: border-box; /* Important pour ne pas dépasser */
+    box-shadow: 0 0 0 1px #e2e8f0; /* Bordure subtile */
+}
+
+/* BOUTONS GÉANTS */
+.btn-stepper {
+    width: 70px; /* Boutons très larges */
+    height: 60px; /* Hauteur confortable */
+    border-radius: 14px;
+    border: none;
+    background: #ffffff;
+    font-size: 2rem; /* Symbole énorme */
+    font-weight: 400;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: opacity 0.3s, transform 0.3s;
-    white-space: nowrap;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    flex-shrink: 0; /* Empêche le bouton de s'écraser */
+}
+
+.btn-stepper:active {
+    background-color: #e2e8f0;
+    transform: scale(0.95);
+}
+
+.btn-stepper.plus { color: #2563eb; background: #fff; }
+.btn-stepper.minus { color: #ef4444; background: #fff; }
+
+/* INPUT CENTRAL GÉANT */
+.score-input {
+    flex-grow: 1; /* Prend tout l'espace restant au milieu */
+    border: none !important;
+    background: transparent !important;
+    font-size: 2rem !important; /* Chiffre énorme */
+    font-weight: 900;
+    text-align: center;
+    color: #0f172a;
+    height: 60px;
+}
+
+/* =========================================================
+   BADGE SAUVEGARDE
+   ========================================================= */
+.save-badge {
+    position: fixed;
+    bottom: 20px; /* Plus bas */
+    left: 20px;
+    right: 20px; /* Prend toute la largeur en bas */
+    text-align: center;
+    justify-content: center;
+    background: #1e293b;
+    color: white;
+    padding: 15px;
+    border-radius: 15px;
+    font-size: 1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 999;
+    transition: transform 0.3s, opacity 0.3s;
 }
 
 .save-badge.hidden {
+    transform: translateY(100px); /* Se cache vers le bas */
     opacity: 0;
-    transform: translateX(-50%) translateY(30px);
-    pointer-events: none;
+}
+.spinner { animation: spin 1s linear infinite; display: inline-block; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* =========================================
+   JOLI SLIDER MODERNE
+   ========================================= */
+
+/* 1. Configuration de base de l'input */
+.pretty-slider {
+    width: 100%;             /* Prend toute la largeur disponible */
+    height: 38px;            /* Hauteur globale pour englober le gros curseur */
+    -webkit-appearance: none; /* INDISPENSABLE : supprime le style moche par défaut */
+    appearance: none;
+    background: transparent; /* Fond transparent pour laisser voir notre barre perso */
+    cursor: pointer;         /* Curseur main au survol */
+    margin: 10px 0;          /* Un peu d'espace autour */
+}
+
+/* Supprime le contour bleu moche au clic sur certains navigateurs */
+.pretty-slider:focus {
+    outline: none;
+}
+
+/* --- A. LA BARRE (TRACK) --- */
+
+/* Style commun pour la barre */
+.pretty-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;            /* Barre épaisse */
+    background: #e2e8f0;     /* Gris clair moderne */
+    border-radius: 10px;     /* Bords complètement arrondis */
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); /* Légère ombre interne pour la profondeur */
+    transition: background 0.3s;
+}
+
+.pretty-slider::-moz-range-track {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    transition: background 0.3s;
+}
+
+
+/* --- B. LE CURSEUR (THUMB - Le rond qu'on déplace) --- */
+
+/* Style pour Chrome, Safari, Edge */
+.pretty-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Indispensable */
+    height: 28px;             /* Gros diamètre */
+    width: 28px;
+    border-radius: 50%;       /* Parfaitement rond */
+    background: #3b82f6;      /* Bleu vif (Change cette couleur selon ton thème !) */
+    border: 4px solid #ffffff; /* Grosse bordure blanche pour le contraste */
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3); /* Belle ombre portée bleue */
+    /* Astuce pour centrer verticalement le curseur sur la barre :
+       (HauteurBarre / 2) - (HauteurCurseur / 2)  => (12/2) - (28/2) = 6 - 14 = -8px */
+    margin-top: -8px;
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+/* Style pour Firefox */
+.pretty-slider::-moz-range-thumb {
+    height: 28px;
+    width: 28px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 4px solid #ffffff;
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+    /* Firefox centre automatiquement, pas besoin de margin-top */
+    transition: transform 0.1s, box-shadow 0.1s;
+}
+
+
+/* --- C. EFFETS D'INTERACTION (Quand on clique/glisse) --- */
+
+/* Quand on appuie sur le curseur, il grossit légèrement */
+.pretty-slider:active::-webkit-slider-thumb {
+    transform: scale(1.15); /* Grossit de 15% */
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4); /* L'ombre s'agrandit */
+    cursor: grabbing; /* Curseur main qui attrape */
+}
+
+.pretty-slider:active::-moz-range-thumb {
+    transform: scale(1.15);
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+    cursor: grabbing;
+}
+
+/* (Optionnel) Change légèrement la couleur de la barre quand on survole */
+.pretty-slider:hover::-webkit-slider-runnable-track {
+    background: #cbd5e1;
+}
+.pretty-slider:hover::-moz-range-track {
+    background: #cbd5e1;
 }

@@ -1,0 +1,186 @@
+/* =========================================================
+   STYLE SPÉCIFIQUE : STAND DE CRÊPES (STOCK INGRÉDIENTS)
+   ========================================================= */
+
+/* 1. RESET & LAYOUT MOBILE (Plein écran) */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mobile-container {
+    padding-bottom: 100px; /* Espace pour le menu du bas */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 2. EN-TÊTE & SECTIONS */
+.header-section {
+    padding: 25px 20px 15px 20px;
+    background: #fff;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.header-section h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    color: #111;
+}
+
+.subtitle {
+    color: #6b7280;
+    margin-top: 5px;
+    font-size: 0.95rem;
+}
+
+.card-section {
+    padding: 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card-section h2 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #9ca3af;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+}
+
+/* 3. GRILLE DES INGRÉDIENTS (Lignes) */
+.scores-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.score-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-radius: 12px;
+    background-color: #f9fafb; /* Gris très clair par défaut */
+    border: 2px solid transparent;
+    transition: all 0.3s ease; /* Animation fluide de la couleur */
+}
+
+.score-item label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+}
+
+/* 4. COULEURS DYNAMIQUES (Gérées par le JS) */
+
+/* Stock OK (Vert) */
+.score-item.stock-ok {
+    background-color: #ecfdf5 !important; /* Fond vert menthe */
+    border-color: #10b981 !important;      /* Bordure verte */
+}
+.score-item.stock-ok label {
+    color: #065f46 !important;             /* Texte vert foncé */
+}
+
+/* Stock KO (Rouge) */
+.score-item.stock-ko {
+    background-color: #fef2f2 !important; /* Fond rouge pâle */
+    border-color: #ef4444 !important;      /* Bordure rouge */
+}
+.score-item.stock-ko label {
+    color: #991b1b !important;             /* Texte rouge foncé */
+}
+
+
+/* 5. LE BOUTON SWITCH (Interrupteur) */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 30px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* La barre de fond */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #d1d5db; /* Gris par défaut */
+  transition: .4s;
+  border-radius: 34px;
+}
+
+/* Le rond blanc */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* État ACTIVÉ (Coché) -> Vert */
+input:checked + .slider {
+  background-color: #10b981;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+/* État DÉSACTIVÉ et STOCK KO -> Rouge clair pour renforcer l'alerte */
+.stock-ko .slider {
+    background-color: #fca5a5; /* Rouge clair */
+}
+
+
+/* 6. INDICATEUR DE SAUVEGARDE (Badge en bas) */
+.save-badge {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1f2937;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 100;
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+.save-badge.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    pointer-events: none;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }

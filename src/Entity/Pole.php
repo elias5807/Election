@@ -57,6 +57,9 @@ class Pole
     #[ORM\OneToMany(mappedBy: 'pole', targetEntity: Militant::class)]
     private Collection $militants;
 
+    #[ORM\OneToOne(targetEntity: Stand::class, mappedBy: 'pole', cascade: ['persist', 'remove'])]
+    private ?Stand $stand = null;
+
     public function __construct()
     {
         $this->respos = new ArrayCollection();
@@ -235,6 +238,23 @@ class Pole
                 $militant->setPole(null);
             }
         }
+        return $this;
+    }
+
+    public function getStand(): ?Stand
+    {
+        return $this->stand;
+    }
+
+    public function setStand(?Stand $stand): static
+    {
+        // Si on définit un nouveau stand, on s'assure que le stand pointe aussi vers ce pôle
+        if ($stand !== null && $stand->getPole() !== $this) {
+            $stand->setPole($this);
+        }
+
+        $this->stand = $stand;
+
         return $this;
     }
 }

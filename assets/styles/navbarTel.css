@@ -1,23 +1,61 @@
-
 ul {
+  /* Reset de base */
   list-style-type: none;
   margin: 0;
   padding: 0;
-  background-color: #333333;
-  display: flex;
+  
+  /* Positionnement fixe en bas */
   position: fixed;
   bottom: 0;
+  left: 0; /* Important pour être sûr qu'elle colle à gauche */
   width: 100%;
-  justify-content: space-around;
+  height: 6%;
+  
+  /* Flexbox pour l'alignement */
+  display: flex;
+  
+  /* Style visuel */
+  background-color: #333333;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.3); /* Ajoute une ombre vers le haut pour détacher du contenu */
+  z-index: 1000; /* S'assure que la navbar passe AU-DESSUS du contenu */
+  
+  /* GESTION IPHONE (Safe Area) */
+  /* Ajoute du padding en bas si l'écran a une barre de swipe (iPhone X, 11, 12, etc.) */
+  padding-bottom: env(safe-area-inset-bottom); 
+}
+
+ul li {
+  /* Chaque bouton prendra une part égale de la largeur (ex: 3 boutons = 33% chacun) */
+  flex: 1; 
+  text-align: center;
+  border-right: 1px solid #444; /* Optionnel : petit séparateur */
+}
+
+ul li:last-child {
+  border-right: none;
 }
 
 ul li a {
-  display: block;
+  /* Prend tout l'espace du li */
+  display: block; 
+  /* Centrage vertical et horizontal */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
   color: white;
-  padding: 14px 16px;
   text-decoration: none;
+  font-weight: bold;
+  font-size: 1.6rem; /* Texte plus gros */
+  
+  /* C'est ICI qu'on gère la hauteur */
+  padding: 20px 0; /* Plus de hauteur verticale */
+  height: 100%; /* S'assure de remplir la hauteur */
+  box-sizing: border-box; /* Pour que le padding ne casse pas les dimensions */
+  
+  transition: background-color 0.3s; /* Effet fluide */
 }
 
-ul li a:hover {
+ul li a:hover, ul li a:active {
   background-color: #111111;
 }

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="mobile-container">
+    <div class="header-section">
+        <h1>👥 Mon Équipe</h1>
+        <p class="subtitle">
+            {% if pole %}
+                Militants du pôle {{ pole.nomPole }}
+            {% else %}
+                Aucun pôle assigné
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="card-section" style="padding: 0;">
+        <div class="scores-grid" style="gap: 0;">
+            {% for militant in militants %}
+                <div class="score-item" style="border-radius: 0; border-bottom: 1px solid #eee; background: white;">
+                    
+                    {# Infos du militant #}
+                    <div style="display: flex; flex-direction: column;">
+                        <span style="font-weight: 700; font-size: 1.1rem;">
+                            {{ militant.prenom }} {{ militant.nom|upper }}
+                        </span>
+                        <span style="color: #666; font-size: 0.9rem;">
+                            {{ militant.tel }}
+                        </span>
+                    </div>
+
+                    {# Bouton d'action (ex: Appeler) #}
+                    {% if militant.tel %}
+                        <a href="tel:{{ militant.tel }}" style="text-decoration: none;">
+                            <button class="btn-stepper plus" style="border-radius: 50%; width: 40px; height: 40px;">
+                                📞
+                            </button>
+                        </a>
+                    {% endif %}
+
+                </div>
+            {% else %}
+                <div style="padding: 20px; text-align: center; color: #888;">
+                    Aucun militant trouvé dans ce pôle.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'partials/_menuTel.html.twig' %}
+{% endblock %}

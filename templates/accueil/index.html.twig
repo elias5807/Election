@@ -1,102 +1,148 @@
 {% extends 'base.html.twig' %}
+
 {% block stylesheets %}
-    {# On garde les styles de base (Bootstrap, etc.) #}
     {{ parent() }}
-    
-    {# On ajoute notre fichier perso #}
     <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
 {% endblock %}
 
 {% block body %}
-    <div class="mobile-container">
-        <div class="header-section">
-            <h1>📊 Rapport d'activité</h1>
-            <p class="subtitle">Mise à jour en temps réel</p>
-        </div>
+<div class="mobile-container">
+    <div class="header-section">
+        <h1>📊 Rapport {{ pole.nomPole }}</h1>
+        <p class="subtitle">Mise à jour en direct</p>
+    </div>
 
-        {# Le formulaire avec l'auto-save #}
-        {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save', 'class': 'modern-form'}}) }}
+    {% if monFormulaire %}
+        {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
             
-            {# Sécurité CSRF #}
             {{ form_row(monFormulaire._token) }}
 
-            {# --- SECTION 1 : ACTIVITÉ (SLIDERS) --- #}
+            {# --- SECTION 1 : SLIDERS (Tracts / Affluence) --- #}
             <div class="card-section">
                 <h2>Activité Terrain</h2>
                 
-                {# SLIDER TRACTS #}
+                {# TRACTS #}
                 <div class="input-group-range">
                     <div class="range-header">
                         <label>Nombre de tracts</label>
-                        {# Ce span affichera la valeur en direct #}
                         <span class="range-value" id="val-tract">0</span>
                     </div>
-                    {{ form_widget(monFormulaire.tract, {'attr': {'class': 'custom-range', 'oninput': 'updateValue("val-tract", this.value)'}}) }}
+                    {{ form_widget(monFormulaire.tract, {'attr': {'class': 'pretty-slider', 'oninput': 'updateSliderValue("val-tract", this.value)'}}) }}
                 </div>
 
-                <hr class="divider">
-
-                {# SLIDER AFFLUENCE #}
+                {# AFFLUENCE #}
                 <div class="input-group-range">
                     <div class="range-header">
                         <label>Affluence</label>
                         <span class="range-value" id="val-afluence">0</span>
                     </div>
-                    {{ form_widget(monFormulaire.afluence, {'attr': {'class': 'custom-range', 'oninput': 'updateValue("val-afluence", this.value)'}}) }}
+                    {{ form_widget(monFormulaire.afluence, {'attr': {'class': 'pretty-slider', 'oninput': 'updateSliderValue("val-afluence", this.value)'}}) }}
                 </div>
             </div>
 
-            {# --- SECTION 2 : RÉSULTATS (SCORES) --- #}
+            {# --- SECTION 2 : SCORES (Steppers +/-) --- #}
             <div class="card-section">
                 <h2>Résultats Syndicats</h2>
                 <div class="scores-grid">
-                    <div class="score-item unef">
-                        {{ form_label(monFormulaire.unef) }}
-                        {{ form_widget(monFormulaire.unef, {'attr': {'class': 'score-input'}}) }}
-                    </div>
-                    <div class="score-item ue">
-                        {{ form_label(monFormulaire.ue) }}
-                        {{ form_widget(monFormulaire.ue, {'attr': {'class': 'score-input'}}) }}
-                    </div>
-                    <div class="score-item uni">
-                        {{ form_label(monFormulaire.uni) }}
-                        {{ form_widget(monFormulaire.uni, {'attr': {'class': 'score-input'}}) }}
-                    </div>
+                    {% for field in [monFormulaire.unef, monFormulaire.ue, monFormulaire.uni] %}
+                        <div class="score-item">
+                            {{ form_label(field) }}
+                            <div class="stepper">
+                                <button type="button" class="btn-stepper minus" onclick="updateStepper(this, -1)">−</button>
+                                {{ form_widget(field, {'attr': {'class': 'score-input', 'readonly': 'readonly'}}) }}
+                                <button type="button" class="btn-stepper plus" onclick="updateStepper(this, 1)">+</button>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
 
-            {# Status de sauvegarde (feedback visuel) #}
             <div id="save-status" class="save-badge hidden">
-                <span class="spinner"></span> Sauvegarde...
-            </div>
-
-            {# Bouton caché (car auto-save) #}
-            <div class="d-none">
-                <button type="submit">Sauvegarder</button>
+                <span class="spinner">⏳</span> Sauvegarde...
             </div>
 
         {{ form_end(monFormulaire, {'render_rest': false}) }}
-    </div>
-    <script>
-        // Petit script pour mettre à jour les chiffres des sliders immédiatement
-        function updateValue(id, value) {
-            document.getElementById(id).innerText = value;
-        }
-        
-        // Initialisation au chargement (pour afficher les valeurs déjà en base)
-        document.addEventListener("DOMContentLoaded", function() {
-            const tractInput = document.querySelector('input[name="mon_pole[tract]"]');
-            const affluenceInput = document.querySelector('input[name="mon_pole[afluence]"]');
-            
-            if(tractInput) updateValue('val-tract', tractInput.value);
-            if(affluenceInput) updateValue('val-afluence', affluenceInput.value);
-        });
-    </script>
-    {% include 'partials/_menuTel.html.twig' %}
+    {% endif %}
+</div>
 
-{% endblock %}
-{% block javascripts %}
-    {{ parent() }}    
-    <script src="{{ asset('controllers/sauvegarder.js') }}"></script>
+{% include 'partials/_menuTel.html.twig' %}
+
+{# --- SCRIPT OPTIMISÉ (Turbo + Debounce) --- #}
+<script>
+    // 1. DÉFINITION DES FONCTIONS GLOBALES (Pour les onclick HTML)
+    // On les met sur 'window' pour être sûr qu'elles soient accessibles partout
+    window.updateSliderValue = function(spanId, value) {
+        const el = document.getElementById(spanId);
+        if(el) el.innerText = value;
+    };
+
+    window.updateStepper = function(btn, change) {
+        const container = btn.parentElement;
+        const input = container.querySelector('input');
+        let val = parseInt(input.value) || 0;
+        let newVal = val + change;
+        if(newVal < 0) newVal = 0;
+        
+        input.value = newVal;
+        // Déclenche l'auto-save
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+
+    // 2. FONCTION D'INITIALISATION PRINCIPALE
+    function initResponsablePage() {
+        const form = document.getElementById('form-auto-save');
+        if (!form) return; // Sécurité : on arrête si on n'est pas sur la bonne page
+
+        const statusBadge = document.getElementById('save-status');
+        let debounceTimer; // Le minuteur pour l'anti-spam
+
+        // A. Initialiser les valeurs visuelles des sliders
+        const tractInput = document.getElementById('mon_pole_tract');
+        const affluenceInput = document.getElementById('mon_pole_afluence');
+        if(tractInput) window.updateSliderValue('val-tract', tractInput.value);
+        if(affluenceInput) window.updateSliderValue('val-afluence', affluenceInput.value);
+
+        // B. Écouteur global avec DEBOUNCE (Temporisation)
+        form.addEventListener('change', function() {
+            // 1. Feedback immédiat pour l'utilisateur
+            if(statusBadge) statusBadge.classList.remove('hidden');
+
+            // 2. On annule l'envoi précédent s'il y en a un en attente
+            clearTimeout(debounceTimer);
+
+            // 3. On attend 500ms avant d'envoyer vraiment
+            debounceTimer = setTimeout(() => {
+                saveData();
+            }, 500);
+        });
+        
+        // C. La fonction d'envoi réelle
+        function saveData() {
+            const formData = new FormData(form);
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("✅ Sauvegardé");
+                    // On laisse le badge vert un instant puis on cache
+                    setTimeout(() => {
+                        if(statusBadge) statusBadge.classList.add('hidden');
+                    }, 800);
+                } else {
+                    console.error("❌ Erreur serveur");
+                    if(statusBadge) statusBadge.innerText = "Erreur !";
+                }
+            })
+            .catch(err => console.error(err));
+        }
+    }
+
+    // 3. CHARGEMENT DU SCRIPT (Compatible Navigation Turbo + Rechargement)
+    document.addEventListener('turbo:load', initResponsablePage);
+    document.addEventListener('DOMContentLoaded', initResponsablePage);
+</script>
 {% endblock %}

@@ -32,7 +32,7 @@ class Stand
     // Relation avec POLE
     // On suppose qu'un Pôle peut avoir plusieurs stands (ou un seul), 
     // mais techniquement c'est Stand qui porte la clé étrangère.
-    #[ORM\ManyToOne(targetEntity: Pole::class)]
+    #[ORM\OneToOne(targetEntity: Pole::class)]
     #[ORM\JoinColumn(name: 'id_pole', referencedColumnName: 'id_pole', nullable: true)]
     private ?Pole $pole = null;
 
