@@ -1,142 +1,194 @@
-/* public/styles/responsable.css */
-
-/* 1. VARIABLES & BASE */
-:root {
-    --faep-green: #1a4d2e;       /* Vert principal */
-    --faep-green-light: #25613c; /* Vert au survol */
-    --faep-bg: #f4f6f5;          /* Fond gris/vert très clair */
-    --white: #ffffff;
-    --grey-border: #e0e0e0;
+/* --- GLOBAL : RESET TOTAL --- */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f0f2f5; /* Fond un peu plus contrasté */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
 }
 
-body {
-    background-color: var(--faep-green);
+/* --- CONTENEUR PRINCIPAL --- */
+.mobile-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 15px; /* Marges externes légèrement réduites pour laisser place aux cartes */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 100px; /* Plus d'espace en bas */
 }
 
-/* 2. LA CARTE (Conteneur) */
-.formulaire{
-    margin-left:10%;
-    margin-right:10%;
+.header-section {
+    text-align: center;
+    margin-bottom: 35px;
+    margin-top: 15px;
 }
 
-.card {
-    border: none;
-    border-top: 5px solid var(--faep-green); /* Petite touche "Institutionnelle" en haut */
-    box-shadow: 0 10px 25px rgba(26, 77, 46, 0.08); /* Ombre douce verte */
-    border-radius: 12px;
-    background-color: var(--white);
+.header-section h1 {
+    font-size: 2.2rem; /* Titre plus imposant */
+    margin: 0;
+    color: #111;
+    font-weight: 800;
 }
 
-h1 {
-    color: var(--white);
-    font-weight: 700;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-    font-size: 1.8rem;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 10px;
-}
-
-/* 3. STRUCTURE DU FORMULAIRE (Géré par form_widget) */
-/* On cible les divs générées par Symfony autour de chaque champ */
-form > div {
-    margin-bottom: 1.5rem; /* Espace entre chaque question */
-    padding: 10px;
-    border-bottom: 1px solid #f0f0f0; /* Ligne de séparation subtile */
-}
-
-/* On enlève la bordure pour le dernier élément */
-form > div:last-child {
-    border-bottom: none;
-}
-
-/* 4. LES LABELS (Titres des questions) */
-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--faep-green);
-    font-weight: 600;
+.subtitle {
+    color: #666;
     font-size: 1.1rem;
+    margin-top: 8px;
 }
 
-/* 5. LES INPUTS CLASSIQUES (Texte & Nombre) */
-input[type="text"], 
-input[type="number"], 
-select {
+/* --- CARTES (SECTIONS) --- */
+.card-section {
+    background: white;
+    border-radius: 28px; /* Coins encore plus arrondis */
+    padding: 30px 25px; /* Plus d'espace interne */
+    margin-bottom: 30px;
     width: 100%;
-    padding: 12px 15px;
-    border: 1px solid var(--grey-border);
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background-color: #fafafa;
+    box-sizing: border-box;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.06);
 }
 
-/* Effet quand on clique dans un champ */
-input[type="text"]:focus, 
-input[type="number"]:focus, 
-select:focus {
-    border-color: var(--faep-green);
+.card-section h2 {
+    font-size: 1.4rem; /* Sous-titres plus gros */
+    font-weight: 700;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #f1f1f1;
+    padding-bottom: 15px;
+}
+
+/* --- SLIDERS (RANGES) --- */
+.input-group-range {
+    margin-bottom: 35px; /* Plus d'espace entre les sliders */
+}
+
+.range-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.range-header label {
+    font-weight: 700;
+    font-size: 1.2rem; /* Label plus gros */
+    color: #222;
+}
+
+.range-value {
+    background-color: #e0e7ff;
+    color: #4338ca;
+    padding: 8px 18px; /* Badge plus gros */
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1.3rem; /* Chiffre plus gros */
+    min-width: 50px;
+    text-align: center;
+}
+
+/* --- SLIDER MODIFIÉ POUR GROS DOIGTS --- */
+.custom-range {
+    width: 100%;
+    height: 16px; /* Barre plus épaisse */
+    background: #e5e7eb;
+    border-radius: 10px;
     outline: none;
-    background-color: var(--white);
-    box-shadow: 0 0 0 4px rgba(26, 77, 46, 0.1); /* Halo vert */
-}
-
-/* 6. LES SLIDERS (Range) - LE PLUS IMPORTANT */
-input[type="range"] {
-    /*-webkit-appearance: none;*/ /* Supprime le style par défaut */
-    width: 100%;
-    margin: 10px 0;
-    background: transparent;
-}
-
-input[type="range"]:focus {
-    outline: none;
-}
-
-/* La barre (Le rail) */
-input[type="range"]::-webkit-slider-runnable-track {
-    width: 100%;
-    height: 8px;
+    /*-webkit-appearance: none;*/
     cursor: pointer;
-    background: #dde6e0;
-    border-radius: 4px;
+    display: block;
 }
 
-/* Le rond (Le curseur) */
-input[type="range"]::-webkit-slider-thumb {
-    height: 24px;
-    width: 24px;
-    border-radius: 50%;
-    background: var(--faep-green);
-    cursor: pointer;
+/* La "boule" du slider (Enorme pour le tactile) */
+.custom-range::-webkit-slider-thumb {
     -webkit-appearance: none;
-    margin-top: -8px; /* Pour centrer le rond sur la barre */
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    transition: transform 0.1s, background-color 0.2s;
+    width: 44px; /* Taille standard Apple tactile (44px) */
+    height: 44px;
+    border-radius: 50%;
+    background: #4f46e5; 
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.6);
+    border: 4px solid white;
+    margin-top: -14px; /* Centrage vertical recalculé */
 }
 
-input[type="range"]::-webkit-slider-thumb:hover {
-    background: var(--faep-green-light);
-    transform: scale(1.2); /* Grossit un peu au survol */
+.divider {
+    border: 0;
+    height: 2px;
+    background: #f3f4f6;
+    margin: 30px 0;
 }
 
-/* 7. MESSAGE DE SAUVEGARDE (Optionnel si ton JS l'ajoute) */
-.saving-status {
+/* --- INPUTS SCORES (Modifications majeures ici) --- */
+.scores-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Espace augmenté entre les lignes */
+}
+
+.score-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9fafb;
+    padding: 20px 25px; /* Hauteur de ligne augmentée significativement */
+    border-radius: 20px;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.score-item:focus-within {
+    background: white;
+    border-color: #4f46e5;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.15);
+    transform: scale(1.02); /* Petit effet de zoom pour confirmer la sélection */
+}
+
+.score-item label {
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.25rem; /* Texte plus grand */
+    color: #333;
+}
+
+.score-input {
+    width: 110px;  /* Case plus large */
+    height: 55px;  /* Case plus haute */
+    padding: 0 10px;
+    font-size: 1.6rem; /* Chiffres TRES lisibles */
+    text-align: center;
+    border: 2px solid #e5e7eb; /* Bordure plus visible */
+    border-radius: 14px;
+    font-weight: 800;
+    outline: none;
+    background: white;
+    color: #4f46e5; /* Chiffre en couleur */
+}
+
+/* --- STATUS --- */
+.save-badge {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: var(--faep-green);
+    bottom: 40px; /* Remonté un peu */
+    left: 50%;
+    transform: translateX(-50%);
+    background: #10b981;
     color: white;
-    padding: 10px 20px;
+    padding: 15px 30px; /* Badge plus gros */
     border-radius: 50px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    font-size: 0.9rem;
-    animation: fadeIn 0.5s;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: opacity 0.3s, transform 0.3s;
+    white-space: nowrap;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.save-badge.hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30px);
+    pointer-events: none;
 }

@@ -1,21 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // 1. On récupère le formulaire
     const form = document.getElementById('form-auto-save');
+    const inputs = form.querySelectorAll('input, select, textarea');
 
-    // 2. On récupère tous les champs (input et select) à l'intérieur
-    const inputs = form.querySelectorAll('input, select');
-
-    // 3. On ajoute un écouteur sur chaque champ
     inputs.forEach(input => {
-        // L'événement 'change' se déclenche quand on lâche le curseur (pour un range)
-        // ou quand on clique ailleurs (pour un texte)
         input.addEventListener('change', function() {
-            
-            // Optionnel : Afficher un petit texte "Sauvegarde..."
-            // document.getElementById('status').innerText = "Sauvegarde en cours...";
-            
-            // 4. On soumet le formulaire
-            form.submit(); 
+            // 1. On prépare les données du formulaire
+            const formData = new FormData(form);
+
+            // 2. On envoie les données via fetch (AJAX)
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Important pour Symfony
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log("Sauvegarde réussie !");
+                    // Optionnel : Changer la couleur de la bordure pour confirmer visuellement
+                    input.style.borderColor = "green";
+                    setTimeout(() => input.style.borderColor = "", 2000);
+                } else {
+                    console.error("Erreur lors de la sauvegarde");
+                    input.style.borderColor = "red";
+                }
+            })
+            .catch(error => console.error('Erreur réseau:', error));
         });
     });
 });

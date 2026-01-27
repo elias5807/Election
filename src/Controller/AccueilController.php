@@ -3,18 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\Respo;
-use App\Form\MonPoleType; // <--- 1. Importez votre formulaire
+use App\Form\MonPoleType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request; // <--- 2. Importez Request
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse; // <--- 1. Import nécessaire pour l'AJAX
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AccueilController extends AbstractController
 {
     #[Route('/responsable', name: 'app_home')]
-    #[IsGranted('ROLE_USER')] // Sécurité
+    #[IsGranted('ROLE_USER')]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         // A. Récupération du User et du Pole
@@ -23,10 +24,9 @@ final class AccueilController extends AbstractController
         $pole = $user->getPole();
 
         if (!$pole) {
-            // Gestion d'erreur si pas de pôle
             return $this->render('accueil/index.html.twig', [
                 'pole' => null,
-                'monFormulaire' => null // On envoie null pour éviter l'erreur Twig
+                'monFormulaire' => null
             ]);
         }
 
@@ -37,16 +37,32 @@ final class AccueilController extends AbstractController
         // C. Traitement de la sauvegarde
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush(); // Sauvegarde en BDD
-            $this->addFlash('success', 'Informations mises à jour !');
+
+            // --- MODIFICATION ICI : Gestion de l'AJAX ---
             
-            return $this->redirectToRoute('app_home'); // On recharge la page
+            // 1. Si la requête vient du JavaScript (auto-save)
+            if ($request->isXmlHttpRequest()) {
+                // On renvoie du JSON pour dire "C'est bon" sans recharger la page
+                return new JsonResponse(['status' => 'success', 'message' => 'Sauvegarde réussie']);
+            }
+
+            // 2. Si c'est une soumission classique (bouton valider ou submit() standard)
+            $this->addFlash('success', 'Informations mises à jour !');
+            return $this->redirectToRoute('app_home');
         }
 
-        // D. Envoi à la Vue
+        // D. Gestion des erreurs de validation en AJAX
+        // Si le formulaire est soumis mais invalide (ex: champ vide requis), on renvoie une erreur au JS
+        if ($form->isSubmitted() && !$form->isValid() && $request->isXmlHttpRequest()) {
+            // On récupère les erreurs pour les voir dans la console si besoin
+            return new JsonResponse(['status' => 'error', 'message' => 'Formulaire invalide'], 400);
+        }
+
+        // E. Envoi à la Vue (Affichage initial)
         return $this->render('accueil/index.html.twig', [
             'controller_name' => 'AccueilController',
             'pole' => $pole,
-            'monFormulaire' => $form->createView(), 
+            'monFormulaire' => $form->createView(),
         ]);
     }   
 }

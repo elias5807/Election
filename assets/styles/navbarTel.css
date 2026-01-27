@@ -1,8 +1,4 @@
-nav {
-  bottom: 0;
-  margin: 0;
-  padding: 0%;
-}
+
 ul {
   list-style-type: none;
   margin: 0;
@@ -10,8 +6,9 @@ ul {
   background-color: #333333;
   display: flex;
   position: fixed;
-  bottom: 4%;
+  bottom: 0;
   width: 100%;
+  justify-content: space-around;
 }
 
 ul li a {

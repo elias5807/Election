@@ -7,7 +7,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\RangeType; 
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 
 class MonPoleType extends AbstractType
@@ -15,21 +14,20 @@ class MonPoleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // Pour les tracts, on garde peut-être un IntegerType car c'est précis ?
-            // Mais si vous voulez une barre, voici comment faire :
             ->add('tract', RangeType::class, [
                 'label' => 'Nombre de tracts',
+                'required' => false, // <--- IMPORTANT pour l'auto-save
                 'attr' => [
                     'min' => 0,
-                    'max' => 5000, // Adaptez le max selon vos besoins
-                    'step' => 10,  // On avance de 10 en 10
-                    'class' => 'form-range' // Classe Bootstrap pour faire joli
+                    'max' => 5000,
+                    'step' => 10,
+                    'class' => 'form-range'
                 ]
             ])
             
-            // Pour l'affluence (0 à 10 par exemple, ou 0 à 100)
             ->add('afluence', RangeType::class, [
                 'label' => 'Affluence (0 à 100)',
+                'required' => false, // <--- IMPORTANT
                 'attr' => [
                     'min' => 0,
                     'max' => 100,
@@ -37,10 +35,20 @@ class MonPoleType extends AbstractType
                 ]
             ])
 
-            // Pour les syndicats (Scores)
-            ->add('unef', IntegerType::class)
-            ->add('ue', IntegerType::class)
-            ->add('uni', IntegerType::class)
+            // Pour les syndicats, on met required false pour ne pas bloquer
+            // si l'utilisateur supprime la valeur avant d'en écrire une nouvelle
+            ->add('unef', IntegerType::class, [
+                'required' => false, 
+                'label' => 'Score UNEF'
+            ])
+            ->add('ue', IntegerType::class, [
+                'required' => false,
+                'label' => 'Score UE'
+            ])
+            ->add('uni', IntegerType::class, [
+                'required' => false,
+                'label' => 'Score UNI'
+            ])
         ;
     }
 
@@ -48,6 +56,9 @@ class MonPoleType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Pole::class,
+            'csrf_protection' => true,
+            'csrf_field_name' => '_token', 
+            'csrf_token_id'   => 'pole_item', // Un ID unique pour ce formulaire
         ]);
     }
 }

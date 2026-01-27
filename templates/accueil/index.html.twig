@@ -9,25 +9,90 @@
 {% endblock %}
 
 {% block body %}
-    <div class="formulaire">
-        <h1>Espace Responsable</h1>
+    <div class="mobile-container">
+        <div class="header-section">
+            <h1>📊 Rapport d'activité</h1>
+            <p class="subtitle">Mise à jour en temps réel</p>
+        </div>
 
-        {% if pole and monFormulaire %}
-            <div class="card p-4">
+        {# Le formulaire avec l'auto-save #}
+        {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save', 'class': 'modern-form'}}) }}
+            
+            {# Sécurité CSRF #}
+            {{ form_row(monFormulaire._token) }}
+
+            {# --- SECTION 1 : ACTIVITÉ (SLIDERS) --- #}
+            <div class="card-section">
+                <h2>Activité Terrain</h2>
                 
-                {# 1. Début du formulaire (avec l'ID pour l'auto-save) #}
-                {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
-                
-                    {# 2. LA LIGNE MAGIQUE : Affiche TOUS les champs d'un coup #}
-                    {{ form_widget(monFormulaire) }}
-                    <div class="d-none">
-                        <button type="submit">Sauvegarder</button>
+                {# SLIDER TRACTS #}
+                <div class="input-group-range">
+                    <div class="range-header">
+                        <label>Nombre de tracts</label>
+                        {# Ce span affichera la valeur en direct #}
+                        <span class="range-value" id="val-tract">0</span>
                     </div>
-                {{ form_end(monFormulaire) }}
-                
+                    {{ form_widget(monFormulaire.tract, {'attr': {'class': 'custom-range', 'oninput': 'updateValue("val-tract", this.value)'}}) }}
+                </div>
+
+                <hr class="divider">
+
+                {# SLIDER AFFLUENCE #}
+                <div class="input-group-range">
+                    <div class="range-header">
+                        <label>Affluence</label>
+                        <span class="range-value" id="val-afluence">0</span>
+                    </div>
+                    {{ form_widget(monFormulaire.afluence, {'attr': {'class': 'custom-range', 'oninput': 'updateValue("val-afluence", this.value)'}}) }}
+                </div>
             </div>
-        {% endif %}
+
+            {# --- SECTION 2 : RÉSULTATS (SCORES) --- #}
+            <div class="card-section">
+                <h2>Résultats Syndicats</h2>
+                <div class="scores-grid">
+                    <div class="score-item unef">
+                        {{ form_label(monFormulaire.unef) }}
+                        {{ form_widget(monFormulaire.unef, {'attr': {'class': 'score-input'}}) }}
+                    </div>
+                    <div class="score-item ue">
+                        {{ form_label(monFormulaire.ue) }}
+                        {{ form_widget(monFormulaire.ue, {'attr': {'class': 'score-input'}}) }}
+                    </div>
+                    <div class="score-item uni">
+                        {{ form_label(monFormulaire.uni) }}
+                        {{ form_widget(monFormulaire.uni, {'attr': {'class': 'score-input'}}) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Status de sauvegarde (feedback visuel) #}
+            <div id="save-status" class="save-badge hidden">
+                <span class="spinner"></span> Sauvegarde...
+            </div>
+
+            {# Bouton caché (car auto-save) #}
+            <div class="d-none">
+                <button type="submit">Sauvegarder</button>
+            </div>
+
+        {{ form_end(monFormulaire, {'render_rest': false}) }}
     </div>
+    <script>
+        // Petit script pour mettre à jour les chiffres des sliders immédiatement
+        function updateValue(id, value) {
+            document.getElementById(id).innerText = value;
+        }
+        
+        // Initialisation au chargement (pour afficher les valeurs déjà en base)
+        document.addEventListener("DOMContentLoaded", function() {
+            const tractInput = document.querySelector('input[name="mon_pole[tract]"]');
+            const affluenceInput = document.querySelector('input[name="mon_pole[afluence]"]');
+            
+            if(tractInput) updateValue('val-tract', tractInput.value);
+            if(affluenceInput) updateValue('val-afluence', affluenceInput.value);
+        });
+    </script>
     {% include 'partials/_menuTel.html.twig' %}
 
 {% endblock %}
