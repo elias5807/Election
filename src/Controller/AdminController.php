@@ -96,4 +96,14 @@ class AdminController extends AbstractController
         // 5. On répond au JS que tout s'est bien passé
         return new JsonResponse(['status' => 'success']);
     }
+
+    // src/Controller/AdminController.php
+
+    #[Route('/admin/militant/{id}/toggle-repas', name: 'app_admin_toggle_repas', methods: ['POST'])]
+    public function toggleRepas(Militant $militant, EntityManagerInterface $em): JsonResponse
+    {
+        $militant->setAMange(!$militant->isAMange());
+        $em->flush();
+        return new JsonResponse(['aMange' => $militant->isAMange()]);
+    }  
 }

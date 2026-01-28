@@ -490,3 +490,72 @@ nav a:hover {
     border-radius: 8px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
 }
+
+/* --- LA COLONNE FIXE À GAUCHE (Pôle 1) --- */
+
+.sidebar-section {
+    /* C'est ici que la magie opère pour fixer la colonne */
+    position: sticky;
+    left: 0;
+    z-index: 100; /* On s'assure qu'elle passe au-dessus des autres quand on scrolle */
+    
+    /* Design demandé : Blanc et propre */
+    background-color: #ffffff;
+    min-width: 300px; /* Largeur fixe pour la colonne de gauche */
+    max-width: 300px;
+    border-right: 2px solid #e5e7eb; /* Petite bordure grise pour séparer */
+    box-shadow: 4px 0 15px rgba(0,0,0,0.05); /* Ombre portée vers la droite */
+    
+    /* Layout interne */
+    display: flex;
+    flex-direction: column;
+    height: auto; /* Ou 100vh si tu veux qu'elle prenne toute la hauteur */
+}
+
+.sidebar-title {
+    background-color: #ffffff; /* Le titre reste blanc aussi */
+    color: #2563eb; /* Bleu */
+    padding: 15px;
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-bottom: 1px solid #f3f4f6;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.sidebar-grid {
+    padding: 10px;
+    flex-grow: 1; /* Prend tout l'espace restant */
+    overflow-y: auto; /* Permet de scroller verticalement SI la liste est trop longue */
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Badge Repas */
+.badge-meal {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+/* Vert si mangé */
+.badge-meal.success {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+/* Orange/Rouge si pas mangé */
+.badge-meal.warning {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #f87171;
+}

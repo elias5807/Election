@@ -45,6 +45,7 @@ class Militant
 
     #[ORM\Column]
     private ?bool $debat = null;
+    
 
     // Relation pour la table "Horaire" (Un militant a plusieurs horaires)
     #[ORM\OneToMany(mappedBy: 'militant', targetEntity: Horaire::class)]
@@ -57,6 +58,9 @@ class Militant
         nullable: true
     )]
     private ?Pole $pole = null;
+
+    #[ORM\Column(name: 'amange', nullable: false, options: ['default' => false])]
+    private ?bool $aMange = false; // Initialise à false par défaut
 
     public function __construct()
     {
@@ -232,6 +236,18 @@ class Militant
     public function removePole(Pole $pole): static
     {
         $this->poles->removeElement($pole);
+        return $this;
+    }
+
+    public function isAMange(): ?bool
+    {
+        return $this->aMange;
+    }
+
+    public function setAMange(bool $aMange): static
+    {
+        $this->aMange = $aMange;
+
         return $this;
     }
 

@@ -2,19 +2,155 @@
 
 {% block title %}Hello AdminController!{% endblock %}
 
+
 {% block body %}
     {% include 'partials/_navbar.html.twig' %}
-    <article class="split-view">
-        {# Colonne de Gauche #}
-        <div class="split-column main-content">
-            {% include 'partials/_militant.html.twig' %}
+    <meta http-equiv="refresh" content="60">
+
+    <div class="dashboard-container" data-controller="native-board">
+
+        {# ================================================= #}
+        {# 1. LE PÔLE NUMÉRO 1 (PRIORITAIRE - GAUCHE)        #}
+        {# ================================================= #}
+        {% for pole in poles %}
+            {% if pole.id == 1 %}
+                
+                {# On prépare le style du chef #}
+                
+                {# NOUVELLE CLASSE : sidebar-section #}
+                <div class="sidebar-section">
+                    
+                    {# NOUVELLE CLASSE : sidebar-title #}
+                    <h3 class="sidebar-title"> {{ pole.nomPole }}</h3>
+                    
+                    {# NOUVELLE CLASSE : sidebar-grid #}
+                    <div class="sidebar-grid" 
+                        data-pole="{{ pole.nomPole }}"
+                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
+                        
+                        {% for militant in militants %}
+                            {% if militant.pole and militant.pole.id == 1 %}
+                                {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+
+        {# ================================================= #}
+        {# 2. LES NON ASSIGNÉS (NULL) - AU MILIEU            #}
+        {# ================================================= #}
+        <div class="pole-section" style="border-right: 2px dashed #ccc;">
+            <h3 class="pole-title">📍 Non assignés</h3>
+            
+            {# data-pole="null" est crucial #}
+            <div class="dashboard-grid" 
+                data-pole="null"
+                data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
+                style="min-height: 150px; background-color: #f9f9f9;">
+                
+                {# BOUCLE SUR TOUS LES MILITANTS #}
+                {% for militant in militants %}
+                    
+                    {# CONDITION : Est-ce qu'il n'a PAS de pôle ? #}
+                    {% if militant.pole is null %}
+                        {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                    {% endif %}
+
+                {% endfor %}
+                
+            </div>
         </div>
 
-        {# Colonne de Droite #}
-        <div class="split-column sidebar">
-            {% include 'partials/_polemilitant.html.twig' %}
-        </div>
-    </article>
-    <meta http-equiv="refresh" content="60">
+
+        {# ================================================= #}
+        {# 3. LES AUTRES PÔLES (TOUT LE RESTE)               #}
+        {# ================================================= #}
+        {% for pole in poles %}
+            {# On exclut le pôle 1 car il est déjà affiché #}
+            {% if pole.id != 1 %}
+                
+                <div class="pole-section">
+                    <h3 class="pole-title">{{ pole.nomPole }}</h3>
+                    
+                    <div class="dashboard-grid" 
+                        data-pole="{{ pole.nomPole }}"
+                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
+                        style="min-height: 150px;">
+                        
+                        {# BOUCLE SUR TOUS LES MILITANTS #}
+                        {% for militant in militants %}
+                            
+                            {# CONDITION : Est-ce le bon pôle ? #}
+                            {% if militant.pole and militant.pole.id == pole.id %}
+                                {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                            {% endif %}
+
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+
+            {% endif %}
+        {% endfor %}
+
+    </div>
+
+
+
+    <script>
+    /**
+     * Cette fonction est globale. Elle peut être appelée depuis n'importe quel partial.
+     * @param {HTMLElement} element - La div .meal-indicator sur laquelle on a cliqué
+     */
+        function toggleRepas(element) {
+            // 1. On récupère l'URL générée par Symfony dans l'attribut data-url
+            const url = element.dataset.url;
+            
+            const badge = element.querySelector('.badge-meal');
+            const textSpan = element.querySelector('.meal-text');
+            const icon = element.querySelector('i');
+
+            // 2. Feedback visuel immédiat (On grise un peu pour montrer que ça charge)
+            badge.style.opacity = '0.5';
+            badge.style.cursor = 'wait';
+
+            // 3. Appel AJAX
+            fetch(url, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 4. On remet l'opacité
+                badge.style.opacity = '1';
+                badge.style.cursor = 'pointer';
+
+                // 5. Mise à jour selon la réponse du serveur (data.aMange est true ou false)
+                if (data.aMange === true) {
+                    // Devenu VERT
+                    badge.classList.remove('warning');
+                    badge.classList.add('success');
+                    textSpan.innerText = "OK";
+                } else {
+                    // Devenu ROUGE
+                    badge.classList.remove('success');
+                    badge.classList.add('warning');
+                    textSpan.innerText = "Non";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                badge.style.opacity = '1';
+                alert("Erreur de connexion");
+            });
+        }
+    </script>
    
 {% endblock %}
+
+

@@ -46,7 +46,7 @@ ul li a {
   color: white;
   text-decoration: none;
   font-weight: bold;
-  font-size: 1.6rem; /* Texte plus gros */
+  font-size: 1rem; /* Texte plus gros */
   
   /* C'est ICI qu'on gère la hauteur */
   padding: 20px 0; /* Plus de hauteur verticale */

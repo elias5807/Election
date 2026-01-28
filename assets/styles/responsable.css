@@ -1,307 +1,238 @@
-/* =========================================================
-   STYLE : ESPACE RESPONSABLE - MODE "GÉANT" (FILL SCREEN)
-   ========================================================= */
-
-/* 1. RESET & FULL WIDTH */
+/* --- RESET & GLOBAL --- */
 html, body {
     margin: 0 !important;
     padding: 0 !important;
     width: 100%;
     min-height: 100vh;
-    background-color: #ffffff !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    overflow-x: hidden;
+    background-color: #f7f8fa; /* Fond gris très doux */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    -webkit-tap-highlight-color: transparent;
 }
 
+/* --- CONTENEUR PRINCIPAL --- */
 .mobile-container {
-    width: 100% !important;
-    max-width: 100% !important; /* On force le plein écran sans limite */
-    padding-bottom: 120px; /* Espace menu bas */
-    display: flex;
-    flex-direction: column;
-}
-
-/* 2. HEADER & SECTIONS */
-.header-section {
-    padding: 30px 25px 10px 25px; /* Plus d'espace */
-    background: #fff;
-}
-
-.header-section h1 {
-    font-size: 2rem; /* Titre plus gros */
-    font-weight: 800;
-    margin: 0;
-    color: #111;
-}
-
-.card-section {
     width: 100%;
-    padding: 30px 25px; /* Marges internes agrandies */
-    background: #fff;
-    border-bottom: 15px solid #f1f5f9; /* Séparation plus épaisse */
+    max-width: 600px; /* Limite la largeur sur tablette/PC */
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 120px; /* Espace pour le menu du bas */
     box-sizing: border-box;
 }
 
-.card-section h2 {
-    font-size: 1rem;
-    text-transform: uppercase;
-    color: #94a3b8;
-    font-weight: 700;
-    letter-spacing: 1.5px;
+/* --- HEADER --- */
+.header-section {
+    text-align: center;
     margin-bottom: 30px;
 }
+.header-section h1 {
+    font-size: 1.8rem;
+    margin: 0 0 5px 0;
+    color: #1a1a1a;
+}
+.subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
 
-/* =========================================================
-   SLIDERS (TRACTS / AFFLUENCE) - VERSION EXTRA LARGE
-   ========================================================= */
+/* --- TITRES DE SECTION --- */
+.card-section h2 {
+    font-size: 1.1rem;
+    color: #8898aa;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    margin: 25px 0 15px 5px;
+}
 
+/* =========================================
+   PARTIE 1 : LES SLIDERS (Tracts / Affluence)
+   ========================================= */
 .input-group-range {
-    margin-bottom: 50px; /* On aère au maximum */
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
 
 .range-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .range-header label {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #334155;
+    font-weight: 600;
+    font-size: 1rem;
+    color: #4a5568;
 }
 
 .range-value {
-    background-color: #eff6ff;
-    color: #2563eb;
-    padding: 8px 16px; /* Badge plus gros */
-    border-radius: 10px;
-    font-weight: 800;
-    font-size: 1.2rem;
-}
-
-/* La Barre */
-.custom-range {
-    width: 100%;
-    height: 16px; /* Barre très épaisse */
-    background: #e2e8f0;
-    border-radius: 20px;
-    outline: none;
-    /*-webkit-appearance: none;*/
-    cursor: pointer;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
-}
-
-/* Le Curseur (Rond) */
-.custom-range::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 40px; /* Très gros rond */
-    height: 40px;
-    border-radius: 50%;
-    background: #2563eb;
-    border: 5px solid white;
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4);
-    margin-top: -12px;
-}
-
-/* =========================================================
-   SCORES - DISPOSITION VERTICALE (POUR REMPLIR L'ÉCRAN)
-   ========================================================= */
-
-.scores-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 35px; /* Gros écart entre les blocs */
-}
-
-.score-item {
-    display: flex;
-    flex-direction: column; /* IMPORTANT : On empile verticalement */
-    align-items: flex-start; /* Aligné à gauche */
-    gap: 15px; /* Espace entre le titre et les boutons */
-    width: 100%;
-}
-
-.score-item label {
-    font-size: 1.3rem; /* Titre du syndicat bien visible */
-    font-weight: 800;
-    color: #1e293b;
-    margin-left: 5px; /* Petit alignement visuel */
-}
-
-/* Conteneur des boutons qui prend TOUTE LA LARGEUR */
-.stepper {
-    display: flex;
-    width: 100%; /* Force la largeur totale */
-    justify-content: space-between; /* Écarte les boutons aux extrémités */
-    align-items: center;
-    background: #f8fafc;
-    border-radius: 20px;
-    padding: 8px;
-    box-sizing: border-box; /* Important pour ne pas dépasser */
-    box-shadow: 0 0 0 1px #e2e8f0; /* Bordure subtile */
-}
-
-/* BOUTONS GÉANTS */
-.btn-stepper {
-    width: 70px; /* Boutons très larges */
-    height: 60px; /* Hauteur confortable */
-    border-radius: 14px;
-    border: none;
-    background: #ffffff;
-    font-size: 2rem; /* Symbole énorme */
-    font-weight: 400;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    flex-shrink: 0; /* Empêche le bouton de s'écraser */
-}
-
-.btn-stepper:active {
-    background-color: #e2e8f0;
-    transform: scale(0.95);
-}
-
-.btn-stepper.plus { color: #2563eb; background: #fff; }
-.btn-stepper.minus { color: #ef4444; background: #fff; }
-
-/* INPUT CENTRAL GÉANT */
-.score-input {
-    flex-grow: 1; /* Prend tout l'espace restant au milieu */
-    border: none !important;
-    background: transparent !important;
-    font-size: 2rem !important; /* Chiffre énorme */
-    font-weight: 900;
-    text-align: center;
-    color: #0f172a;
-    height: 60px;
-}
-
-/* =========================================================
-   BADGE SAUVEGARDE
-   ========================================================= */
-.save-badge {
-    position: fixed;
-    bottom: 20px; /* Plus bas */
-    left: 20px;
-    right: 20px; /* Prend toute la largeur en bas */
-    text-align: center;
-    justify-content: center;
-    background: #1e293b;
+    background: #3182ce;
     color: white;
-    padding: 15px;
-    border-radius: 15px;
-    font-size: 1rem;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    z-index: 999;
-    transition: transform 0.3s, opacity 0.3s;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    min-width: 30px;
+    text-align: center;
 }
 
-.save-badge.hidden {
-    transform: translateY(100px); /* Se cache vers le bas */
-    opacity: 0;
-}
-.spinner { animation: spin 1s linear infinite; display: inline-block; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-/* =========================================
-   JOLI SLIDER MODERNE
-   ========================================= */
-
-/* 1. Configuration de base de l'input */
-.pretty-slider {
-    width: 100%;             /* Prend toute la largeur disponible */
-    height: 38px;            /* Hauteur globale pour englober le gros curseur */
-    -webkit-appearance: none; /* INDISPENSABLE : supprime le style moche par défaut */
-    appearance: none;
-    background: transparent; /* Fond transparent pour laisser voir notre barre perso */
-    cursor: pointer;         /* Curseur main au survol */
-    margin: 10px 0;          /* Un peu d'espace autour */
-}
-
-/* Supprime le contour bleu moche au clic sur certains navigateurs */
-.pretty-slider:focus {
-    outline: none;
-}
-
-/* --- A. LA BARRE (TRACK) --- */
-
-/* Style commun pour la barre */
-.pretty-slider::-webkit-slider-runnable-track {
+/* Customisation de la barre du slider */
+input[type=range] {
+    /*-webkit-appearance: none; Enlève le style par défaut */
     width: 100%;
-    height: 12px;            /* Barre épaisse */
-    background: #e2e8f0;     /* Gris clair moderne */
-    border-radius: 10px;     /* Bords complètement arrondis */
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1); /* Légère ombre interne pour la profondeur */
-    transition: background 0.3s;
+    background: transparent;
 }
 
-.pretty-slider::-moz-range-track {
-    width: 100%;
-    height: 12px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-    transition: background 0.3s;
-}
-
-
-/* --- B. LE CURSEUR (THUMB - Le rond qu'on déplace) --- */
-
-/* Style pour Chrome, Safari, Edge */
-.pretty-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; /* Indispensable */
-    height: 28px;             /* Gros diamètre */
-    width: 28px;
-    border-radius: 50%;       /* Parfaitement rond */
-    background: #3b82f6;      /* Bleu vif (Change cette couleur selon ton thème !) */
-    border: 4px solid #ffffff; /* Grosse bordure blanche pour le contraste */
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3); /* Belle ombre portée bleue */
-    /* Astuce pour centrer verticalement le curseur sur la barre :
-       (HauteurBarre / 2) - (HauteurCurseur / 2)  => (12/2) - (28/2) = 6 - 14 = -8px */
-    margin-top: -8px;
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-/* Style pour Firefox */
-.pretty-slider::-moz-range-thumb {
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
     height: 28px;
     width: 28px;
     border-radius: 50%;
-    background: #3b82f6;
-    border: 4px solid #ffffff;
-    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
-    /* Firefox centre automatiquement, pas besoin de margin-top */
-    transition: transform 0.1s, box-shadow 0.1s;
+    background: #3182ce;
+    cursor: pointer;
+    margin-top: -12px; /* Pour centrer sur la barre */
+    box-shadow: 0 2px 6px rgba(49, 130, 206, 0.4);
 }
 
-
-/* --- C. EFFETS D'INTERACTION (Quand on clique/glisse) --- */
-
-/* Quand on appuie sur le curseur, il grossit légèrement */
-.pretty-slider:active::-webkit-slider-thumb {
-    transform: scale(1.15); /* Grossit de 15% */
-    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4); /* L'ombre s'agrandit */
-    cursor: grabbing; /* Curseur main qui attrape */
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 6px;
+    cursor: pointer;
+    background: #e2e8f0;
+    border-radius: 5px;
 }
 
-.pretty-slider:active::-moz-range-thumb {
-    transform: scale(1.15);
-    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
-    cursor: grabbing;
+/* =========================================
+   PARTIE 2 : LES STEPPERS (Syndicats)
+   C'est ici qu'on règle le problème d'affichage
+   ========================================= */
+
+.scores-grid {
+    display: flex;
+    flex-direction: column; /* Une colonne verticale */
+    gap: 15px;
 }
 
-/* (Optionnel) Change légèrement la couleur de la barre quand on survole */
-.pretty-slider:hover::-webkit-slider-runnable-track {
-    background: #cbd5e1;
+.score-item {
+    background: white;
+    border-radius: 20px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between; /* Nom à gauche, Boutons à droite */
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
 }
-.pretty-slider:hover::-moz-range-track {
-    background: #cbd5e1;
+
+/* Le Nom du Syndicat */
+.score-item label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+    /* Empêche le texte d'être sélectionné quand on tape vite */
+    user-select: none; 
+}
+
+/* Le conteneur des boutons [- 0 +] */
+.stepper {
+    display: flex;
+    align-items: center;
+    background: #f7fafc;
+    border-radius: 15px;
+    padding: 5px;
+}
+
+/* Les boutons + et - */
+.btn-stepper {
+    width: 44px;  /* Taille confortable pour le doigt */
+    height: 44px;
+    border: none;
+    border-radius: 12px;
+    background-color: white;
+    color: #4a5568;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s, background-color 0.2s;
+    touch-action: manipulation; /* Optimise pour le tactile */
+}
+
+/* Effet quand on appuie */
+.btn-stepper:active {
+    transform: scale(0.9);
+    background-color: #edf2f7;
+}
+
+/* Couleur spécifique pour le Plus (Vert léger) */
+.btn-stepper.plus {
+    color: #38a169;
+}
+.btn-stepper.plus:active {
+    background-color: #f0fff4;
+}
+
+/* Couleur spécifique pour le Moins (Rouge léger) */
+.btn-stepper.minus {
+    color: #e53e3e;
+}
+.btn-stepper.minus:active {
+    background-color: #fff5f5;
+}
+
+/* L'input au milieu (le chiffre) */
+.score-input {
+    width: 50px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1a202c;
+    pointer-events: none; /* L'utilisateur ne tape pas, il utilise les boutons */
+}
+
+/* --- BADGE DE SAUVEGARDE FLOTTANT --- */
+.save-badge {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(30, 41, 59, 0.95);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.save-badge:not(.hidden) {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+.hidden {
+    display: none;
 }
