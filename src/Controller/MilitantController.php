@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 final class MilitantController extends AbstractController
 {
@@ -38,5 +39,30 @@ final class MilitantController extends AbstractController
             'militants' => $militants,
             'pole' => $pole
         ]);
+    }
+
+    #[Route('/militant/toggle-repas/{id}', name: 'app_militant_toggle_repas', methods: ['POST'])]
+    public function toggleRepas(Militant $militant, EntityManagerInterface $em): JsonResponse
+    {
+        try {
+            // 1. On inverse
+            $militant->setAMange(!$militant->isAMange());
+            
+            // 2. On sauvegarde
+            $em->flush();
+
+            return new JsonResponse([
+                'status' => 'success', 
+                'nouvelEtat' => $militant->isAMange()
+            ]);
+        } catch (\Exception $e) {
+            // C'EST ICI QUE LA MAGIE OPÈRE : On renvoie l'erreur précise
+            return new JsonResponse([
+                'status' => 'error',
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ], 500);
+        }
     }
 }

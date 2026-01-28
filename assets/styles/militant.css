@@ -1,0 +1,218 @@
+/* --- RESET & GLOBAL --- */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f7f8fa; /* Fond gris très doux moderne */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* --- CONTENEUR PRINCIPAL --- */
+.mobile-container {
+    width: 100%;
+    max-width: 600px; /* Limite la largeur sur tablette/PC */
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 120px; /* Espace pour le menu du bas */
+    box-sizing: border-box;
+}
+
+/* --- EN-TÊTE (Header) --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.header-section h1 {
+    font-size: 1.8rem;
+    margin: 0 0 5px 0;
+    color: #1a1a1a;
+    font-weight: 800;
+}
+.subtitle {
+    font-size: 0.95rem;
+    color: #718096;
+    margin: 0;
+}
+
+/* --- LISTE DES MILITANTS (Architecture Flexbox) --- */
+
+.militant-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Espace entre les cartes */
+}
+
+.militant-card {
+    background: white;
+    border-radius: 15px; /* Coins arrondis jolis */
+    padding: 15px;
+    
+    /* C'EST ICI QUE LA MAGIE OPÈRE : */
+    display: flex; 
+    justify-content: space-between; /* Ecarte le texte (gauche) des boutons (droite) */
+    align-items: center; /* Centre verticalement */
+    
+    box-shadow: 0 2px 5px rgba(0,0,0,0.04); /* Ombre légère */
+    border: 1px solid transparent; /* Prévient les sauts de pixels */
+}
+
+/* Partie GAUCHE : Infos Texte */
+.militant-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    /* RÈGLE D'OR POUR LES NOMS LONGS : */
+    flex: 1;       /* Prend toute la place disponible */
+    min-width: 0;  /* Autorise le texte à être coupé si besoin */
+    margin-right: 10px; /* Marge de sécurité avec les boutons */
+}
+
+.militant-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-bottom: 3px;
+
+    /* Coupe le texte proprement avec "..." si trop long */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.militant-tel {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* Partie DROITE : Groupe de boutons */
+.action-group {
+    display: flex;
+    gap: 10px;       /* Espace entre bouton Repas et Tel */
+    align-items: center;
+    flex-shrink: 0;  /* INTERDIT aux boutons de rétrécir */
+}
+
+/* --- STYLE DES BOUTONS RONDS --- */
+.btn-round {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.1s, background-color 0.3s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none; /* Pour le lien <a> */
+}
+
+.btn-round:active {
+    transform: scale(0.92); /* Petit effet de clic */
+}
+
+/* Couleurs spécifiques */
+.btn-call {
+    background-color: #3182ce; /* Bleu */
+    color: white;
+}
+
+.btn-repas {
+    background-color: #edf2f7; /* Gris clair */
+    color: #a0aec0; /* Icône grise */
+}
+
+/* État ACTIVÉ (Vert) - Ajouté par JS/Server */
+.btn-repas.a-mange {
+    background-color: #48bb78; /* Vert */
+    color: white;
+    box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3);
+}
+
+/* --- MESSAGE VIDE --- */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #a0aec0;
+    background: white;
+    border-radius: 15px;
+    border: 2px dashed #e2e8f0;
+}
+
+/* --- LE CONTENEUR DU MILITANT --- */
+.militant-card {
+    background: white;
+    border-bottom: 1px solid #eee;
+    padding: 15px;
+    
+    /* 1. Aligne le TEXTE à gauche et le GROUPE BOUTONS à droite */
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- LA PARTIE TEXTE (GAUCHE) --- */
+.militant-info {
+    display: flex;
+    flex-direction: column;
+    
+    /* Empêche le texte de pousser les boutons */
+    flex: 1; 
+    min-width: 0; 
+}
+
+.militant-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #2d3748;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.militant-tel {
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* --- LE GROUPE DE BOUTONS (DROITE) --- */
+.action-group {
+    /* 2. Force les boutons à être CÔTE À CÔTE */
+    display: flex !important;
+    flex-direction: row !important; /* Ligne obligatoire */
+    align-items: center;
+    gap: 10px; /* Espace entre les deux boutons */
+    
+    /* Empêche les boutons de s'écraser */
+    flex-shrink: 0; 
+}
+
+/* --- STYLE DES BOUTONS RONDS --- */
+.btn-round {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-decoration: none;
+    transition: transform 0.1s;
+}
+
+.btn-round:active {
+    transform: scale(0.95);
+}
+
+.btn-call { background-color: #3182ce; color: white; }
+.btn-repas { background-color: #edf2f7; color: #a0aec0; }
+.btn-repas.a-mange { background-color: #48bb78; color: white; }
