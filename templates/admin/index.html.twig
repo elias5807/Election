@@ -2,142 +2,170 @@
 
 {% block title %}Hello AdminController!{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* --- LAYOUT DU DASHBOARD (Grid System) --- */
+        
+        /* On retire le scroll du body pour gérer le scroll à l'intérieur des zones */
+        body {
+            overflow: hidden; /* Optionnel, selon votre navbar */
+        }
+
+        /* Le conteneur principal divise l'écran en 2 : 
+           - Colonne 1 : 350px (Sidebar fixe)
+           - Colonne 2 : 1fr (Le reste de l'écran) 
+        */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 350px 1fr; 
+            height: calc(100vh - 60px); /* 100% hauteur écran MOINS la hauteur de la navbar (approx 60px) */
+            width: 100%;
+        }
+
+        /* --- ZONE GAUCHE (SIDEBAR) --- */
+        .sidebar-wrapper {
+            background-color: #f8f9fa; /* Gris léger pour distinguer */
+            border-right: 2px solid #e9ecef;
+            overflow-y: auto; /* Scroll indépendant si la liste est longue */
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+        }
+
+        /* --- ZONE DROITE (CONTENU PRINCIPAL) --- */
+        .main-content-wrapper {
+            background-color: #fff;
+            overflow-y: auto; /* C'est ICI que le scroll principal se fait */
+            padding: 30px;
+        }
+
+        /* Grille pour les cartes dans la zone principale (responsive) */
+        .main-grid-layout {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* --- MOBILE (Responsive) --- */
+        @media (max-width: 768px) {
+            .dashboard-container {
+                grid-template-columns: 1fr; /* On repasse en une seule colonne */
+                height: auto;
+            }
+            body { overflow: auto; }
+            .sidebar-wrapper {
+                height: auto;
+                border-right: none;
+                border-bottom: 2px solid #ddd;
+            }
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
     {% include 'partials/_navbar.html.twig' %}
     <meta http-equiv="refresh" content="60">
 
+    {# On ajoute le data-controller ici #}
     <div class="dashboard-container" data-controller="native-board">
 
         {# ================================================= #}
-        {# 1. LE PÔLE NUMÉRO 1 (PRIORITAIRE - GAUCHE)        #}
+        {# ZONE 1 : SIDEBAR GAUCHE (PÔLE 1 UNIQUEMENT)       #}
         {# ================================================= #}
-        {% for pole in poles %}
-            {% if pole.id == 1 %}
-                
-                {# On prépare le style du chef #}
-                
-                {# NOUVELLE CLASSE : sidebar-section #}
-                <div class="sidebar-section">
+        <aside class="sidebar-wrapper">
+            {% for pole in poles %}
+                {% if pole.id == 1 %}
                     
-                    {# NOUVELLE CLASSE : sidebar-title #}
-                    <h3 class="sidebar-title"> {{ pole.nomPole }}</h3>
-                    
-                    {# NOUVELLE CLASSE : sidebar-grid #}
-                    <div class="sidebar-grid" 
-                        data-pole="{{ pole.nomPole }}"
-                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
+                    <div class="sidebar-section">
+                        <h3 class="sidebar-title" style="margin-top:0;">
+                            <i class="fas fa-crown"></i> {{ pole.nomPole }}
+                        </h3>
+                        <hr>
                         
-                        {% for militant in militants %}
-                            {% if militant.pole and militant.pole.id == 1 %}
-                                {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                            {% endif %}
-                        {% endfor %}
-                        
-                    </div>
-                </div>
-
-            {% endif %}
-        {% endfor %}
-
-
-        {# ================================================= #}
-        {# 2. LES NON ASSIGNÉS (NULL) - AU MILIEU            #}
-        {# ================================================= #}
-        <div class="pole-section" style="border-right: 2px dashed #ccc;">
-            <h3 class="pole-title">📍 Non assignés</h3>
-            
-            {# data-pole="null" est crucial #}
-            <div class="dashboard-grid" 
-                data-pole="null"
-                data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
-                style="min-height: 150px; background-color: #f9f9f9;">
-                
-                {# BOUCLE SUR TOUS LES MILITANTS #}
-                {% for militant in militants %}
-                    
-                    {# CONDITION : Est-ce qu'il n'a PAS de pôle ? #}
-                    {% if militant.pole is null %}
-                        {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                    {% endif %}
-
-                {% endfor %}
-                
-            </div>
-        </div>
-
-
-        {# ================================================= #}
-        {# 3. LES AUTRES PÔLES (TOUT LE RESTE)               #}
-        {# ================================================= #}
-        {% for pole in poles %}
-            {# On exclut le pôle 1 car il est déjà affiché #}
-            {% if pole.id != 1 %}
-                
-                <div class="pole-section">
-                    <h3 class="pole-title">{{ pole.nomPole }}</h3>
-                    
-                    <div class="dashboard-grid" 
-                        data-pole="{{ pole.nomPole }}"
-                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
-                        style="min-height: 150px;">
-                        
-                        {# BOUCLE SUR TOUS LES MILITANTS #}
-                        {% for militant in militants %}
+                        {# Zone de drop pour la sidebar #}
+                        <div class="sidebar-grid" 
+                             data-pole="{{ pole.nomPole }}"
+                             data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
+                             style="min-height: 200px;"> {% for militant in militants %}
+                                {% if militant.pole and militant.pole.id == 1 %}
+                                    {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                                {% endif %}
+                            {% endfor %}
                             
-                            {# CONDITION : Est-ce le bon pôle ? #}
-                            {% if militant.pole and militant.pole.id == pole.id %}
-                                {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                            {% endif %}
-
-                        {% endfor %}
-                        
+                        </div>
                     </div>
-                </div>
 
-            {% endif %}
-        {% endfor %}
+                {% endif %}
+            {% endfor %}
+        </aside>
+
+        {# ================================================= #}
+        {# ZONE 2 : CONTENU PRINCIPAL (LES AUTRES PÔLES)     #}
+        {# ================================================= #}
+        <main class="main-content-wrapper">
+            
+            <h2 class="mb-4">Vue d'ensemble</h2>
+
+            {# On utilise une grille CSS pour afficher les pôles joliment #}
+            <div class="main-grid-layout">
+                
+                {% for pole in poles %}
+                    {# On exclut le pôle 1 car il est dans la sidebar #}
+                    {% if pole.id != 1 %}
+                        
+                        <div class="pole-section card shadow-sm">
+                            <div class="card-header bg-white">
+                                <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
+                            </div>
+                            
+                            <div class="card-body bg-light">
+                                <div class="dashboard-grid" 
+                                    data-pole="{{ pole.nomPole }}"
+                                    data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave"
+                                    style="min-height: 150px;">
+                                    
+                                    {% for militant in militants %}
+                                        {% if militant.pole and militant.pole.id == pole.id %}
+                                            {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                                        {% endif %}
+                                    {% endfor %}
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                    {% endif %}
+                {% endfor %}
+
+            </div>
+        </main>
 
     </div>
 
-
-
+    {# --- SCRIPT REPAS (inchangé) --- #}
     <script>
-    /**
-     * Cette fonction est globale. Elle peut être appelée depuis n'importe quel partial.
-     * @param {HTMLElement} element - La div .meal-indicator sur laquelle on a cliqué
-     */
         function toggleRepas(element) {
-            // 1. On récupère l'URL générée par Symfony dans l'attribut data-url
             const url = element.dataset.url;
-            
             const badge = element.querySelector('.badge-meal');
             const textSpan = element.querySelector('.meal-text');
-            const icon = element.querySelector('i');
 
-            // 2. Feedback visuel immédiat (On grise un peu pour montrer que ça charge)
             badge.style.opacity = '0.5';
             badge.style.cursor = 'wait';
 
-            // 3. Appel AJAX
             fetch(url, {
                 method: 'POST',
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(response => response.json())
             .then(data => {
-                // 4. On remet l'opacité
                 badge.style.opacity = '1';
                 badge.style.cursor = 'pointer';
 
-                // 5. Mise à jour selon la réponse du serveur (data.aMange est true ou false)
                 if (data.aMange === true) {
-                    // Devenu VERT
                     badge.classList.remove('warning');
                     badge.classList.add('success');
                     textSpan.innerText = "OK";
                 } else {
-                    // Devenu ROUGE
                     badge.classList.remove('success');
                     badge.classList.add('warning');
                     textSpan.innerText = "Non";
@@ -152,5 +180,3 @@
     </script>
    
 {% endblock %}
-
-
