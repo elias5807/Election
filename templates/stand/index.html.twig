@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion Stock{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('styles/stock.css') }}">
+    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="mobile-container">
+    
+    <div class="header-section">
+        <h1>🥞 Stocks Stand</h1>
+        <p class="subtitle">Disponibilité des ingrédients</p>
+    </div>
+
+    {% if form %}
+        {{ form_start(form, {'attr': {'id': 'form-auto-save'}}) }}
+            {{ form_row(form._token) }}
+
+            <div class="card-section">
+                <h2>Ingrédients</h2>
+                
+                <div class="scores-grid">
+                    {# On boucle sur les champs booléens #}
+                    {% for field in [form.lait, form.oeuf, form.rhum, form.farine] %}
+                        
+                        <div class="score-item">
+                            {# Le label (ex: Lait en stock) #}
+                            {{ form_label(field) }}
+                            
+                            {# L'interrupteur SWITCH #}
+                            <label class="switch">
+                                {# La checkbox cachée #}
+                                {{ form_widget(field) }}
+                                {# Le curseur visuel #}
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div id="save-status" class="save-badge hidden">
+                <span class="spinner">⏳</span> Sauvegarde...
+            </div>
+
+        {{ form_end(form, {'render_rest': false}) }}
+    {% endif %}
+
+</div>
+
+{% include 'partials/_menuTel.html.twig' %}
+
+{# --- SCRIPT OPTIMISÉ (Turbo + Debounce + Couleurs) --- #}
+<script>
+    function initStockPage() {
+        const form = document.getElementById('form-auto-save');
+        // Si le formulaire n'est pas sur cette page, on arrête tout (évite les erreurs)
+        if (!form) return; 
+
+        // On cible spécifiquement les checkbox dans les switchs
+        const checkboxes = document.querySelectorAll('.switch input[type="checkbox"]');
+        const statusBadge = document.getElementById('save-status');
+        let debounceTimer; // Le minuteur pour l'anti-spam
+
+        // 1. Fonction VISUELLE : Rouge / Vert
+        function updateStockColor(checkbox) {
+            const row = checkbox.closest('.score-item');
+            if (checkbox.checked) {
+                row.classList.add('stock-ok');
+                row.classList.remove('stock-ko');
+            } else {
+                row.classList.add('stock-ko');
+                row.classList.remove('stock-ok');
+            }
+        }
+
+        // 2. Fonction TECHNIQUE : Envoi AJAX avec DEBOUNCE
+        function saveData() {
+            // A. Feedback immédiat
+            if(statusBadge) statusBadge.classList.remove('hidden');
+
+            // B. On annule l'envoi précédent s'il était en attente
+            clearTimeout(debounceTimer);
+
+            // C. On attend 500ms avant d'envoyer vraiment
+            debounceTimer = setTimeout(() => {
+                const formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        console.log("✅ Sauvegarde réussie");
+                        // On cache le badge après un petit délai
+                        setTimeout(() => {
+                            if(statusBadge) statusBadge.classList.add('hidden');
+                        }, 800);
+                    } else {
+                        console.error("❌ Erreur serveur");
+                        if(statusBadge) statusBadge.innerText = "Erreur !";
+                    }
+                })
+                .catch(error => {
+                    console.error("❌ Erreur réseau", error);
+                });
+            }, 500); // 500ms de délai
+        }
+
+        // 3. Initialisation et Écouteurs
+        checkboxes.forEach(checkbox => {
+            // A. On met la bonne couleur au chargement de la page
+            updateStockColor(checkbox);
+
+            // B. Quand on clique sur un switch
+            checkbox.addEventListener('change', function() {
+                // 1. On change la couleur immédiatement (super réactif)
+                updateStockColor(this);
+                // 2. On lance la sauvegarde (temporisée)
+                saveData();
+            });
+        });
+    }
+
+    // Lancement compatible Navigation Turbo + Rechargement classique
+    document.addEventListener('turbo:load', initStockPage);
+    document.addEventListener('DOMContentLoaded', initStockPage);
+</script>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}    
+{% endblock %}

@@ -1,0 +1,82 @@
+{# templates/partials/_militant_card.html.twig #}
+
+<div class="mini-card" 
+     draggable="true" 
+     data-id="{{ militant.id }}"
+     data-action="dragstart->native-board#onDragStart dragend->native-board#onDragEnd"
+     style="cursor: grab; {% if militant.pole is null %}border-left: 4px solid #999;{% endif %}">
+
+    {# 1. STATUS DOT (Gris si null, Couleur par défaut sinon) #}
+    <div class="status-dot" 
+         {% if militant.pole is null %}style="background-color: #999;"{% endif %} 
+         title="{{ militant.pole ? 'Présent' : 'En attente' }}">
+    </div>
+
+    {# 2. NOM #}
+    <div class="card-name">
+        {{ militant.prenom }} {{ militant.nom|upper }}
+    </div>
+
+    {# 3. PÔLE (Affichage dynamique) #}
+    <div class="card-pole">
+        {% if militant.pole %}
+            <i class="fas fa-map-marker-alt"></i> 
+            <span class="pole-text">{{ militant.pole.nomPole }}</span>
+        {% else %}
+            <i class="fas fa-question-circle"></i> 
+            <span class="pole-text" style="font-style: italic; color: #666;">Aucun pôle</span>
+        {% endif %}
+    </div>
+
+    {# 4. HORAIRES (Vérifie l'heure actuelle pour afficher le créneau en cours) #}
+    <div class="card-time">
+        <i class="far fa-clock"></i>
+        {% set has_horaire = false %}
+        
+        {% for horaire in militant.horaires %}
+            {# On vérifie si "Maintenant" est compris dans le créneau #}
+            {% if horaire.debut <= date() and horaire.fin >= date() %}
+                {{ horaire.debut|date('H:i') }} - {{ horaire.fin|date('H:i') }}
+                {% set has_horaire = true %}
+            {% endif %}
+        {% endfor %}
+
+        {% if not has_horaire %}
+            <span style="color: #ccc; font-size: 0.8em;">--:--</span>
+        {% endif %}
+    </div>
+
+    {# 5. ACTIONS & REPAS (Interactif) #}
+    <div class="card-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+        
+        {# 
+           BOUTON REPAS AJAX 
+           - onclick="toggleRepas(this)" : Appelle le JS global
+           - data-url : Contient le lien Symfony vers le contrôleur
+        #}
+        <div class="meal-indicator" 
+             style="cursor: pointer;" 
+             onclick="toggleRepas(this)"
+             data-url="{{ path('app_admin_toggle_repas', {id: militant.id}) }}">
+            
+            {% if militant.aMange %}
+                {# CAS 1 : A MANGÉ (Vert) #}
+                <span class="badge-meal success" title="Cliquez pour annuler">
+                    <i class="fas fa-utensils"></i> <span class="meal-text">a Mangé</span>
+                </span>
+            {% else %}
+                {# CAS 2 : PAS MANGÉ (Rouge/Orange) #}
+                <span class="badge-meal warning" title="Cliquez pour valider le repas">
+                    <i class="fas fa-utensils"></i> <span class="meal-text">Pas Mangé</span>
+                </span>
+            {% endif %}
+
+        </div>
+        
+        {# BOUTON INFO #}
+        <a href="#" class="btn-mini btn-info-card">
+            Information
+        </a>
+    </div>
+
+</div>

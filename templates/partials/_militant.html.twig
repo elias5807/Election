@@ -1,0 +1,48 @@
+<div class="dashboard-grid">
+    <h1>Militants</h1>
+    {% for militant in militants %}
+        <div class="mini-card">
+            <div class="status-dot" title="Présent"></div>
+
+            <div class="card-name" title="{{ militant.prenom }} {{ militant.nom }}">
+                {{ militant.prenom }} {{ militant.nom|upper }}
+            </div>
+
+            <div class="card-pole" title="{{ militant.pole ? militant.pole.nomPole : 'Aucun pôle' }}">
+                <i class="fas fa-map-marker-alt"></i> 
+                {% if militant.pole %}
+                    {{ militant.pole.nomPole }}
+                {% else %}
+                    <span style="color: #999; font-style: italic;">Non assigné</span>
+                {% endif %}
+            </div>
+
+            <div class="card-time">
+                <i class="far fa-clock"></i>
+                {% for horaire in militant.horaires %}
+                    {% if horaire.debut <= date() and horaire.fin >= date() %}
+                        {{ horaire.debut|date('H:i') }} - {{ horaire.fin|date('H:i') }}
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="card-actions">
+                {# Bouton Appeler #}
+                {% if militant.tel %}
+                    <a href="tel:{{ militant.tel }}" class="btn-mini btn-call">
+                        <i class="fas fa-phone"></i> Appeler
+                    </a>
+                {% else %}
+                    <span class="btn-mini btn-call disabled">
+                        <i class="fas fa-phone-slash"></i>
+                    </span>
+                {% endif %}
+
+                {# Bouton Info #}
+                <a href="#" class="btn-mini btn-info-card">
+                    <i class="fas fa-eye"></i> Info
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>

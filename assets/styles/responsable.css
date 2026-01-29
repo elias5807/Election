@@ -1,0 +1,298 @@
+/* =========================================
+   1. RESET & STRUCTURE GLOBALE
+   ========================================= */
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f4f6f8; /* Gris très léger, plus moderne */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1a202c;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+}
+
+.mobile-container {
+    width: 100%;
+    max-width: 600px; /* On garde l'aspect "mobile" sur PC */
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 120px; /* Espace pour le menu du bas */
+    box-sizing: border-box;
+}
+
+/* --- EN-TÊTE --- */
+.header-section {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-top: 10px;
+}
+
+.header-section h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 0 0 5px 0;
+    color: #2d3748;
+    letter-spacing: -0.5px;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: #718096;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* --- TITRES DE SECTION --- */
+.card-section h2 {
+    font-size: 0.85rem;
+    color: #a0aec0;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    margin: 30px 0 10px 10px;
+}
+
+/* =========================================
+   2. LES SLIDERS (DESIGN MODERNE & ÉPURÉ)
+   ========================================= */
+
+.input-group-range {
+    background: white;
+    padding: 25px 20px; /* Un peu plus d'espace vertical */
+    border-radius: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03); /* Ombre très légère */
+    border: 1px solid #f0f0f0; /* Bordure subtile */
+}
+
+.range-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px; /* Espace entre le titre et la barre */
+}
+
+.range-header label {
+    font-weight: 700;
+    font-size: 1rem;
+    color: #2d3748;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.range-value {
+    background: #3182ce;
+    color: white;
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    min-width: 40px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(49, 130, 206, 0.3);
+}
+
+/* --- LE SLIDER LUI-MÊME --- */
+
+/* 1. Base Reset */
+input[type=range] {
+    -webkit-appearance: none; /* Obligatoire */
+    width: 100%;
+    background: transparent;
+    margin: 0;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+/* 2. La Barre (Track) - Chrome/Safari/Edge */
+input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px; /* Barre plus épaisse */
+    cursor: pointer;
+    background: #edf2f7; /* Gris très clair */
+    border-radius: 10px;
+    border: 1px solid #e2e8f0; /* Légère bordure interne */
+}
+
+/* 3. Le Curseur (Thumb) - Chrome/Safari/Edge */
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 32px; /* Gros bouton facile à toucher */
+    width: 32px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 4px solid #3182ce; /* Anneau bleu */
+    cursor: grab;
+    margin-top: -11px; /* Calcul : (32px / 2) - (12px / 2) + ajustement */
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15); /* Ombre portée */
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+/* Effet quand on touche le curseur */
+input[type=range]:active::-webkit-slider-thumb {
+    transform: scale(1.1); /* Il grossit */
+    cursor: grabbing;
+    box-shadow: 0 4px 12px rgba(49, 130, 206, 0.3); /* L'ombre grandit */
+    background: #3182ce; /* Le centre devient bleu */
+    border-color: white; /* La bordure devient blanche */
+}
+
+/* --- SUPPORT FIREFOX --- */
+
+/* La Barre (Firefox) */
+input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    background: #edf2f7;
+    border-radius: 10px;
+}
+
+/* Le Curseur (Firefox) */
+input[type=range]::-moz-range-thumb {
+    height: 32px;
+    width: 32px;
+    border: 4px solid #3182ce;
+    border-radius: 50%;
+    background: #ffffff;
+    cursor: grab;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+input[type=range]:active::-moz-range-thumb {
+    transform: scale(1.1);
+    background: #3182ce;
+    border-color: white;
+}
+
+/* =========================================
+   3. LES STEPPERS (Boutons +/-)
+   ========================================= */
+.scores-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.score-item {
+    background: white;
+    border-radius: 20px;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+/* Nom du syndicat */
+.score-item label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0;
+    user-select: none;
+    
+    /* Sécurité si le nom est long */
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-right: 15px;
+}
+
+/* Conteneur gris des boutons */
+.stepper {
+    display: flex;
+    align-items: center;
+    background: #f7fafc;
+    border-radius: 16px;
+    padding: 4px;
+    flex-shrink: 0; /* Empêche le stepper de s'écraser */
+}
+
+/* Boutons + et - */
+.btn-stepper {
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 12px;
+    background-color: white;
+    color: #4a5568;
+    font-size: 1.4rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    touch-action: manipulation;
+}
+
+.btn-stepper:active {
+    transform: scale(0.92);
+    background-color: #edf2f7;
+}
+
+/* Couleurs spécifiques */
+.btn-stepper.plus { color: #38a169; }     /* Vert */
+.btn-stepper.minus { color: #e53e3e; }    /* Rouge */
+
+/* L'input nombre au milieu */
+.score-input {
+    width: 45px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1a202c;
+    pointer-events: none;
+    margin: 0 2px;
+}
+
+/* =========================================
+   4. BADGE DE SAUVEGARDE (Feedback)
+   ========================================= */
+.save-badge {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(30px);
+    background: rgba(26, 32, 44, 0.95); /* Noir presque opaque */
+    backdrop-filter: blur(5px);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    z-index: 2000;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.save-badge:not(.hidden) {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Animation du sablier/spinner */
+@keyframes spin { 100% { transform: rotate(360deg); } }
+.spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+}
+
+.hidden {
+    display: none;
+}

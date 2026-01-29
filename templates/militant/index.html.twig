@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# Changement de version pour forcer le cache : v=4 #}
+    <link rel="stylesheet" href="{{ asset('styles/militant.css') }}?v=4">
+    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="mobile-container">
+    <div class="header-section">
+        <h1>👥 Mon Équipe</h1>
+        <p class="subtitle">
+            {{ pole ? pole.nomPole : 'Non assigné' }}
+        </p>
+    </div>
+
+    <div class="card-section" style="padding: 0;">
+        <div class="militant-list">
+            {% for militant in militants %}
+                
+                <div class="militant-card">
+                    
+                    <div class="militant-info">
+                        <span class="militant-name">
+                            {{ militant.prenom }} {{ militant.nom|upper }}
+                        </span>
+                        <span class="militant-tel">
+                            {{ militant.tel ? militant.tel : 'Pas de numéro' }}
+                        </span>
+                    </div>
+
+                    <div class="action-group">
+                        
+                        <button class="btn-round btn-repas {{ militant.aMange ? 'a-mange' : '' }}" 
+                                onclick="toggleRepas(this, {{ militant.id }})">
+                            🍽️
+                        </button>
+
+                        {% if militant.tel %}
+                            <a href="tel:{{ militant.tel }}" class="btn-round btn-call">
+                                📞
+                            </a>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+            {% else %}
+                <div style="padding: 30px; text-align: center; color: #888;">
+                    Aucun militant trouvé.
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% include 'partials/_menuTel.html.twig' %}
+
+<script>
+    function toggleRepas(btn, id) {
+        fetch('/militant/toggle-repas/' + id, {
+            method: 'POST',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                if(data.nouvelEtat) btn.classList.add('a-mange');
+                else btn.classList.remove('a-mange');
+            } else {
+                alert('Erreur: ' + data.message);
+            }
+        })
+        .catch(err => console.error(err));
+    }
+</script>
+{% endblock %}

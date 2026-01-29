@@ -1,0 +1,152 @@
+:root {
+    /* Palette FAEP : Vert Foncé & Blanc */
+    --main-green: #1a4d2e;       /* Vert forêt profond */
+    --main-green-hover: #143d23; /* Vert encore plus sombre pour le survol */
+    --accent-white: #ffffff;
+    
+    /* Couleurs structurelles */
+    --bg-color: #f0f2f0;         /* Gris très pâle pour faire ressortir le blanc */
+    --text-color: #2c3e50;       /* Gris foncé (plus doux que le noir pur) */
+    --border-color: #d1d5db;
+    
+    /* Erreurs */
+    --error-bg: #fee2e2;
+    --error-text: #991b1b;
+}
+
+body {
+    background-color: var(--bg-color);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--text-color);
+}
+
+/* La carte de connexion (Fond Blanc) */
+form {
+    background-color: var(--accent-white);
+    padding: 3rem;
+    border-radius: 8px;
+    /* Ombre légère pour décoller le formulaire du fond */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    max-width: 400px;
+    
+    /* Bordure décorative verte sur le dessus */
+    border-top: 6px solid var(--main-green);
+}
+
+/* Titre "Please sign in" */
+h1.h3 {
+    text-align: center;
+    color: var(--main-green);
+    font-weight: 700;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    letter-spacing: -0.5px;
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+/* Champs de texte */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.75rem;
+    margin-bottom: 1.2rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    background-color: var(--accent-white);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    box-sizing: border-box; 
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+/* Focus sur les champs : Bordure verte */
+.form-control:focus {
+    border-color: var(--main-green);
+    outline: 0;
+    /* Petit halo vert pâle */
+    box-shadow: 0 0 0 3px rgba(26, 77, 46, 0.2);
+}
+
+/* Checkbox */
+.checkbox {
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox label {
+    margin-bottom: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+.checkbox input[type="checkbox"] {
+    accent-color: var(--main-green); /* La case devient verte quand cochée */
+    margin-right: 0.5rem;
+    width: 1.2em;
+    height: 1.2em;
+}
+
+/* Le Bouton Principal (Vert fond, texte Blanc) */
+.btn-primary {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent-white);
+    background-color: var(--main-green);
+    border: 1px solid var(--main-green);
+    border-radius: 4px;
+    cursor: pointer;
+    text-transform: uppercase; /* Optionnel : pour un style plus "officiel" */
+    letter-spacing: 0.5px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-primary:hover {
+    background-color: var(--main-green-hover);
+    border-color: var(--main-green-hover);
+}
+
+.btn-primary:active {
+    transform: translateY(1px); /* Petit effet d'enfoncement */
+}
+
+/* Messages d'erreur */
+.alert-danger {
+    background-color: var(--error-bg);
+    border-left: 5px solid var(--error-text); /* Barre rouge sur le côté */
+    color: var(--error-text);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* Lien de déconnexion */
+.mb-3 a {
+    color: var(--main-green);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.mb-3 a:hover {
+    text-decoration: underline;
+    color: var(--main-green-hover);
+}

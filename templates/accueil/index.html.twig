@@ -1,0 +1,177 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Rapport Responsable{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {# On force le rechargement du CSS avec v=5 #}
+    <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}?v=5">
+    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="mobile-container">
+    
+    {# --- HEADER --- #}
+    <div class="header-section">
+        <h1>📊 Rapport Terrain</h1>
+        <p class="subtitle">
+            {% if pole %}
+                {{ pole.nomPole }}
+            {% else %}
+                Pôle non assigné
+            {% endif %}
+        </p>
+    </div>
+
+    {% if monFormulaire %}
+        {{ form_start(monFormulaire, {'attr': {'id': 'form-auto-save'}}) }}
+            {{ form_row(monFormulaire._token) }}
+
+            {# ================================================= #}
+            {# 1. SECTION ACTIVITÉ (SLIDERS)                     #}
+            {# ================================================= #}
+            <div class="card-section">
+                <h2>Activité</h2>
+                
+                {# TRACTS #}
+                <div class="input-group-range">
+                    <div class="range-header">
+                        <label>Nombre de tracts</label>
+                        {# Le span qui affiche la valeur en direct #}
+                        <span class="range-value" id="val-tract">0</span>
+                    </div>
+                    {# On ajoute l'événement oninput pour mettre à jour le chiffre quand on glisse #}
+                    {{ form_widget(monFormulaire.tract, {
+                        'attr': {
+                            'oninput': 'updateSliderValue("val-tract", this.value)',
+                            'type': 'range' 
+                        }
+                    }) }}
+                </div>
+
+                {# AFFLUENCE #}
+                <div class="input-group-range">
+                    <div class="range-header">
+                        <label>Affluence</label>
+                        <span class="range-value" id="val-afluence">0</span>
+                    </div>
+                    {{ form_widget(monFormulaire.afluence, {
+                        'attr': {
+                            'oninput': 'updateSliderValue("val-afluence", this.value)',
+                            'type': 'range'
+                        }
+                    }) }}
+                </div>
+            </div>
+
+            {# ================================================= #}
+            {# 2. SECTION SYNDICATS (STEPPERS +/-)               #}
+            {# ================================================= #}
+            <div class="card-section">
+                <h2>Résultats Syndicats</h2>
+                <div class="scores-grid">
+                    
+                    {# On boucle sur les 3 champs #}
+                    {% for field in [monFormulaire.unef, monFormulaire.ue, monFormulaire.uni] %}
+                        <div class="score-item">
+                            {# Le Label (ex: UNEF) #}
+                            {{ form_label(field) }}
+                            
+                            {# Le Stepper (Boutons +/- et Input) #}
+                            <div class="stepper">
+                                <button type="button" class="btn-stepper minus" onclick="updateStepper(this, -1)">−</button>
+                                
+                                {# L'input est en readonly pour forcer l'usage des boutons #}
+                                {{ form_widget(field, {'attr': {'class': 'score-input', 'readonly': 'readonly'}}) }}
+                                
+                                <button type="button" class="btn-stepper plus" onclick="updateStepper(this, 1)">+</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            {# BADGE DE SAUVEGARDE (Caché par défaut) #}
+            <div id="save-status" class="save-badge hidden">
+                <span class="spinner">⏳</span> Sauvegarde...
+            </div>
+
+        {{ form_end(monFormulaire, {'render_rest': false}) }}
+    {% endif %}
+
+</div>
+
+{% include 'partials/_menuTel.html.twig' %}
+
+{# --- JAVASCRIPT --- #}
+<script>
+    // 1. Mise à jour visuelle des Sliders (Tracts/Affluence)
+    window.updateSliderValue = function(spanId, value) {
+        const el = document.getElementById(spanId);
+        if(el) el.innerText = value;
+    };
+
+    // 2. Mise à jour des Steppers (+/-)
+    window.updateStepper = function(btn, change) {
+        const container = btn.parentElement;
+        const input = container.querySelector('input');
+        
+        let val = parseInt(input.value) || 0;
+        let newVal = val + change;
+        if(newVal < 0) newVal = 0; // Pas de négatif
+        
+        input.value = newVal;
+        
+        // Déclenche l'événement 'change' pour lancer l'auto-save
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+
+    // 3. Logique d'Auto-Save (AJAX)
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('form-auto-save');
+        if (!form) return;
+
+        const statusBadge = document.getElementById('save-status');
+        let debounceTimer;
+
+        // A. Initialisation des valeurs des sliders au chargement
+        const tractInput = document.getElementById('{{ monFormulaire.tract.vars.id }}');
+        const affluenceInput = document.getElementById('{{ monFormulaire.afluence.vars.id }}');
+        
+        if(tractInput) window.updateSliderValue('val-tract', tractInput.value);
+        if(affluenceInput) window.updateSliderValue('val-afluence', affluenceInput.value);
+
+        // B. Écouteur global sur le formulaire
+        form.addEventListener('change', function() {
+            // Affiche "Sauvegarde..."
+            if(statusBadge) statusBadge.classList.remove('hidden');
+
+            clearTimeout(debounceTimer);
+            
+            // On attend 500ms après la dernière action pour envoyer
+            debounceTimer = setTimeout(() => {
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: form.method,
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Petit délai pour laisser lire "Sauvegarde..."
+                        setTimeout(() => {
+                            if(statusBadge) statusBadge.classList.add('hidden');
+                        }, 800);
+                    } else {
+                        console.error("Erreur save");
+                    }
+                })
+                .catch(err => console.error(err));
+            }, 500);
+        });
+    });
+</script>
+{% endblock %}

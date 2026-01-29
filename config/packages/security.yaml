@@ -1,20 +1,51 @@
 security:
-    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    # Algorithme de hachage pour votre entité
     password_hashers:
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+        App\Entity\Respo: 'auto'
 
-    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
-
+        # On déclare un provider qu'on nomme 'app_user_provider'
+        # Il utilise l'entité Respo et cherche l'utilisateur via la propriété 'mail'
+        app_user_provider:
+            entity:
+                class: App\Entity\Respo
+                property: mail
+    role_hierarchy:
+        # Le ROLE_RESPO possède aussi les droits du ROLE_USER
+        ROLE_RESPO:       [ROLE_USER]
+        
+        # Le ROLE_ADMIN possède les droits du RESPO (et donc du USER aussi)
+        ROLE_ADMIN:       [ROLE_RESPO]
+        
     firewalls:
         dev:
-            # Ensure dev tools and static assets are always allowed
-            pattern: ^/(_profiler|_wdt|assets|build)/
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: users_in_memory
+            provider: app_user_provider # On relie le firewall au provider créé au-dessus
+            entry_point: App\Security\SecurityAuthenticator
+
+            # Configuration pour le formulaire de connexion
+            form_login:
+                login_path: app_login  # La route vers la page de login (à créer)
+                check_path: app_login  # La route qui traite le formulaire
+                enable_csrf: true
+            
+            # Configuration de la déconnexion
+            logout:
+                path: app_logout
+            custom_authenticator: App\Security\SecurityAuthenticator
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
+                # where to redirect after logout
+                # target: app_any_route
 
             # Activate different ways to authenticate:
             # https://symfony.com/doc/current/security.html#the-firewall
