@@ -11,6 +11,7 @@ use App\Repository\StandRepository;
 final class MapController extends AbstractController
 {
     #[Route('/map', name: 'app_map')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(PoleRepository $poleRepository, StandRepository $standRepository): Response
     {
         

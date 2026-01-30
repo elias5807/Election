@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'app_admin')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
     {
         // 1. Récupérer TOUS les militants actifs maintenant

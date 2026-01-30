@@ -1,0 +1,54 @@
+/* --- LAYOUT DU DASHBOARD (Grid System) --- */
+
+/* On retire le scroll du body pour gérer le scroll à l'intérieur des zones */
+body {
+    overflow: hidden; /* Optionnel, selon votre navbar */
+}
+
+/* Le conteneur principal divise l'écran en 2 : 
+    - Colonne 1 : 350px (Sidebar fixe)
+    - Colonne 2 : 1fr (Le reste de l'écran) 
+*/
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 350px 1fr; 
+    height: calc(100vh - 60px); /* 100% hauteur écran MOINS la hauteur de la navbar (approx 60px) */
+    width: 100%;
+}
+
+/* --- ZONE GAUCHE (SIDEBAR) --- */
+.sidebar-wrapper {
+    background-color: #f8f9fa; /* Gris léger pour distinguer */
+    border-right: 2px solid #e9ecef;
+    overflow-y: auto; /* Scroll indépendant si la liste est longue */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+}
+
+/* --- ZONE DROITE (CONTENU PRINCIPAL) --- */
+.main-content-wrapper {
+    background-color: #fff;
+    overflow-y: auto; /* C'est ICI que le scroll principal se fait */
+    padding: 30px;
+}
+
+/* Grille pour les cartes dans la zone principale (responsive) */
+.main-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+/* --- MOBILE (Responsive) --- */
+@media (max-width: 768px) {
+    .dashboard-container {
+        grid-template-columns: 1fr; /* On repasse en une seule colonne */
+        height: auto;
+    }
+    body { overflow: auto; }
+    .sidebar-wrapper {
+        height: auto;
+        border-right: none;
+        border-bottom: 2px solid #ddd;
+    }
+}

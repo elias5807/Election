@@ -4,9 +4,8 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    {# On force le rechargement du CSS avec v=5 #}
-    <link rel="stylesheet" href="{{ asset('styles/responsable.css') }}?v=5">
-    <link rel="stylesheet" href="{{ asset('styles/navbarTel.css') }}">
+    <link rel="stylesheet" href="{{ asset('/styles/responsable.css') }}" data-turbo-track="reload">
+    <link rel="stylesheet" href="{{ asset('/styles/navbarTel.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -69,7 +68,7 @@
             {# 2. SECTION SYNDICATS (STEPPERS +/-)               #}
             {# ================================================= #}
             <div class="card-section">
-                <h2>Résultats Syndicats</h2>
+                <h2>Nombre de militants Syndicats</h2>
                 <div class="scores-grid">
                     
                     {# On boucle sur les 3 champs #}
@@ -129,7 +128,7 @@
     };
 
     // 3. Logique d'Auto-Save (AJAX)
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('turbo:load', function() {
         const form = document.getElementById('form-auto-save');
         if (!form) return;
 

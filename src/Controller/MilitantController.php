@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class MilitantController extends AbstractController
 {
     #[Route('/militant', name: 'app_militant')]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_RESPO')]
     public function index(EntityManagerInterface $em): Response
     {
         /** @var Respo $user */

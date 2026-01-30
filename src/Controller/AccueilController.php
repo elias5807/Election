@@ -15,7 +15,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class AccueilController extends AbstractController
 {
     #[Route('/responsable', name: 'app_home')]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_RESPO')]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         // A. Récupération du User et du Pole

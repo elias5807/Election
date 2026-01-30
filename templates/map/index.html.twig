@@ -23,8 +23,9 @@
         #}
         <div id="map" 
             style="height: 600px;"
-            data-poles="{{ poles|json_encode }}"       
-            data-alertes="{{ alertes|json_encode }}"
+            data-controller="carte"
+            data-carte-poles-value="{{ poles|json_encode }}"
+            data-carte-alertes-value="{{ alertes|json_encode }}"
         ></div>
     </div>
     <meta http-equiv="refresh" content="60">

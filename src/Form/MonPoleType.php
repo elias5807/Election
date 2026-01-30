@@ -39,15 +39,15 @@ class MonPoleType extends AbstractType
             // si l'utilisateur supprime la valeur avant d'en écrire une nouvelle
             ->add('unef', IntegerType::class, [
                 'required' => false, 
-                'label' => 'Score UNEF'
+                'label' => 'Militant UNEF'
             ])
             ->add('ue', IntegerType::class, [
                 'required' => false,
-                'label' => 'Score UE'
+                'label' => 'Militant UE'
             ])
             ->add('uni', IntegerType::class, [
                 'required' => false,
-                'label' => 'Score UNI'
+                'label' => 'Militant UNI'
             ])
         ;
     }

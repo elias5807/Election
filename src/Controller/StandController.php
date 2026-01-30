@@ -17,7 +17,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 final class StandController extends AbstractController
 {
     #[Route('/stand', name: 'app_stand')]
-    #[IsGranted('ROLE_USER')]
+    #[IsGranted('ROLE_RESPO')]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         /** @var Respo $user */
