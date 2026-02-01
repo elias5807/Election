@@ -1,60 +1,87 @@
-/* --- LAYOUT DU DASHBOARD (Grid System) --- */
-
-/* On retire le scroll du body pour gérer le scroll à l'intérieur des zones */
-body {
-    overflow: hidden; /* Optionnel, selon votre navbar */
-    overflow-y: auto !important;
-    height: auto !important;
+/* --- CONFIGURATION GLOBALE --- */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* On fixe la hauteur à celle de l'écran */
+    overflow: hidden; /* On empêche le scroll global pour éviter le "double scroll" */
+    font-family: sans-serif;
 }
 
-/* Le conteneur principal divise l'écran en 2 : 
-    - Colonne 1 : 350px (Sidebar fixe)
-    - Colonne 2 : 1fr (Le reste de l'écran) 
-*/
+/* --- LAYOUT DU DASHBOARD --- */
+/* Le conteneur occupe tout l'espace sous la navbar */
 .dashboard-container {
     display: grid;
     grid-template-columns: 350px 1fr; 
-    height: calc(100vh - 60px); /* 100% hauteur écran MOINS la hauteur de la navbar (approx 60px) */
+    height: calc(100vh - 60px); /* Hauteur écran MOINS la navbar */
     width: 100%;
+    overflow: hidden; /* Important : le container ne doit pas scroller lui-même */
 }
 
 /* --- ZONE GAUCHE (SIDEBAR) --- */
 .sidebar-wrapper {
-    background-color: #f8f9fa; /* Gris léger pour distinguer */
+    background-color: #f8f9fa;
     border-right: 2px solid #e9ecef;
-    overflow-y: auto; /* Scroll indépendant si la liste est longue */
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    
+    /* On permet le scroll interne si la liste des militants à gauche est longue */
+    height: 100%; 
+    overflow-y: auto; 
 }
 
 /* --- ZONE DROITE (CONTENU PRINCIPAL) --- */
 .main-content-wrapper {
     background-color: #fff;
-    overflow-y: auto; /* C'est ICI que le scroll principal se fait */
     padding: 30px;
+    
+    /* C'est ICI que la magie opère pour le scroll des pôles */
+    height: 100%; 
+    overflow-y: auto; 
+    box-sizing: border-box; /* Pour que le padding ne casse pas la hauteur */
 }
 
 /* Grille pour les cartes dans la zone principale (responsive) */
 .main-grid-layout {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
+    /* On laisse la grille s'étendre en hauteur, le parent gérera le scroll */
+    height: auto; 
+}
+
+/* --- ÉLÉMENTS DU DASHBOARD --- */
+.pole-section {
+    margin-bottom: 10px;
+}
+
+.dashboard-grid {
+    background-color: #f1f3f5;
+    border-radius: 8px;
+    padding: 15px;
+    transition: background-color 0.2s ease;
 }
 
 /* --- MOBILE (Responsive) --- */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
     .dashboard-container {
-        grid-template-columns: 1fr; /* On repasse en une seule colonne */
+        grid-template-columns: 280px 1fr; /* On rétrécit un peu la sidebar */
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        overflow: auto; /* On rend le scroll au navigateur sur mobile */
+    }
+    .dashboard-container {
+        display: block; /* On empile les éléments */
         height: auto;
     }
-    body { overflow: auto; }
-    .sidebar-wrapper {
+    .sidebar-wrapper, .main-content-wrapper {
         height: auto;
+        overflow: visible;
+    }
+    .sidebar-wrapper {
         border-right: none;
         border-bottom: 2px solid #ddd;
     }
 }
-
-.wrapper, .main-content {
-        overflow: visible !important;
-    }
