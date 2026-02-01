@@ -17,14 +17,14 @@ class MonStandType extends AbstractType
                 'label' => 'Lait en stock',
                 'required' => false, // Important pour les checkbox
             ])
-            ->add('oeuf', CheckboxType::class, [
-                'label' => 'Oeufs en stock',
-                'required' => false,
-            ])
-            ->add('rhum', CheckboxType::class, [
-                'label' => 'Rhum en stock',
-                'required' => false,
-            ])
+            //->add('oeuf', CheckboxType::class, [
+            //    'label' => 'Oeufs en stock',
+            //    'required' => false,
+            //])
+            //->add('rhum', CheckboxType::class, [
+            //    'label' => 'Rhum en stock',
+            //    'required' => false,
+            //])
             ->add('farine', CheckboxType::class, [
                 'label' => 'Farine en stock',
                 'required' => false,
