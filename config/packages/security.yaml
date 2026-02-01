@@ -42,6 +42,7 @@ security:
     # 5. Contrôle d'accès (Une seule fois !)
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/map, roles: ROLE_ADMIN }
         - { path: ^/responsable, roles: ROLE_RESPO }
         - { path: ^/stand, roles: ROLE_RESPO }
         - { path: ^/militant, roles: ROLE_RESPO }
