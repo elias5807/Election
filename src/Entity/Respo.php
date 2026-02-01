@@ -48,12 +48,17 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = [];
         
-        // On vérifie de manière sécurisée si l'objet Role existe et a une valeur
-        if ($this->role && method_exists($this->role, 'getRoleString')) {
-            $roles[] = $this->role->getRoleString();
+        // On vérifie si la relation role est chargée
+        if ($this->role !== null) {
+            // On récupère le nom du rôle (ex: ROLE_ADMIN)
+            // Assure-toi que getRoleString() existe bien dans Role.php
+            $roleName = $this->role->getRoleString();
+            if ($roleName) {
+                $roles[] = $roleName;
+            }
         }
 
-        // On garantit au moins ROLE_USER pour que Symfony ne rejette pas l'utilisateur
+        // Sécurité Symfony : un utilisateur doit TOUJOURS avoir au moins ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
