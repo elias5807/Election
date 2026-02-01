@@ -13,64 +13,58 @@
     {# Rafraîchissement automatique toutes les 60s pour voir les nouveaux scores/militants #}
     <meta http-equiv="refresh" content="60">
 
+    {# ... début du fichier ... #}
     <div class="dashboard-container" data-controller="native-board">
 
-        {# ================================================= #}
-        {# ZONE 1 : SIDEBAR (PÔLE 1 - EXÉCUTIF)              #}
-        {# ================================================= #}
         <aside class="sidebar-wrapper">
+            {# --- PÔLE 1 (Exécutif / Fixe) --- #}
             {% set pole1 = null %}
-            {% for pole in poles %}
-                {% if pole.id == 1 %}
-                    {% set pole1 = pole %}
-                {% endif %}
-            {% endfor %}
+            {% for pole in poles %}{% if pole.id == 1 %}{% set pole1 = pole %}{% endif %}{% endfor %}
 
             {% if pole1 %}
                 <div class="sidebar-section">
-                    <h3 class="sidebar-title">
-                        <i class="fas fa-crown"></i> {{ pole1.nomPole }}
-                    </h3>
-                    
+                    <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                     <div class="sidebar-grid" 
-                         data-pole="{{ pole1.nomPole }}"
-                         data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
-                        
-                        {# On utilise l'ID '1' pour piocher dans le tableau groupé du Controller #}
+                        data-pole="{{ pole1.nomPole }}"
+                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
                         {% for militant in militantsParPole[1] ?? [] %}
                             {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                         {% endfor %}
                     </div>
                 </div>
             {% endif %}
+
+            <hr>
+
+            {# --- ZONE NON ASSIGNÉ (Pour remettre les gens en attente) --- #}
+            <div class="sidebar-section">
+                <h3 class="sidebar-title text-muted"><i class="fas fa-user-slash"></i> Non assignés</h3>
+                <div class="sidebar-grid unassigned-zone" 
+                    data-pole="null" 
+                    data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
+                    {% for militant in militantsParPole['sans-pole'] ?? [] %}
+                        {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                    {% endfor %}
+                </div>
+            </div>
         </aside>
 
-        {# ================================================= #}
-        {# ZONE 2 : CONTENU PRINCIPAL (HORIZONTAL)           #}
-        {# ================================================= #}
         <main class="main-content-wrapper">
-            <h2 class="mb-4">Flux des Pôles</h2>
-
             <div class="main-grid-layout">
-                {# On boucle sur les pôles pour créer les colonnes #}
                 {% for pole in poles %}
-                    {# On exclut le pôle 1 car il est déjà dans la sidebar #}
                     {% if pole.id != 1 %}
                         <section class="pole-section card shadow-sm">
                             <div class="card-header bg-white">
                                 <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
                             </div>
-                            
                             <div class="card-body bg-light">
+                                {# La min-height CSS permettra de drop ici même si c'est vide #}
                                 <div class="dashboard-grid" 
-                                     data-pole="{{ pole.nomPole }}"
-                                     data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
-                                    
-                                    {# On récupère les militants via l'ID du pôle (clé du tableau PHP) #}
+                                    data-pole="{{ pole.nomPole }}"
+                                    data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
                                     {% for militant in militantsParPole[pole.id] ?? [] %}
                                         {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                                     {% endfor %}
-                                    
                                 </div>
                             </div>
                         </section>
@@ -79,6 +73,7 @@
             </div>
         </main>
     </div>
+{# ... reste du fichier ... #}
 
     {# --- SCRIPT REPAS (Gestion AJAX) --- #}
     <script>
