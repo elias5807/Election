@@ -38,15 +38,16 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
+        // Si vide, on rentre à la maison
         if (empty($searchTerm)) {
             return $this->redirectToRoute('app_admin');
         }
 
-        // 1. On récupère les pôles avec TON ordre spécifique
+        // 1. On récupère les pôles avec ton tri CUSTOM
         $poles = $poleRepo->findAllOrderedCustom();
 
-        // 2. On cherche uniquement les militants qui correspondent à la recherche
-        $militantsFiltrés = $militantRepo->createQueryBuilder('m')
+        // 2. Recherche QueryBuilder
+        $militantsResults = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
             ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
@@ -54,10 +55,10 @@ class AdminController extends AbstractController
             ->getQuery()
             ->getResult();
 
-        // 3. On renvoie au template
+        // 3. On renvoie EXACTEMENT les mêmes variables que la méthode index()
         return $this->render('admin/index.html.twig', [
-            'poles'      => $poles,            // L'ordre sera respecté ici
-            'militants'  => $militantsFiltrés, // Seulement ceux qui matchent
+            'poles'      => $poles,
+            'militants'  => $militantsResults, // Le template boucle là-dessus
             'searchTerm' => $searchTerm,
             'stats'      => $poleRepo->getGlobalStats(),
         ]);
