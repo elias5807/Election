@@ -22,7 +22,6 @@ class MilitantRepository extends ServiceEntityRepository
      */
     public function militantDispo(): array
     {
-        $now = new \DateTime();
 
         return $this->createQueryBuilder('m')
             // 1. Jointure OBLIGATOIRE sur les horaires pour vérifier l'heure
@@ -34,12 +33,7 @@ class MilitantRepository extends ServiceEntityRepository
             ->addSelect('h') 
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
-            // 3. Conditions temporelles
-            ->where('h.debut <= :now')
-            ->andWhere('h.fin >= :now')
-            ->setParameter('now', $now)
-
-            // 4. Distinction pour éviter les doublons si jointures multiples
+            // 3. Distinction pour éviter les doublons si jointures multiples
             ->distinct()
 
             ->getQuery()
@@ -52,14 +46,6 @@ class MilitantRepository extends ServiceEntityRepository
         return (int) $this->createQueryBuilder('m')
             // On compte les identifiants uniques de 'm' (militant)
             ->select('COUNT(DISTINCT m.id)')
-            
-            // Jointure nécessaire pour filtrer sur les horaires
-            ->innerJoin('m.horaires', 'h')
-            
-            // Conditions temporelles
-            ->where('h.debut <= :now')
-            ->andWhere('h.fin >= :now')
-            ->setParameter('now', $now)
 
             ->getQuery()
             // On récupère une valeur unique (le nombre)
