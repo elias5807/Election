@@ -22,7 +22,7 @@ class AdminController extends AbstractController
     public function index(PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
     {
         // 1. Récupérer TOUS les militants actifs maintenant
-        $tousMilitants = $militantRepository->militantDispo();
+        $tousMilitants = $militantRepository->findAllMilitantsPourDashboard();
         $nbFaep = $militantRepository->countFaep();
         $stats = $poleRepository->getGlobalStats();
         $poles = $poleRepository->findAll();
