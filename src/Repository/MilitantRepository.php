@@ -40,20 +40,20 @@ class MilitantRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Récupère TOUS les militants avec leurs pôles.
+     * @return Militant[]
+     */
     public function findAllMilitantsPourDashboard(): array
     {
-        try {
-            return $this->createQueryBuilder('m')
-                ->leftJoin('m.pole', 'p') // Assure-toi que 'pole' est bien le nom de la relation dans l'entité Militant
-                ->addSelect('p')
-                ->orderBy('p.nom', 'ASC')
-                ->addOrderBy('m.nom', 'ASC')
-                ->getQuery()
-                ->getResult();
-        } catch (\Exception $e) {
-            // Cela te permettra de voir l'erreur réelle si tu as un debugger
-            throw $e; 
-        }
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.pole', 'p')
+            ->addSelect('p')
+            // Correction ici : on utilise nom_pole comme vu dans les logs
+            ->orderBy('p.nom_pole', 'ASC') 
+            ->addOrderBy('m.nom', 'ASC')
+            ->getQuery()
+            ->getResult();
     }
 
     public function countFaep(): int {
