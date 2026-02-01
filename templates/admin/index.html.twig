@@ -26,13 +26,24 @@
                     <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                     
                     {# --- BARRE DE RECHERCHE --- #}
-                    <div class="search-container px-2 mb-3">
-                        <form action="{{ path('app_admin') }}" method="get" class="input-group input-group-sm">
-                            <input type="text" name="q" value="{{ searchTerm }}" class="form-control" placeholder="Rechercher...">
-                            <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
-                            {% if searchTerm %}
-                                <a href="{{ path('app_admin') }}" class="btn btn-outline-danger"><i class="fas fa-times"></i></a>
-                            {% endif %}
+                    <div class="search-box p-2">
+                        {# On pointe vers 'app_admin_search' au lieu de 'app_admin' #}
+                        <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex">
+                            <div class="input-group">
+                                <input 
+                                    type="text" 
+                                    name="q" 
+                                    class="form-control" 
+                                    placeholder="Rechercher un militant..." 
+                                    value="{{ searchTerm }}"
+                                >
+                                <button type="submit" class="btn btn-primary">OK</button>
+                                
+                                {# Bouton pour annuler et revenir au dashboard complet #}
+                                {% if searchTerm %}
+                                    <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary">X</a>
+                                {% endif %}
+                            </div>
                         </form>
                     </div>
 
