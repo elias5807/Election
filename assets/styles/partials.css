@@ -1,175 +1,93 @@
 /* =========================================
-   1. VARIABLES & RESET
+   1. VARIABLES & RESET (Unifiés)
    ========================================= */
 :root {
-    /* Couleurs Institutionnelles (FAEP) */
     --faep-green: #1a4d2e;
-    --faep-green-light: #25613c;
-    
-    /* Couleurs UI */
     --primary: #3b82f6;
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f87171;
-    
-    /* Neutres */
     --white: #ffffff;
     --bg-page: #f4f6f9;
-    --bg-section: #f9fafb;
     --text-main: #1f2937;
     --text-muted: #6b7280;
     --border-color: #e5e7eb;
-    
-    /* Design */
     --radius: 12px;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-body {
+html, body {
     margin: 0;
-    padding-top: 80px; 
-    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    padding: 0;
+    min-height: 100%;
     background-color: var(--bg-page);
-    color: var(--text-main);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    overflow-x: hidden;
+}
+
+/* Correction du décalage lié à la Navbar */
+body {
+    padding-top: 70px; 
 }
 
 /* =========================================
-   2. BARRE DE NAVIGATION (NAVBAR)
+   2. NAVBAR (Inchangée mais propre)
    ========================================= */
 nav {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
+    top: 0; left: 0;
+    width: 100%; height: 70px;
     background-color: var(--faep-green);
     color: var(--white);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
-    box-sizing: border-box;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
     z-index: 1000;
-}
-
-nav h1 {
-    font-size: 1.4rem;
-    margin: 0;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-/* Liste des scores */
-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
-}
-
-nav li {
-    font-size: 0.95rem;
-    font-weight: 500;
-    background-color: rgba(255, 255, 255, 0.1);
-    padding: 6px 12px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s;
-}
-
-nav li.faep-item {
-    background-color: var(--white);
-    color: var(--faep-green);
-    font-weight: bold;
-    transform: scale(1.05);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* Bouton Map */
-nav a {
-    color: var(--white);
-    text-decoration: none;
-    font-weight: 600;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 8px 20px;
-    border-radius: 30px;
-    transition: all 0.3s;
-    text-transform: uppercase;
-    font-size: 0.8rem;
-}
-
-nav a:hover {
-    background-color: var(--white);
-    color: var(--faep-green);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    box-sizing: border-box;
 }
 
 /* =========================================
-   3. LAYOUT : SPLIT VIEW & DASHBOARD
+   3. LAYOUT GLOBAL (Le cœur du changement)
    ========================================= */
-.split-view {
-    display: flex;
-    width: 100%;
-    height: calc(100vh - 80px);
-    gap: 1.5rem;
-    padding: 1rem;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-/* Conteneur horizontal des pôles */
 .dashboard-container {
     display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 1.5rem;
-    align-items: flex-start;
-    height: 100%;
+    width: 100%;
+    align-items: stretch;
 }
 
-.dashboard-container::-webkit-scrollbar { height: 8px; }
-.dashboard-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-
-/* Colonnes (Pôles) */
-.pole-section {
-    min-width: 300px;
-    max-width: 300px;
+/* Sidebar qui reste collée au scroll */
+.sidebar-wrapper {
+    width: 320px;
     flex-shrink: 0;
-    background-color: var(--bg-section);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    max-height: 100%;
-}
-
-.pole-title {
-    font-size: 1.1rem;
-    color: var(--primary);
-    margin-bottom: 1rem;
-    font-weight: 700;
-    padding-left: 0.5rem;
-    border-left: 4px solid var(--primary);
-    text-transform: uppercase;
-}
-
-/* Grille interne de chaque pôle */
-.dashboard-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    background-color: var(--white);
+    border-right: 2px solid var(--border-color);
+    padding: 20px;
+    position: sticky;
+    top: 70px; /* Aligné sous la navbar */
+    height: calc(100vh - 70px);
     overflow-y: auto;
+}
+
+/* Zone de contenu qui s'étend à l'infini vers le bas */
+.main-content-wrapper {
     flex-grow: 1;
-    padding-right: 5px;
+    padding: 30px;
+    height: auto;
+    min-height: 100vh;
+}
+
+/* Grille des pôles intelligente */
+.main-grid-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 25px;
+    padding-bottom: 100px; /* Marge de confort */
 }
 
 /* =========================================
-   4. COMPOSANT : MINI CARTE (MILITANTS)
+   4. COMPOSANT : MINI CARTE (Nettoyé)
    ========================================= */
 .mini-card {
     background-color: var(--white);
@@ -177,134 +95,83 @@ nav a:hover {
     box-shadow: var(--shadow);
     padding: 1rem;
     position: relative;
-    border: 1px solid transparent;
+    border: 1px solid var(--border-color);
     transition: transform 0.2s, box-shadow 0.2s;
-    cursor: grab;
 }
 
 .mini-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-.mini-card.dragging {
-    opacity: 0.4;
-    border: 2px dashed #999;
-}
-
-/* Détails Carte */
 .status-dot {
-    width: 10px;
-    height: 10px;
+    width: 10px; height: 10px;
     background-color: var(--success);
     border-radius: 50%;
-    position: absolute;
-    top: 12px;
-    right: 12px;
+    position: absolute; top: 12px; right: 12px;
     box-shadow: 0 0 0 2px white;
 }
 
 .card-name {
     font-weight: 700;
-    font-size: 1rem;
     color: var(--text-main);
     margin-bottom: 0.5rem;
-    padding-right: 15px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.card-pole, .card-time {
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 0.25rem;
-}
-
-.card-pole i, .card-time i {
-    color: var(--primary);
-    width: 16px;
-    text-align: center;
-}
-
-/* Boutons d'action */
+/* Actions */
 .card-actions {
     margin-top: 1rem;
-    display: flex;
-    gap: 8px;
+    display: flex; gap: 8px;
 }
 
 .btn-mini {
     flex: 1;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    align-items: center; justify-content: center;
     padding: 0.5rem;
     font-size: 0.8rem;
     font-weight: 600;
     border-radius: 6px;
     text-decoration: none;
-    transition: all 0.2s;
+    transition: 0.2s;
 }
 
 .btn-call { background: #ecfdf5; color: var(--success); border: 1px solid #d1fae5; }
 .btn-call:hover { background: var(--success); color: white; }
 
 .btn-info-card { background: #f3f4f6; color: var(--text-main); border: 1px solid var(--border-color); }
-.btn-info-card:hover { background: #e5e7eb; }
-
-.btn-mini.disabled { opacity: 0.5; pointer-events: none; background: #f3f4f6; color: #9ca3af; }
+.btn-info-card:hover { background: var(--border-color); }
 
 /* =========================================
-   5. BADGES & ETATS SPÉCIAUX
+   5. BADGES & DRAG (Inspiré des deux codes)
    ========================================= */
 .badge-meal {
     font-size: 0.8rem;
     font-weight: 600;
     padding: 3px 8px;
     border-radius: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    margin-top: 5px;
+    display: inline-flex; align-items: center; gap: 4px;
 }
+.badge-meal.success { background: #d1fae5; color: #065f46; border: 1px solid var(--success); }
+.badge-meal.warning { background: #fee2e2; color: #991b1b; border: 1px solid var(--warning); }
 
-.badge-meal.success { background-color: #d1fae5; color: #065f46; border: 1px solid var(--success); }
-.badge-meal.warning { background-color: #fee2e2; color: #991b1b; border: 1px solid var(--warning); }
-
-.drag-over-active {
-    background-color: rgba(0, 0, 0, 0.05);
-    border: 2px dashed var(--primary);
-}
+.dragging { opacity: 0.4; border: 2px dashed #999; }
+.drag-over-active { background-color: rgba(59, 130, 246, 0.05); border: 2px dashed var(--primary); }
 
 /* =========================================
    6. RESPONSIVE
    ========================================= */
 @media (max-width: 1024px) {
-    .split-view {
-        flex-direction: column;
+    .dashboard-container { flex-direction: column; }
+    .sidebar-wrapper {
+        width: 100%;
+        position: relative;
         height: auto;
-        overflow: visible;
+        top: 0;
+        border-right: none;
+        border-bottom: 2px solid var(--border-color);
     }
-    
-    .pole-section {
-        min-width: 100%;
-        max-width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    nav {
-        height: auto;
-        flex-direction: column;
-        padding: 1rem;
-        gap: 1rem;
-    }
-    
-    body { padding-top: 160px; }
-    
-    nav ul { flex-wrap: wrap; justify-content: center; gap: 10px; }
 }
