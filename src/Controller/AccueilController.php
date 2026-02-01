@@ -11,13 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse; // <--- 1. Import nécessaire pour l'AJAX
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Repository\RespoRepository;
 
 #[IsGranted('ROLE_RESPO')]
 final class AccueilController extends AbstractController
 {
     #[Route('/responsable', name: 'app_home')]
     #[IsGranted('ROLE_RESPO')]
-    public function index(Request $request, EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em, RespoRepository $RespoRepository): Response
     {
         // A. Récupération du User et du Pole
         /** @var Respo $user */
