@@ -74,4 +74,24 @@ class MilitantRepository extends ServiceEntityRepository
 
         return $qb->getQuery()->getResult();
     }
+
+    /**
+     * La fonction centrale pour récupérer les militants du dashboard
+     * avec ou sans filtre de recherche.
+     */
+    public function findBySearch(?string $term): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.pole', 'p')
+            ->addSelect('p');
+
+        if ($term) {
+            $qb->andWhere('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
+               ->setParameter('t', '%' . $term . '%');
+        }
+
+        return $qb->orderBy('m.nom', 'ASC')
+                  ->getQuery()
+                  ->getResult();
+    }
 }
