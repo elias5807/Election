@@ -74,5 +74,41 @@
         </main>
     </div>
 
-    {# Ton script JS toggleRepas reste ici... #}
+    {# --- SCRIPT REPAS (inchangé) --- #}
+    <script>
+        function toggleRepas(element) {
+            const url = element.dataset.url;
+            const badge = element.querySelector('.badge-meal');
+            const textSpan = element.querySelector('.meal-text');
+
+            badge.style.opacity = '0.5';
+            badge.style.cursor = 'wait';
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                badge.style.opacity = '1';
+                badge.style.cursor = 'pointer';
+
+                if (data.aMange === true) {
+                    badge.classList.remove('warning');
+                    badge.classList.add('success');
+                    textSpan.innerText = "a Mangé";
+                } else {
+                    badge.classList.remove('success');
+                    badge.classList.add('warning');
+                    textSpan.innerText = "Pas Mangé";
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                badge.style.opacity = '1';
+                alert("Erreur de connexion");
+            });
+        }
+    </script>
+   
 {% endblock %}

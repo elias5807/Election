@@ -26,17 +26,18 @@ class AdminController extends AbstractController
         $stats = $poleRepository->getGlobalStats();
         $poles = $poleRepository->findAll();
 
-        $militants = $militantRepository->findAllMilitantsPourDashboard();
-        $militantsParPole = [];
+        $allMilitants = $militantRepo->findAllMilitantsPourDashboard();
+        $poles = $poleRepo->findAll();
 
-        foreach ($militants as $m) {
-            // On récupère le nom du pôle, ou "Sans Pôle" s'il est vide
-            $nomPole = $m->getPole() ? $m->getPole()->getNomPole() : 'Non assigné';
-            $militantsParPole[$nomPole][] = $m;
+        $militantsGroupes = [];
+        foreach ($allMilitants as $m) {
+            // On récupère l'ID du pôle (propriété $id dans ton entité Pole)
+            $poleId = $m->getPole() ? $m->getPole()->getId() : 'sans-pole';
+            $militantsGroupes[$poleId][] = $m;
         }
 
         return $this->render('admin/index.html.twig', [
-            'militants' => $militantsParPole,
+            'militantsParPole' => $militantsGroupes,
             'nbFaep' => $nbFaep,
             'stats' => $stats,
             'poles' => $poles,
