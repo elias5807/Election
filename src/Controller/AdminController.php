@@ -19,41 +19,62 @@ class AdminController extends AbstractController
 {
     // src/Controller/AdminController.php
     #[Route('/admin', name: 'app_admin')]
-    public function index(Request $request, PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
+    public function index(PoleRepository $poleRepo, MilitantRepository $militantRepo): Response
     {
-        $query = $request->query->get('q');
-        $allMilitants = $militantRepository->findBySearch($query);
-        dd($allMilitants); // Ceci va arrêter le code et afficher les résultats.
-        // Récupération du terme de recherche depuis l'URL (ex: /admin?q=durand)
-        $searchTerm = $request->query->get('q');
-
-        // 1. Statistiques globales (restent inchangées)
-        $nbFaep = $militantRepository->countFaep();
-        $stats = $poleRepository->getGlobalStats();
-        $poles = $poleRepository->findAll();
-
-        // 2. Récupération filtrée ou globale
-        if ($searchTerm) {
-            $allMilitants = $militantRepository->findBySearchTerm($searchTerm);
-        } else {
-            $allMilitants = $militantRepository->findAllMilitantsPourDashboard();
-        }
-
-        // 3. Groupement (ton code actuel fonctionne toujours)
-        $militantsGroupes = [];
-        foreach ($allMilitants as $m) {
-            $poleId = $m->getPole() ? $m->getPole()->getId() : 'sans-pole';
-            $militantsGroupes[$poleId][] = $m;
-        }
-
+        // Affichage normal (tous les militants)
+        $allMilitants = $militantRepo->findAllMilitantsPourDashboard();
+        
         return $this->render('admin/index.html.twig', [
-            'militantsParPole' => $militantsGroupes,
-            'nbFaep' => $nbFaep,
-            'stats' => $stats,
-            'poles' => $poles,
-            'searchTerm' => $searchTerm // On renvoie le terme pour l'afficher dans l'input
+            'militantsParPole' => $this->grouperMilitants($allMilitants),
+            'poles'            => $poleRepo->findAll(),
+            'searchTerm'       => null,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
         ]);
     }
+
+    #[Route('/admin/search', name: 'app_admin_search', methods: ['GET'])]
+    public function search(Request $request, PoleRepository $poleRepo, MilitantRepository $militantRepo): Response
+    {
+        $searchTerm = trim($request->query->get('q', ''));
+
+        // Si la recherche est vide, on redirige vers l'accueil admin
+        if (empty($searchTerm)) {
+            return $this->redirectToRoute('app_admin');
+        }
+
+        // On effectue la recherche
+        $results = $militantRepo->createQueryBuilder('m')
+            ->leftJoin('m.pole', 'p')
+            ->addSelect('p')
+            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
+            ->setParameter('t', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
+
+        // On réutilise le même template pour afficher les résultats filtrés
+        return $this->render('admin/index.html.twig', [
+            'militantsParPole' => $this->grouperMilitants($results),
+            'poles'            => $poleRepo->findAll(),
+            'searchTerm'       => $searchTerm,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
+        ]);
+    }
+
+    /**
+     * Petite fonction utilitaire pour éviter de répéter le foreach du groupement
+     */
+    private function grouperMilitants(array $militants): array
+    {
+        $groupes = [];
+        foreach ($militants as $m) {
+            $poleId = $m->getPole() ? $m->getPole()->getId() : 'sans-pole';
+            $groupes[$poleId][] = $m;
+        }
+        return $groupes;
+    }
+    
     /**
      * Route utilisée par le Drag & Drop pour mettre à jour le pôle
      */
