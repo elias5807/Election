@@ -3,6 +3,8 @@
 /* On retire le scroll du body pour gérer le scroll à l'intérieur des zones */
 body {
     overflow: hidden; /* Optionnel, selon votre navbar */
+    overflow-y: auto !important;
+    height: auto !important;
 }
 
 /* Le conteneur principal divise l'écran en 2 : 
@@ -52,3 +54,7 @@ body {
         border-bottom: 2px solid #ddd;
     }
 }
+
+.wrapper, .main-content {
+        overflow: visible !important;
+    }
