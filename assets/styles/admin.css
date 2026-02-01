@@ -49,3 +49,17 @@ html, body {
 .pole-section {
     height: fit-content;
 }
+
+/* Force brute pour le scroll */
+main.main-content-wrapper {
+    display: block !important;
+    height: auto !important;
+    min-height: 100vh !important;
+    overflow-y: visible !important;
+}
+
+.dashboard-container {
+    display: flex !important;
+    height: auto !important;
+    overflow: visible !important;
+}
