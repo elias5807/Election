@@ -42,8 +42,11 @@ class AdminController extends AbstractController
             return $this->redirectToRoute('app_admin');
         }
 
-        // On cherche les militants qui matchent
-        $militants = $militantRepo->createQueryBuilder('m')
+        // 1. On récupère les pôles avec TON ordre spécifique
+        $poles = $poleRepo->findAllOrderedCustom();
+
+        // 2. On cherche uniquement les militants qui correspondent à la recherche
+        $militantsFiltrés = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
             ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
@@ -51,12 +54,12 @@ class AdminController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        // 3. On renvoie au template
         return $this->render('admin/index.html.twig', [
-            // Crucial : on passe la liste filtrée à la variable que ton template utilise déjà
-            'militants'    => $militants, 
-            'poles'        => $poleRepo->findAllOrderedCustom(),
-            'searchTerm'   => $searchTerm,
-            'stats'        => $poleRepo->getGlobalStats(),
+            'poles'      => $poles,            // L'ordre sera respecté ici
+            'militants'  => $militantsFiltrés, // Seulement ceux qui matchent
+            'searchTerm' => $searchTerm,
+            'stats'      => $poleRepo->getGlobalStats(),
         ]);
     }
 
