@@ -1,94 +1,58 @@
-/* --- CONFIGURATION GLOBALE --- */
+/* --- RESET TOTAL --- */
 html, body {
-    height: auto !important; /* On laisse le contenu définir la hauteur */
-    overflow-y: auto !important; /* On rend le scroll au navigateur */
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important; /* Le scroll appartient au navigateur désormais */
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
 }
 
-/* --- LE CONTENEUR --- */
+/* --- LAYOUT FLEXIBLE --- */
 .dashboard-container {
-    display: flex; /* Flexbox est plus simple pour aligner Sidebar et Main */
+    display: flex !important;
+    flex-direction: row;
+    min-height: 100vh;
     width: 100%;
-    min-height: calc(100vh - 60px); /* Prend au moins toute la hauteur restante */
-    background-color: #f4f7f6;
+    align-items: stretch;
 }
 
-/* --- LA SIDEBAR (FIXÉE) --- */
+/* --- SIDEBAR COLLÉE --- */
 .sidebar-wrapper {
     width: 350px;
-    flex-shrink: 0; /* Empêche la sidebar de rétrécir */
+    flex-shrink: 0;
     background-color: #f8f9fa;
-    border-right: 2px solid #e9ecef;
+    border-right: 2px solid #ddd;
     padding: 20px;
-    
-    /* Magie du Sticky : elle reste en haut pendant que tu scrolles à droite */
+    /* La sidebar reste fixée au haut de l'écran pendant qu'on scrolle le reste */
     position: sticky;
-    top: 0; 
-    height: 100vh; 
+    top: 0;
+    height: 100vh;
     overflow-y: auto;
 }
 
-/* --- LE CONTENU (DÉROULANT) --- */
+/* --- ZONE PRINCIPALE LIBÉRÉE --- */
 .main-content-wrapper {
-    flex-grow: 1; /* Prend tout l'espace restant */
+    flex-grow: 1;
     padding: 30px;
-    background-color: #fff;
-    min-width: 0; /* Évite les bugs de débordement avec les grilles */
+    background-color: #ffffff;
+    /* Suppression de TOUTE limite de hauteur */
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important; 
 }
 
-/* Ta grille de pôles */
+/* --- LA GRILLE DES PÔLES --- */
 .main-grid-layout {
-    display: grid;
+    display: grid !important;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
-    padding-bottom: 50px; /* Petit espace de sécurité en bas */
+    gap: 25px;
+    /* On ajoute une énorme marge en bas pour être CERTAIN de voir le dernier */
+    padding-bottom: 300px !important; 
 }
 
-/* On s'assure que les cartes ne cassent pas le layout */
 .pole-section {
-    height: fit-content;
-}
-
-/* Force brute pour le scroll */
-main.main-content-wrapper {
     display: block !important;
     height: auto !important;
-    min-height: 100vh !important;
-    overflow-y: visible !important;
-}
-
-.dashboard-container {
-    display: flex !important;
-    height: auto !important;
-    overflow: visible !important;
-}
-
-.main-content-wrapper {
-    /* On ne bloque JAMAIS la hauteur maximum ici */
-    min-height: calc(100vh - 60px); 
-    height: auto !important; 
-    overflow-y: visible !important; /* Laisse le scroll remonter au parent */
-}
-
-.main-grid-layout {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: 20px;
-    padding-bottom: 200px !important; /* Force une zone vide en bas pour voir le dernier pôle */
-}
-
-/* On force le déblocage de la hauteur sur toute la chaîne */
-.dashboard-container, 
-.main-content-wrapper, 
-.main-grid-layout {
-    height: auto !important;
-    max-height: none !important;
-    overflow: visible !important;
-}
-
-/* On rend le scroll au BODY (la fenêtre du navigateur) */
-body {
-    overflow-y: auto !important;
-    height: auto !important;
+    position: relative !important;
 }
