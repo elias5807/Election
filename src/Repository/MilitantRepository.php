@@ -40,17 +40,12 @@ class MilitantRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    /**
-     * Récupère TOUS les militants avec leurs pôles.
-     * @return Militant[]
-     */
     public function findAllMilitantsPourDashboard(): array
     {
         return $this->createQueryBuilder('m')
-            ->leftJoin('m.pole', 'p')
             ->addSelect('p')
-            // Correction ici : on utilise nom_pole comme vu dans les logs
-            ->orderBy('p.nom_pole', 'ASC') 
+            ->leftJoin('m.pole', 'p')
+            ->orderBy('p.nom_pole', 'ASC') // "nom_pole" d'après tes logs
             ->addOrderBy('m.nom', 'ASC')
             ->getQuery()
             ->getResult();
