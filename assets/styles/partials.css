@@ -294,3 +294,77 @@ nav a:hover {
     .main-grid-layout { flex-direction: column; align-items: stretch; }
     .pole-section { width: 100%; min-width: 100%; }
 }
+
+/* --- Conteneur de la recherche --- */
+.search-box {
+    background-color: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+/* --- Groupe d'entrée (Input + Boutons) --- */
+.search-box .input-group {
+    display: flex;
+    gap: 0; /* On colle les éléments pour l'effet "groupe" */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #d1d5db;
+}
+
+/* --- Le champ de saisie --- */
+.search-box .form-control {
+    border: none;
+    padding: 10px 15px;
+    font-size: 0.9rem;
+    flex-grow: 1;
+    outline: none;
+    box-shadow: none !important; /* Enlève le contour bleu par défaut de Bootstrap */
+}
+
+.search-box .form-control:focus {
+    background-color: #f9fafb;
+}
+
+/* --- Les boutons --- */
+.search-box .btn {
+    border: none;
+    padding: 8px 15px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    border-radius: 0; /* Les boutons sont carrés dans le groupe */
+}
+
+/* Bouton OK (Principal) */
+.search-box .btn-primary {
+    background-color: #2563eb;
+    color: white;
+}
+
+.search-box .btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+/* Bouton Annuler (X) */
+.search-box .btn-outline-secondary {
+    background-color: #f3f4f6;
+    color: #6b7280;
+    border-left: 1px solid #d1d5db;
+    text-decoration: none;
+}
+
+.search-box .btn-outline-secondary:hover {
+    background-color: #fee2e2; /* Rouge très léger au survol */
+    color: #ef4444;
+}
+
+/* --- Ajustement quand la barre est focus --- */
+.search-box:focus-within .input-group {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
