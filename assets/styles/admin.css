@@ -1,91 +1,51 @@
 /* --- CONFIGURATION GLOBALE --- */
 html, body {
+    height: auto !important; /* On laisse le contenu définir la hauteur */
+    overflow-y: auto !important; /* On rend le scroll au navigateur */
     margin: 0;
     padding: 0;
-    height: 100vh; /* On fixe la hauteur à celle de l'écran */
-    overflow: auto; /* On empêche le scroll global pour éviter le "double scroll" */
-    font-family: sans-serif;
 }
 
-/* --- LAYOUT DU DASHBOARD --- */
-/* Le conteneur occupe tout l'espace sous la navbar */
+/* --- LE CONTENEUR --- */
 .dashboard-container {
-    display: grid;
-    grid-template-columns: 350px 1fr; 
-    /* On utilise vh pour occuper TOUT l'écran restant */
-    /* Si ta navbar est "fixe", utilise 100vh. Si elle est normale, garde le calc */
-    height: calc(100vh - 60px); 
+    display: flex; /* Flexbox est plus simple pour aligner Sidebar et Main */
     width: 100%;
-    
-    /* SECURITÉ : On s'assure que le container lui-même ne scrolle pas */
-    overflow: hidden; 
-    position: relative;
+    min-height: calc(100vh - 60px); /* Prend au moins toute la hauteur restante */
+    background-color: #f4f7f6;
 }
 
-/* --- ZONE GAUCHE (SIDEBAR) --- */
+/* --- LA SIDEBAR (FIXÉE) --- */
 .sidebar-wrapper {
+    width: 350px;
+    flex-shrink: 0; /* Empêche la sidebar de rétrécir */
     background-color: #f8f9fa;
     border-right: 2px solid #e9ecef;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
     
-    /* On permet le scroll interne si la liste des militants à gauche est longue */
-    height: 100%; 
-    overflow-y: auto; 
+    /* Magie du Sticky : elle reste en haut pendant que tu scrolles à droite */
+    position: sticky;
+    top: 0; 
+    height: 100vh; 
+    overflow-y: auto;
 }
 
-/* --- ZONE DROITE (CONTENU PRINCIPAL) --- */
+/* --- LE CONTENU (DÉROULANT) --- */
 .main-content-wrapper {
-    background-color: #fff;
+    flex-grow: 1; /* Prend tout l'espace restant */
     padding: 30px;
-    
-    /* FORCE LE SCROLL ICI */
-    height: 100%; 
-    overflow-y: auto !important; 
-    display: block;
+    background-color: #fff;
+    min-width: 0; /* Évite les bugs de débordement avec les grilles */
 }
 
-/* Grille pour les cartes dans la zone principale (responsive) */
+/* Ta grille de pôles */
 .main-grid-layout {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
-    padding-bottom: 100px; /* Ajoute de l'espace en bas pour être sûr de voir le dernier pôle */
+    padding-bottom: 50px; /* Petit espace de sécurité en bas */
 }
 
-/* --- ÉLÉMENTS DU DASHBOARD --- */
+/* On s'assure que les cartes ne cassent pas le layout */
 .pole-section {
-    margin-bottom: 10px;
-}
-
-.dashboard-grid {
-    background-color: #f1f3f5;
-    border-radius: 8px;
-    padding: 15px;
-    transition: background-color 0.2s ease;
-}
-
-/* --- MOBILE (Responsive) --- */
-@media (max-width: 1024px) {
-    .dashboard-container {
-        grid-template-columns: 280px 1fr; /* On rétrécit un peu la sidebar */
-    }
-}
-
-@media (max-width: 768px) {
-    body {
-        overflow: auto; /* On rend le scroll au navigateur sur mobile */
-    }
-    .dashboard-container {
-        display: block; /* On empile les éléments */
-        height: auto;
-    }
-    .sidebar-wrapper, .main-content-wrapper {
-        height: auto;
-        overflow: visible;
-    }
-    .sidebar-wrapper {
-        border-right: none;
-        border-bottom: 2px solid #ddd;
-    }
+    height: fit-content;
 }
