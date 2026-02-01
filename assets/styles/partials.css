@@ -19,19 +19,19 @@
 html, body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    height: 100vh; /* Fixe la hauteur pour forcer le scroll interne */
     background-color: var(--bg-page);
     font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow-x: hidden;
+    overflow: hidden; /* Empêche le scroll global du navigateur */
 }
 
-/* Correction du décalage lié à la Navbar */
 body {
     padding-top: 70px; 
+    box-sizing: border-box;
 }
 
 /* =========================================
-   2. NAVBAR (Inchangée mais propre)
+   2. NAVBAR
    ========================================= */
 nav {
     position: fixed;
@@ -49,45 +49,78 @@ nav {
 }
 
 /* =========================================
-   3. LAYOUT GLOBAL (Le cœur du changement)
+   3. LAYOUT GLOBAL (HORIZONTAL)
    ========================================= */
 .dashboard-container {
     display: flex;
-    width: 100%;
-    align-items: stretch;
+    width: 100vw;
+    height: calc(100vh - 70px);
 }
 
-/* Sidebar qui reste collée au scroll */
+/* Sidebar reste à gauche */
 .sidebar-wrapper {
     width: 320px;
     flex-shrink: 0;
     background-color: var(--white);
     border-right: 2px solid var(--border-color);
     padding: 20px;
-    position: sticky;
-    top: 70px; /* Aligné sous la navbar */
-    height: calc(100vh - 70px);
     overflow-y: auto;
+    box-sizing: border-box;
 }
 
-/* Zone de contenu qui s'étend à l'infini vers le bas */
+/* Zone principale : Active le scroll horizontal */
 .main-content-wrapper {
     flex-grow: 1;
-    padding: 30px;
-    height: auto;
-    min-height: 100vh;
+    overflow-x: auto; /* Permet de scroller vers la droite */
+    overflow-y: hidden;
+    padding: 20px;
+    background-color: var(--bg-page);
 }
 
-/* Grille des pôles intelligente */
+/* Grille transformée en ligne flexible */
 .main-grid-layout {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 25px;
-    padding-bottom: 100px; /* Marge de confort */
+    display: flex; /* Aligne les pôles en ligne */
+    flex-direction: row;
+    gap: 20px;
+    height: 100%;
+    align-items: flex-start;
+}
+
+/* Chaque colonne (Pôle) */
+.pole-section {
+    width: 320px; /* Largeur fixe pour chaque pôle */
+    min-width: 320px;
+    max-height: 100%;
+    background-color: #f9fafb;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+/* La liste des militants dans chaque pôle scrolle verticalement */
+.dashboard-grid {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-right: 5px;
+}
+
+/* Style de la scrollbar horizontale */
+.main-content-wrapper::-webkit-scrollbar {
+    height: 10px;
+}
+.main-content-wrapper::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 5px;
 }
 
 /* =========================================
-   4. COMPOSANT : MINI CARTE (Nettoyé)
+   4. COMPOSANT : MINI CARTE
    ========================================= */
 .mini-card {
     background-color: var(--white);
@@ -96,32 +129,15 @@ nav {
     padding: 1rem;
     position: relative;
     border: 1px solid var(--border-color);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.mini-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.status-dot {
-    width: 10px; height: 10px;
-    background-color: var(--success);
-    border-radius: 50%;
-    position: absolute; top: 12px; right: 12px;
-    box-shadow: 0 0 0 2px white;
 }
 
 .card-name {
     font-weight: 700;
+    font-size: 0.95rem;
     color: var(--text-main);
     margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-/* Actions */
 .card-actions {
     margin-top: 1rem;
     display: flex; gap: 8px;
@@ -131,47 +147,12 @@ nav {
     flex: 1;
     display: inline-flex;
     align-items: center; justify-content: center;
-    padding: 0.5rem;
-    font-size: 0.8rem;
+    padding: 0.4rem;
+    font-size: 0.75rem;
     font-weight: 600;
     border-radius: 6px;
     text-decoration: none;
-    transition: 0.2s;
 }
 
 .btn-call { background: #ecfdf5; color: var(--success); border: 1px solid #d1fae5; }
-.btn-call:hover { background: var(--success); color: white; }
-
 .btn-info-card { background: #f3f4f6; color: var(--text-main); border: 1px solid var(--border-color); }
-.btn-info-card:hover { background: var(--border-color); }
-
-/* =========================================
-   5. BADGES & DRAG (Inspiré des deux codes)
-   ========================================= */
-.badge-meal {
-    font-size: 0.8rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 20px;
-    display: inline-flex; align-items: center; gap: 4px;
-}
-.badge-meal.success { background: #d1fae5; color: #065f46; border: 1px solid var(--success); }
-.badge-meal.warning { background: #fee2e2; color: #991b1b; border: 1px solid var(--warning); }
-
-.dragging { opacity: 0.4; border: 2px dashed #999; }
-.drag-over-active { background-color: rgba(59, 130, 246, 0.05); border: 2px dashed var(--primary); }
-
-/* =========================================
-   6. RESPONSIVE
-   ========================================= */
-@media (max-width: 1024px) {
-    .dashboard-container { flex-direction: column; }
-    .sidebar-wrapper {
-        width: 100%;
-        position: relative;
-        height: auto;
-        top: 0;
-        border-right: none;
-        border-bottom: 2px solid var(--border-color);
-    }
-}
