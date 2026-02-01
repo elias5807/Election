@@ -111,22 +111,5 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPole(): ?Pole { return $this->pole; }
     public function setPole(?Pole $pole): static { $this->pole = $pole; return $this; }
 
-    public function __serialize(): array
-    {
-        return [
-            'id' => $this->id,
-            'mail' => $this->mail,
-            'mdp' => $this->mdp,
-            // On ne stocke que l'objet role s'il est chargé
-            'role' => $this->role, 
-        ];
-    }
 
-    public function __unserialize(array $data): void
-    {
-        $this->id = $data['id'] ?? null;
-        $this->mail = $data['mail'] ?? null;
-        $this->mdp = $data['mdp'] ?? null;
-        $this->role = $data['role'] ?? null;
-    }
 }
