@@ -38,29 +38,29 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
-        // Si vide, on rentre à la maison
+        // Si la recherche est vide, on redirige vers l'accueil admin
         if (empty($searchTerm)) {
             return $this->redirectToRoute('app_admin');
         }
 
-        // 1. On récupère les pôles avec ton tri CUSTOM
-        $poles = $poleRepo->findAllOrderedCustom();
+        $poles=$poleRepo->findAllOrderedCustom();
 
-        // 2. Recherche QueryBuilder
-        $militantsResults = $militantRepo->createQueryBuilder('m')
+        // On effectue la recherche
+        $results = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
-            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
+            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
             ->setParameter('t', '%' . $searchTerm . '%')
             ->getQuery()
             ->getResult();
 
-        // 3. On renvoie EXACTEMENT les mêmes variables que la méthode index()
+        // On réutilise le même template pour afficher les résultats filtrés
         return $this->render('admin/index.html.twig', [
-            'poles'      => $poles,
-            'militants'  => $militantsResults, // Le template boucle là-dessus
-            'searchTerm' => $searchTerm,
-            'stats'      => $poleRepo->getGlobalStats(),
+            'militantsParPole' => $this->grouperMilitants($results),
+            'poles'            => $poles,
+            'searchTerm'       => $searchTerm,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
         ]);
     }
 
