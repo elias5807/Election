@@ -23,7 +23,7 @@ class AdminController extends AbstractController
     {
         // 1. Récupérer TOUS les militants actifs maintenant
         $tousMilitants = $militantRepository->militantDispo();
-        $nbFaep = $militantRepository->nbFaep();
+        $nbFaep = $militantRepository->countFaep();
         $stats = $poleRepository->getGlobalStats();
         $poles = $poleRepository->findAll();
 

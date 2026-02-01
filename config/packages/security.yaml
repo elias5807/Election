@@ -1,70 +1,56 @@
 security:
-    # Algorithme de hachage pour votre entité
+    # 1. Hachage des mots de passe
     password_hashers:
         App\Entity\Respo: 'auto'
 
+    # 2. Hiérarchie des rôles
+    role_hierarchy:
+        ROLE_RESPO:       [ROLE_USER]
+        ROLE_ADMIN:       [ROLE_RESPO]
+
+    # 3. Source des utilisateurs
     providers:
-        # On déclare un provider qu'on nomme 'app_user_provider'
-        # Il utilise l'entité Respo et cherche l'utilisateur via la propriété 'mail'
         app_user_provider:
             entity:
                 class: App\Entity\Respo
                 property: mail
-    role_hierarchy:
-        # Le ROLE_RESPO possède aussi les droits du ROLE_USER
-        ROLE_RESPO:       [ROLE_USER]
-        
-        # Le ROLE_ADMIN possède les droits du RESPO (et donc du USER aussi)
-        ROLE_ADMIN:       [ROLE_RESPO]
-        
+
+    # 4. Le Pare-feu (Firewall)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: app_user_provider # On relie le firewall au provider créé au-dessus
+            provider: app_user_provider
             entry_point: App\Security\SecurityAuthenticator
+            custom_authenticator: App\Security\SecurityAuthenticator
 
-            # Configuration pour le formulaire de connexion
             form_login:
-                login_path: app_login  # La route vers la page de login (à créer)
-                check_path: app_login  # La route qui traite le formulaire
+                login_path: app_login
+                check_path: app_login
                 enable_csrf: true
             
-            # Configuration de la déconnexion
             logout:
                 path: app_logout
-            custom_authenticator: App\Security\SecurityAuthenticator
 
             remember_me:
                 secret: '%kernel.secret%'
                 lifetime: 604800
                 path: /
-                # by default, the feature is enabled by checking a checkbox in the
-                # login form, uncomment the following line to always enable it.
-                #always_remember_me: true
-                # where to redirect after logout
-                # target: app_any_route
 
-            # Activate different ways to authenticate:
-            # https://symfony.com/doc/current/security.html#the-firewall
-
-            # https://symfony.com/doc/current/security/impersonating_user.html
-            # switch_user: true
-
-    # Note: Only the *first* matching rule is applied
+    # 5. Contrôle d'accès (Une seule fois !)
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }
+        - { path: ^/responsable, roles: ROLE_RESPO }
+        - { path: ^/stand, roles: ROLE_RESPO }
+        - { path: ^/militant, roles: ROLE_RESPO }
 
 when@test:
     security:
         password_hashers:
-            # Password hashers are resource-intensive by design to ensure security.
-            # In tests, it's safe to reduce their cost to improve performance.
             Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
                 algorithm: auto
-                cost: 4 # Lowest possible value for bcrypt
-                time_cost: 3 # Lowest possible value for argon
-                memory_cost: 10 # Lowest possible value for argon
+                cost: 4
+                time_cost: 3
+                memory_cost: 10
