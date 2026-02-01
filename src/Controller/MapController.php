@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\PoleRepository;
 use App\Repository\StandRepository;
 use App\Repository\MilitantRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_ADMIN')]
 final class MapController extends AbstractController
