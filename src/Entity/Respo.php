@@ -112,14 +112,16 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
             'id' => $this->id,
             'mail' => $this->mail,
             'mdp' => $this->mdp,
-            // On ne sérialise que l'ID des relations pour éviter les erreurs de récurrence
+            // On ne stocke que l'objet role s'il est chargé
+            'role' => $this->role, 
         ];
     }
 
     public function __unserialize(array $data): void
     {
-        $this->id = $data['id'];
-        $this->mail = $data['mail'];
-        $this->mdp = $data['mdp'];
+        $this->id = $data['id'] ?? null;
+        $this->mail = $data['mail'] ?? null;
+        $this->mdp = $data['mdp'] ?? null;
+        $this->role = $data['role'] ?? null;
     }
 }

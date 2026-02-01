@@ -59,16 +59,16 @@ class PoleRepository extends ServiceEntityRepository
         $poles = $this->findAll();
 
         $ordreVoulu = [
-            'Cathédrale', 
-            'Sud', 
-            'Sciences', 
-            'Citadelle', 
-            'Staps', 
-            'IUT', 
-            'Art', 
-            'IFMK', 
-            'Apradis', 
-            'AGORAé', 
+            'Campus Cathédrale', 
+            'Campus Sud', 
+            'Campus Science', 
+            'Campus Citadelle', 
+            'Campus Staps', 
+            'Campus IUT', 
+            'Campus Art', 
+            'Campus IFMK', 
+            'Campus Apradis', 
+            'AGORAE', 
             'Deloc'
         ];
 
