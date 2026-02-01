@@ -1,54 +1,58 @@
-/* --- LAYOUT DU DASHBOARD (Grid System) --- */
-
-/* On retire le scroll du body pour gérer le scroll à l'intérieur des zones */
-body {
-    overflow: hidden; /* Optionnel, selon votre navbar */
+/* --- RESET TOTAL --- */
+html, body {
+    height: auto !important;
+    min-height: 100% !important;
+    overflow-y: auto !important; /* Le scroll appartient au navigateur désormais */
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
 
-/* Le conteneur principal divise l'écran en 2 : 
-    - Colonne 1 : 350px (Sidebar fixe)
-    - Colonne 2 : 1fr (Le reste de l'écran) 
-*/
+/* --- LAYOUT FLEXIBLE --- */
 .dashboard-container {
-    display: grid;
-    grid-template-columns: 350px 1fr; 
-    height: calc(100vh - 60px); /* 100% hauteur écran MOINS la hauteur de la navbar (approx 60px) */
+    display: flex !important;
+    flex-direction: row;
+    min-height: 100vh;
     width: 100%;
+    align-items: stretch;
 }
 
-/* --- ZONE GAUCHE (SIDEBAR) --- */
+/* --- SIDEBAR COLLÉE --- */
 .sidebar-wrapper {
-    background-color: #f8f9fa; /* Gris léger pour distinguer */
-    border-right: 2px solid #e9ecef;
-    overflow-y: auto; /* Scroll indépendant si la liste est longue */
+    width: 350px;
+    flex-shrink: 0;
+    background-color: #f8f9fa;
+    border-right: 2px solid #ddd;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    /* La sidebar reste fixée au haut de l'écran pendant qu'on scrolle le reste */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
 }
 
-/* --- ZONE DROITE (CONTENU PRINCIPAL) --- */
+/* --- ZONE PRINCIPALE LIBÉRÉE --- */
 .main-content-wrapper {
-    background-color: #fff;
-    overflow-y: auto; /* C'est ICI que le scroll principal se fait */
+    flex-grow: 1;
     padding: 30px;
+    background-color: #ffffff;
+    /* Suppression de TOUTE limite de hauteur */
+    height: auto !important;
+    min-height: 100vh;
+    overflow: visible !important; 
 }
 
-/* Grille pour les cartes dans la zone principale (responsive) */
+/* --- LA GRILLE DES PÔLES --- */
 .main-grid-layout {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+    /* On ajoute une énorme marge en bas pour être CERTAIN de voir le dernier */
+    padding-bottom: 300px !important; 
 }
 
-/* --- MOBILE (Responsive) --- */
-@media (max-width: 768px) {
-    .dashboard-container {
-        grid-template-columns: 1fr; /* On repasse en une seule colonne */
-        height: auto;
-    }
-    body { overflow: auto; }
-    .sidebar-wrapper {
-        height: auto;
-        border-right: none;
-        border-bottom: 2px solid #ddd;
-    }
+.pole-section {
+    display: block !important;
+    height: auto !important;
+    position: relative !important;
 }

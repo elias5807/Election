@@ -1,561 +1,296 @@
+/* =========================================
+   1. VARIABLES & RESET
+   ========================================= */
 :root {
-    --faep-green: #1a4d2e;       /* Vert Forêt Institutionnel */
-    --faep-green-light: #25613c; /* Pour le survol */
+    /* Couleurs Institutionnelles */
+    --faep-green: #1a4d2e;
+    --faep-green-light: #25613c;
+    
+    /* Couleurs d'Action */
+    --primary: #3b82f6;
+    --success: #15803d; /* Vert forêt pour "Mangé" */
+    --success-bg: #dcfce7;
+    --danger: #b91c1c;  /* Rouge sombre pour "Pas Mangé" */
+    --danger-bg: #fee2e2;
+    
+    /* Neutres & Backgrounds */
     --white: #ffffff;
-    --text-color: #333;
+    --bg-page: #f4f6f9;
+    --bg-pole: #f1f5f9;
+    --text-main: #1f2937;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    background-color: var(--bg-page);
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    overflow: hidden; /* Empêche le scroll global, on utilise les scrolls internes */
 }
 
 body {
-    margin: 0;
-    /* IMPORTANT : On décale le contenu vers le bas pour ne pas qu'il soit caché sous la barre */
-    padding-top: 80px; 
-    font-family: 'Segoe UI', Roboto, sans-serif;
-    background-color: #f4f6f9;
+    padding-top: 70px; /* Espace pour la Navbar fixe */
 }
 
-/* --- La Barre Principale --- */
+/* =========================================
+   2. BARRE DE NAVIGATION (NAVBAR)
+   ========================================= */
 nav {
-    position: fixed; /* Reste collée en haut lors du scroll */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 70px;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 70px;
     background-color: var(--faep-green);
     color: var(--white);
     display: flex;
-    justify-content: space-between; /* Écarte : Logo à gauche, Stats au milieu, Map à droite */
+    justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
-    box-sizing: border-box;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15); /* Ombre portée */
     z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    box-sizing: border-box;
 }
 
-/* --- Titre / Logo --- */
 nav h1 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin: 0;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* --- La liste des scores (Au milieu) --- */
 nav ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px; /* Espace entre les scores */
+    margin: 0; padding: 0;
+    display: flex; gap: 15px;
 }
 
-/* Style de base pour les items (Uni, UE, Unef) */
 nav li {
-    font-size: 0.95rem;
-    font-weight: 500;
-    background-color: rgba(255, 255, 255, 0.1); /* Fond légèrement transparent */
+    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.1);
     padding: 6px 12px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s;
+    display: flex; align-items: center; gap: 8px;
 }
 
-nav li:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* Style spécial pour mettre en valeur la FAEP */
 nav li.faep-item {
     background-color: var(--white);
-    color: var(--faep-green); /* Texte vert sur fond blanc */
+    color: var(--faep-green);
     font-weight: bold;
-    transform: scale(1.05); /* Légèrement plus gros */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Les chiffres (Scores) */
-nav li span {
-    font-weight: 700;
-    font-size: 1.1rem;
-}
-
-/* --- Le bouton Map (À droite) --- */
 nav a {
     color: var(--white);
     text-decoration: none;
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 8px 20px;
-    border-radius: 30px; /* Forme de pilule */
-    transition: all 0.3s;
+    padding: 8px 18px;
+    border-radius: 30px;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    transition: 0.3s;
 }
 
 nav a:hover {
     background-color: var(--white);
     color: var(--faep-green);
-    border-color: var(--white);
-}
-
-/* --- Responsive (Mobile) --- */
-@media (max-width: 768px) {
-    nav {
-        height: auto;
-        flex-direction: column;
-        padding: 1rem;
-        gap: 1rem;
-    }
-    
-    body {
-        padding-top: 150px; /* Plus d'espace pour le body */
-    }
-    
-    nav ul {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-}
-
-/***************************************
-*      style des militants             *
-*      tout les militants              *
-****************************************/
-/* --- Variables de couleurs (Facile à modifier) --- */
-:root {
-  --bg-card: #ffffff;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --primary: #3b82f6;       /* Bleu standard */
-  --success: #10b981;       /* Vert pour le statut/appel */
-  --danger: #ef4444;        /* Rouge (au cas où) */
-  --border-radius: 12px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-/* --- 1. La Grille Principale --- */
-.dashboard-grid {
-  display: grid;
-  /* Crée des colonnes automatiques (min 280px de large) */
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  padding: 1.5rem;
-  font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
-/* Fait en sorte que le titre H1 prenne toute la largeur de la première ligne */
-.dashboard-grid h1 {
-  grid-column: 1 / -1;
-  font-size: 1.8rem;
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
-  border-bottom: 2px solid #e5e7eb;
-  padding-bottom: 0.5rem;
-}
-
-/* --- 2. La Mini-Carte --- */
-.mini-card {
-  background-color: var(--bg-card);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: 1.5rem;
-  position: relative; /* Pour positionner le point de statut */
-  border: 1px solid #f3f4f6;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.mini-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* --- 3. Point de statut (Présent) --- */
-.status-dot {
-  width: 12px;
-  height: 12px;
-  background-color: var(--success);
-  border-radius: 50%;
-  position: absolute;
-  top: 15px;
-  right: 15px;
-  box-shadow: 0 0 0 2px white; /* Petit contour blanc pour séparer */
-}
-
-/* --- 4. Contenu de la carte --- */
-.card-name {
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: var(--text-main);
-  margin-bottom: 0.75rem;
-  padding-right: 20px; /* Évite que le texte passe sous le point vert */
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; /* Ajoute "..." si le nom est trop long */
-}
-
-.card-pole, 
-.card-time {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 8px; /* Espace entre l'icône et le texte */
-}
-
-.card-pole i, 
-.card-time i {
-  color: var(--primary); /* Couleur des icônes */
-  width: 16px;
-  text-align: center;
-}
-
-/* --- 5. Boutons d'action --- */
-.card-actions {
-  margin-top: 1.25rem;
-  display: flex;
-  gap: 10px;
-}
-
-.btn-mini {
-  flex: 1; /* Les boutons prennent la même largeur */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 0.5rem 0.8rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  border-radius: 6px;
-  text-decoration: none;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-/* Bouton Appeler */
-.btn-call {
-  background-color: #ecfdf5; /* Fond vert très clair */
-  color: var(--success);
-  border: 1px solid #d1fae5;
-}
-
-.btn-call:hover {
-  background-color: var(--success);
-  color: white;
-}
-
-/* Bouton Info */
-.btn-info-card {
-  background-color: #f3f4f6;
-  color: var(--text-main);
-  border: 1px solid #e5e7eb;
-}
-
-.btn-info-card:hover {
-  background-color: #e5e7eb;
-}
-
-/* État désactivé */
-.btn-mini.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: #f9fafb;
-  color: #9ca3af;
-  border-color: #f3f4f6;
-}
-
-/***************************************
-*      style des militants             *
-*      tout les poles                  *
-****************************************/
-/* =========================================
-   1. VARIABLES & RESET
-   ========================================= */
-:root {
-  --primary: #3b82f6;
-  --success: #10b981;
-  --bg-page: #f3f4f6;
-  --bg-card: #ffffff;
-  --bg-section: #f9fafb;
-  --text-main: #1f2937;
-  --text-muted: #6b7280;
-  --border-color: #e5e7eb;
-  --radius: 12px;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 /* =========================================
-   2. CONTENEUR HORIZONTAL (Scrollable)
+   3. LAYOUT GLOBAL (HORIZONTAL KANBAN)
    ========================================= */
 .dashboard-container {
-  display: flex;            /* Alignement horizontal */
-  flex-direction: row;
-  overflow-x: auto;         /* Scroll horizontal si ça dépasse */
-  overflow-y: hidden;
-  gap: 1.5rem;              /* Espace standard entre les colonnes */
-  padding: 1.5rem;
-  align-items: flex-start;  /* Aligne tout en haut */
-  height: calc(100vh - 100px); /* Prend la hauteur de l'écran */
+    display: flex;
+    width: 100vw;
+    height: calc(100vh - 70px);
 }
 
-/* Barre de scroll horizontale plus jolie */
-.dashboard-container::-webkit-scrollbar {
-  height: 8px;
-}
-.dashboard-container::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
+/* Sidebar Fixe à gauche */
+.sidebar-wrapper {
+    width: 320px;
+    flex-shrink: 0;
+    background-color: var(--white);
+    border-right: 2px solid var(--border-color);
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-/* =========================================
-   3. COLONNES (Pôles)
-   ========================================= */
+/* Zone principale (Scroll Horizontal) */
+.main-content-wrapper {
+    flex-grow: 1;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 25px;
+    background-color: var(--bg-page);
+}
+
+.main-grid-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 25px;
+    height: 100%;
+    align-items: flex-start;
+}
+
+/* Colonnes (Pôles) */
 .pole-section {
-  min-width: 320px;         /* Largeur fixe pour chaque colonne */
-  max-width: 320px;
-  flex-shrink: 0;           /* Empêche la colonne de s'écraser */
-  background-color: var(--bg-section);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius);
-  padding: 1rem;
-  
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
+    width: 320px;
+    min-width: 320px;
+    max-height: 100%;
+    background-color: var(--bg-pole);
+    border: none !important;
+    border-radius: 16px !important;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .pole-title {
-  font-size: 1.2rem;
-  color: var(--primary);
-  margin-bottom: 1rem;
-  font-weight: 700;
-  padding-left: 0.5rem;
-  border-left: 4px solid var(--primary);
+    font-size: 1.1rem;
+    color: var(--text-main);
+    font-weight: 800;
+    margin: 0;
+    padding: 1.25rem;
+    border-bottom: 2px solid rgba(0,0,0,0.03);
+}
+
+/* Liste des militants interne (Scroll Vertical) */
+.dashboard-grid, .sidebar-grid {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 150px; /* Crucial pour le drop dans les pôles vides */
 }
 
 /* =========================================
-   4. GRILLE INTERNE & CARTES
+   4. CARTES MILITANTS & BADGES
    ========================================= */
-.dashboard-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  overflow-y: auto;         /* Scroll vertical DANS la colonne */
-  padding-right: 5px;       /* Petit espace pour la scrollbar */
-  flex-grow: 1;
-}
-
-.dashboard-grid::-webkit-scrollbar {
-  width: 5px;
-}
-.dashboard-grid::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
-}
-
-/* --- La Mini Carte --- */
 .mini-card {
-  background-color: var(--bg-card);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1rem;
-  position: relative;
-  border: 1px solid transparent;
-  transition: transform 0.2s, box-shadow 0.2s;
+    background-color: var(--white);
+    border-radius: 12px;
+    padding: 1rem;
+    position: relative;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: grab;
 }
 
 .mini-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-/* --- Détails internes de la carte --- */
-.status-dot {
-  width: 10px; height: 10px;
-  background-color: var(--success);
-  border-radius: 50%;
-  position: absolute; top: 12px; right: 12px;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    border-color: var(--primary);
 }
 
 .card-name {
-  font-weight: 700;
-  font-size: 1rem;
-  color: var(--text-main);
-  margin-bottom: 0.5rem;
-  padding-right: 15px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--text-main);
+    margin-bottom: 0.8rem;
+    padding-right: 15px;
 }
 
-.card-pole, .card-time {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  display: flex; align-items: center; gap: 8px;
-  margin-bottom: 0.25rem;
+.status-dot {
+    width: 10px; height: 10px;
+    background-color: var(--success);
+    border-radius: 50%;
+    position: absolute; top: 12px; right: 12px;
+    box-shadow: 0 0 0 2px white;
 }
 
-.card-pole i, .card-time i {
-  color: var(--primary);
-  width: 16px; text-align: center;
+/* Badges de Repas (Vert/Rouge) */
+.badge-meal {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid transparent;
 }
 
-/* --- Boutons --- */
+/* MANGÉ - VERT */
+.badge-meal.success {
+    background-color: var(--success-bg) !important;
+    color: var(--success) !important;
+    border-color: #bbf7d0 !important;
+}
+.badge-meal.success:hover {
+    background-color: var(--success) !important;
+    color: var(--white) !important;
+}
+
+/* PAS MANGÉ - ROUGE */
+.badge-meal.warning {
+    background-color: var(--danger-bg) !important;
+    color: var(--danger) !important;
+    border-color: #fecaca !important;
+}
+.badge-meal.warning:hover {
+    background-color: var(--danger) !important;
+    color: var(--white) !important;
+}
+
+/* Boutons d'action */
 .card-actions {
-  margin-top: 1rem;
-  display: flex; gap: 8px;
+    margin-top: 1rem;
+    display: flex; gap: 8px;
 }
 
 .btn-mini {
-  flex: 1;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0.5rem;
-  font-size: 0.8rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 600;
-  transition: background 0.2s;
+    flex: 1;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.2s;
 }
 
-.btn-call { background: #ecfdf5; color: var(--success); }
-.btn-call:hover { background: var(--success); color: white; }
+.btn-call { background: #eff6ff; color: var(--primary); border: 1px solid #dbeafe; }
+.btn-call:hover { background: var(--primary); color: white; }
 
-.btn-info-card { background: #e5e7eb; color: var(--text-main); }
-.btn-info-card:hover { background: #d1d5db; }
-
-.btn-mini.disabled {
-  opacity: 0.5; pointer-events: none;
-  background: #f3f4f6; color: #9ca3af;
-}
-
-/* --- LE CONTENEUR PRINCIPAL --- */
-.split-view {
-  display: flex;        /* Active l'alignement côte à côte */
-  width: 100%;
-  height: calc(100vh - 80px); /* Prend toute la hauteur (moins la navbar) */
-  gap: 1.5rem;          /* Espace entre les deux blocs */
-  padding: 1rem;
-  overflow: hidden;     /* Empêche la page entière de scroller */
-}
-
-/* --- COLONNE DE GAUCHE (1/5) --- */
-.split-column.main-content {
-  flex: 1;              /* Prend 1 part */
-  min-width: 0;         /* Indispensable pour éviter les bugs de largeur */
-  
-  /* Optionnel : rendre cette partie scrollable verticalement si besoin */
-  overflow-y: auto;     
-  background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-}
-
-/* --- COLONNE DE DROITE (4/5) --- */
-.split-column.sidebar {
-  flex: 4;              /* Prend 4 parts */
-  min-width: 0;         /* Indispensable pour que le scroll horizontal fonctionne dedans */
-  
-  /* C'est ici que tes pôles vont s'afficher */
-  position: relative;
-}
-
-/* --- RESPONSIVE (MOBILE) --- */
-/* Sur petit écran, on repasse l'un sous l'autre */
-@media (max-width: 1024px) {
-  .split-view {
-    flex-direction: column;
-    height: auto; /* La hauteur s'adapte au contenu */
-    overflow: visible;
-  }
-  
-  .split-column.main-content,
-  .split-column.sidebar {
-    flex: none;   /* On désactive le ratio 1/5 4/5 */
-    width: 100%;  /* On force 100% de largeur */
-  }
-}
-
-/* Quand une carte est en train d'être déplacée (l'originale reste semi-transparente) */
+/* =========================================
+   5. ÉTATS DRAG & DROP
+   ========================================= */
 .dragging {
     opacity: 0.4;
-    border: 2px dashed #999;
+    transform: scale(0.95);
 }
 
-/* Quand on survole une colonne valide pour lâcher la carte */
 .drag-over-active {
-    background-color: rgba(0, 0, 0, 0.05); /* Gris léger */
-    border-radius: 8px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    outline: 2px dashed var(--primary) !important;
+    outline-offset: -4px;
+    border-radius: 12px;
 }
 
-/* --- LA COLONNE FIXE À GAUCHE (Pôle 1) --- */
-
-.sidebar-section {
-    /* C'est ici que la magie opère pour fixer la colonne */
-    position: sticky;
-    left: 0;
-    z-index: 100; /* On s'assure qu'elle passe au-dessus des autres quand on scrolle */
-    
-    /* Design demandé : Blanc et propre */
-    background-color: #ffffff;
-    min-width: 300px; /* Largeur fixe pour la colonne de gauche */
-    max-width: 300px;
-    border-right: 2px solid #e5e7eb; /* Petite bordure grise pour séparer */
-    box-shadow: 4px 0 15px rgba(0,0,0,0.05); /* Ombre portée vers la droite */
-    
-    /* Layout interne */
-    display: flex;
-    flex-direction: column;
-    height: auto; /* Ou 100vh si tu veux qu'elle prenne toute la hauteur */
+/* Zone spécifique pour les non-assignés */
+.unassigned-zone {
+    background-color: #f8fafc;
+    border: 2px dashed var(--border-color);
 }
 
-.sidebar-title {
-    background-color: #ffffff; /* Le titre reste blanc aussi */
-    color: #2563eb; /* Bleu */
-    padding: 15px;
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-bottom: 1px solid #f3f4f6;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.sidebar-grid {
-    padding: 10px;
-    flex-grow: 1; /* Prend tout l'espace restant */
-    overflow-y: auto; /* Permet de scroller verticalement SI la liste est trop longue */
-    min-height: 150px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Badge Repas */
-.badge-meal {
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 4px 10px;
-    border-radius: 20px;
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    transition: all 0.2s ease;
-}
-
-/* Vert si mangé */
-.badge-meal.success {
-    background-color: #d1fae5;
-    color: #065f46;
-    border: 1px solid #10b981;
-}
-
-/* Orange/Rouge si pas mangé */
-.badge-meal.warning {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #f87171;
+/* =========================================
+   6. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+    .dashboard-container { flex-direction: column; overflow-y: auto; }
+    .sidebar-wrapper { width: 100%; height: auto; border-right: none; border-bottom: 2px solid var(--border-color); }
+    .main-content-wrapper { overflow-x: hidden; height: auto; }
+    .main-grid-layout { flex-direction: column; align-items: stretch; }
+    .pole-section { width: 100%; min-width: 100%; }
 }

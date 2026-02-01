@@ -4,12 +4,14 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>{% block title %}Welcome!{% endblock %}</title>
+        
         {% block stylesheets %}
-            {{ importmap('app') }}
+            {# On ne met rien ici concernant l'importmap, sauf tes CSS perso si besoin #}
         {% endblock %}
 
         {% block javascripts %}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            {# L'importmap génère TOUT (JS et CSS mappé) en une seule fois #}
+            {{ importmap('app') }}
         {% endblock %}
     </head>
     <body>

@@ -2,68 +2,81 @@
 
 namespace App\Controller;
 
-use App\Entity\Militant;              // Pour l'entité Militant
-use App\Entity\Pole;                  // (Optionnel selon ton code, mais utile)
-use App\Repository\PoleRepository;    // Pour trouver le pôle
-use App\Repository\MilitantRepository; // Pour trouver les militants
+use App\Entity\Militant;
+use App\Entity\Pole;
+use App\Repository\PoleRepository;
+use App\Repository\MilitantRepository;
 use Symfony\Component\HttpFoundation\Response;
-use Doctrine\ORM\EntityManagerInterface; // Pour sauvegarder
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
+    // src/Controller/AdminController.php
     #[Route('/admin', name: 'app_admin')]
-    #[IsGranted('ROLE_ADMIN')]
-    public function index(PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
+    public function index(PoleRepository $poleRepo, MilitantRepository $militantRepo): Response
     {
-        // 1. Récupérer TOUS les militants actifs maintenant
-        $tousMilitants = $militantRepository->militantDispo();
-
-        $stats = $poleRepository->getGlobalStats();
-        $poles = $poleRepository->findAll();
-
+        // Affichage normal (tous les militants)
+        $allMilitants = $militantRepo->findAllMilitantsPourDashboard();
+        
         return $this->render('admin/index.html.twig', [
-            'militants' => $tousMilitants,
-            'stats' => $stats,
-            'poles' => $poles,
+            'militantsParPole' => $this->grouperMilitants($allMilitants),
+            'poles'            => $poleRepo->findAllOrderedCustom(),
+            'searchTerm'       => null,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
         ]);
     }
 
-    #[Route('/militant/update-pole', name: 'militant_update_pole', methods: ['POST'])]
-    public function updatePole(Request $request, EntityManagerInterface $em): JsonResponse
+    #[Route('/admin/search', name: 'app_admin_search', methods: ['GET'])]
+    public function search(Request $request, PoleRepository $poleRepo, MilitantRepository $militantRepo): Response
     {
-        $data = json_decode($request->getContent(), true);
-        
-        $militantId = $data['id'] ?? null;
-        $poleName = $data['pole'] ?? null;
+        $searchTerm = trim($request->query->get('q', ''));
 
-        $militant = $em->getRepository(Militant::class)->find($militantId);
-
-        if (!$militant) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Militant non trouvé'], 404);
+        // Si la recherche est vide, on redirige vers l'accueil admin
+        if (empty($searchTerm)) {
+            return $this->redirectToRoute('app_admin');
         }
 
-        // Gestion du cas "Non assigné" (si poleName est 'null' ou vide)
-        if ($poleName === 'null' || empty($poleName)) {
-            $militant->setPole(null);
-        } else {
-            // Trouver le pôle par son nom
-            $pole = $em->getRepository(Pole::class)->findOneBy(['nomPole' => $poleName]);
-            if ($pole) {
-                $militant->setPole($pole);
-            }
+        // On effectue la recherche
+        $results = $militantRepo->createQueryBuilder('m')
+            ->leftJoin('m.pole', 'p')
+            ->addSelect('p')
+            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
+            ->setParameter('t', '%' . $searchTerm . '%')
+            ->getQuery()
+            ->getResult();
+
+        // On réutilise le même template pour afficher les résultats filtrés
+        return $this->render('admin/index.html.twig', [
+            'militantsParPole' => $this->grouperMilitants($results),
+            'poles'            => $poleRepo->findAll(),
+            'searchTerm'       => $searchTerm,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
+        ]);
+    }
+
+    /**
+     * Petite fonction utilitaire pour éviter de répéter le foreach du groupement
+     */
+    private function grouperMilitants(array $militants): array
+    {
+        $groupes = [];
+        foreach ($militants as $m) {
+            $poleId = $m->getPole() ? $m->getPole()->getId() : 'sans-pole';
+            $groupes[$poleId][] = $m;
         }
-
-        $em->flush();
-
-        return new JsonResponse(['status' => 'success']);
+        return $groupes;
     }
     
     /**
-     * C'est cette route qui est appelée par le JavaScript 'fetch'
+     * Route utilisée par le Drag & Drop pour mettre à jour le pôle
      */
     #[Route('/militant/{id}/change-pole', name: 'app_militant_change_pole', methods: ['POST'])]
     public function changePole(
@@ -71,9 +84,7 @@ class AdminController extends AbstractController
         Request $request, 
         PoleRepository $poleRepository, 
         EntityManagerInterface $em
-    ): JsonResponse
-    {
-        // 1. On récupère les données envoyées par le JS (le JSON)
+    ): JsonResponse {
         $data = json_decode($request->getContent(), true);
         $nouveauNomPole = $data['poleNom'] ?? null;
 
@@ -81,30 +92,29 @@ class AdminController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => 'Nom du pôle manquant'], 400);
         }
 
-        // 2. On cherche l'entité du nouveau Pôle en base de données
+        // On cherche par 'nomPole' (le nom de la propriété dans ton entité Pole)
         $nouveauPole = $poleRepository->findOneBy(['nomPole' => $nouveauNomPole]);
 
         if (!$nouveauPole) {
             return new JsonResponse(['status' => 'error', 'message' => 'Pôle introuvable'], 404);
         }
 
-        // 3. On met à jour le militant
         $militant->setPole($nouveauPole);
-
-        // 4. On sauvegarde (C'est ici que la BDD est modifiée !)
         $em->flush();
 
-        // 5. On répond au JS que tout s'est bien passé
         return new JsonResponse(['status' => 'success']);
     }
 
-    // src/Controller/AdminController.php
-
+    /**
+     * Route pour cocher/décocher le repas en AJAX
+     */
     #[Route('/admin/militant/{id}/toggle-repas', name: 'app_admin_toggle_repas', methods: ['POST'])]
     public function toggleRepas(Militant $militant, EntityManagerInterface $em): JsonResponse
     {
+        // On inverse l'état actuel
         $militant->setAMange(!$militant->isAMange());
         $em->flush();
+        
         return new JsonResponse(['aMange' => $militant->isAMange()]);
     }  
 }

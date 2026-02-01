@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse; // <--- 1. Import nécessaire
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_RESPO')]
 final class AccueilController extends AbstractController
 {
     #[Route('/responsable', name: 'app_home')]
@@ -58,11 +59,13 @@ final class AccueilController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => 'Formulaire invalide'], 400);
         }
 
+        $responsableGlobal = $RespoRepository->find(1);
         // E. Envoi à la Vue (Affichage initial)
         return $this->render('accueil/index.html.twig', [
             'controller_name' => 'AccueilController',
             'pole' => $pole,
             'monFormulaire' => $form->createView(),
+            'responsable' => $responsableGlobal,
         ]);
     }   
 }

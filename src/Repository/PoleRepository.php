@@ -49,4 +49,40 @@ class PoleRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * Récupère les pôles dans l'ordre spécifique défini par le client
+     * @return Pole[]
+     */
+    public function findAllOrderedCustom(): array
+    {
+        $poles = $this->findAll();
+
+        $ordreVoulu = [
+            'Cathédrale', 
+            'Sud', 
+            'Sciences', 
+            'Citadelle', 
+            'Staps', 
+            'IUT', 
+            'Art', 
+            'IFMK', 
+            'Apradis', 
+            'AGORAé', 
+            'Deloc'
+        ];
+
+        usort($poles, function ($a, $b) use ($ordreVoulu) {
+            $posA = array_search($a->getNomPole(), $ordreVoulu);
+            $posB = array_search($b->getNomPole(), $ordreVoulu);
+
+            // Si un pôle n'est pas dans la liste, on le met à la fin
+            $posA = ($posA === false) ? 999 : $posA;
+            $posB = ($posB === false) ? 999 : $posB;
+
+            return $posA <=> $posB;
+        });
+
+        return $poles;
+    }
 }

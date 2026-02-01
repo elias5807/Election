@@ -46,14 +46,14 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        // Maintenant $this->role existe, donc ça ne plantera plus
-        $roleString = $this->role?->getRoleString();
-
         $roles = [];
-        if ($roleString) {
-            $roles[] = $roleString;
+        
+        // On vérifie de manière sécurisée si l'objet Role existe et a une valeur
+        if ($this->role && method_exists($this->role, 'getRoleString')) {
+            $roles[] = $this->role->getRoleString();
         }
 
+        // On garantit au moins ROLE_USER pour que Symfony ne rejette pas l'utilisateur
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -105,4 +105,21 @@ class Respo implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPole(): ?Pole { return $this->pole; }
     public function setPole(?Pole $pole): static { $this->pole = $pole; return $this; }
+
+    public function __serialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'mail' => $this->mail,
+            'mdp' => $this->mdp,
+            // On ne sérialise que l'ID des relations pour éviter les erreurs de récurrence
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->id = $data['id'];
+        $this->mail = $data['mail'];
+        $this->mdp = $data['mdp'];
+    }
 }
