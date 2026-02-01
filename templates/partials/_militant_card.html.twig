@@ -6,7 +6,7 @@
      data-action="dragstart->native-board#onDragStart dragend->native-board#onDragEnd"
      style="cursor: grab; {% if militant.pole is null %}border-left: 4px solid #999;{% endif %}">
 
-    {# 1. STATUS DOT (Gris si null, Couleur par défaut sinon) #}
+    {# 1. STATUS DOT #}
     <div class="status-dot" 
          {% if militant.pole is null %}style="background-color: #999;"{% endif %} 
          title="{{ militant.pole ? 'Présent' : 'En attente' }}">
@@ -17,66 +17,56 @@
         {{ militant.prenom }} {{ militant.nom|upper }}
     </div>
 
-    {# 3. PÔLE (Affichage dynamique) #}
-    <div class="card-pole">
-        {% if militant.pole %}
-            <i class="fas fa-map-marker-alt"></i> 
-            <span class="pole-text">{{ militant.pole.nomPole }}</span>
-        {% else %}
-            <i class="fas fa-question-circle"></i> 
-            <span class="pole-text" style="font-style: italic; color: #666;">Aucun pôle</span>
-        {% endif %}
-    </div>
-
-    {# 4. HORAIRES (Vérifie l'heure actuelle pour afficher le créneau en cours) #}
-    <div class="card-time">
-        <i class="far fa-clock"></i>
-        {% set has_horaire = false %}
+    {# 3. INFORMATIONS DE CONTACT & DÉTAILS #}
+    <div class="card-details" style="font-size: 0.85rem; color: #4b5563;">
         
-        {% for horaire in militant.horaires %}
-            {# On vérifie si "Maintenant" est compris dans le créneau #}
-            {% if horaire.debut <= date() and horaire.fin >= date() %}
-                {{ horaire.debut|date('H:i') }} - {{ horaire.fin|date('H:i') }}
-                {% set has_horaire = true %}
+        {# TÉLÉPHONE #}
+        <div class="card-phone" style="margin-bottom: 4px;">
+            <i class="fas fa-phone-alt" style="color: #10b981; width: 16px;"></i> 
+            <a href="tel:{{ militant.tel }}" style="text-decoration: none; color: inherit; font-weight: 600;">
+                {{ militant.tel ? militant.tel : 'N/C' }}
+            </a>
+        </div>
+
+        {# PÔLE #}
+        <div class="card-pole" style="margin-bottom: 4px;">
+            {% if militant.pole %}
+                <i class="fas fa-map-marker-alt" style="color: #3b82f6; width: 16px;"></i> 
+                <span class="pole-text">{{ militant.pole.nomPole }}</span>
+            {% else %}
+                <i class="fas fa-question-circle" style="color: #999; width: 16px;"></i> 
+                <span class="pole-text" style="font-style: italic; color: #666;">Aucun pôle</span>
             {% endif %}
-        {% endfor %}
+        </div>
 
-        {% if not has_horaire %}
-            <span style="color: #ccc; font-size: 0.8em;">--:--</span>
-        {% endif %}
+        {# RÉGIME ALIMENTAIRE #}
+        <div class="card-diet" style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #f3f4f6;">
+            <i class="fas fa-leaf" style="color: #8b5cf6; width: 16px;"></i>
+            <span style="font-weight: 500;">Régime :</span> 
+            <span class="badge-diet" style="color: #6d28d9;">
+                {{ militant.regimeAlimentaire ? militant.regimeAlimentaire : 'Standard' }}
+            </span>
+        </div>
     </div>
 
-    {# 5. ACTIONS & REPAS (Interactif) #}
-    <div class="card-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+    {# 5. ACTIONS & REPAS #}
+    <div class="card-actions" style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px;">
         
-        {# 
-           BOUTON REPAS AJAX 
-           - onclick="toggleRepas(this)" : Appelle le JS global
-           - data-url : Contient le lien Symfony vers le contrôleur
-        #}
         <div class="meal-indicator" 
              style="cursor: pointer;" 
              onclick="toggleRepas(this)"
              data-url="{{ path('app_admin_toggle_repas', {id: militant.id}) }}">
             
             {% if militant.aMange %}
-                {# CAS 1 : A MANGÉ (Vert) #}
-                <span class="badge-meal success" title="Cliquez pour annuler">
+                <span class="badge-meal success" title="Cliquez pour annuler" style="background-color: #d1fae5; color: #065f46; border: 1px solid #10b981; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
                     <i class="fas fa-utensils"></i> <span class="meal-text">a Mangé</span>
                 </span>
             {% else %}
-                {# CAS 2 : PAS MANGÉ (Rouge/Orange) #}
-                <span class="badge-meal warning" title="Cliquez pour valider le repas">
+                <span class="badge-meal warning" title="Cliquez pour valider le repas" style="background-color: #fee2e2; color: #991b1b; border: 1px solid #f87171; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; font-weight: 600;">
                     <i class="fas fa-utensils"></i> <span class="meal-text">Pas Mangé</span>
                 </span>
             {% endif %}
-
         </div>
-        
-        {# BOUTON INFO #}
-        <a href="#" class="btn-mini btn-info-card">
-            Information
-        </a>
     </div>
 
 </div>
