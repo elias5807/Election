@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse; // <--- 1. Import nécessaire
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_RESPO')]
 final class AccueilController extends AbstractController
 {
     #[Route('/responsable', name: 'app_home')]

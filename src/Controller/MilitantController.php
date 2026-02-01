@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
+#[IsGranted('ROLE_RESPO')]
 final class MilitantController extends AbstractController
 {
     #[Route('/militant', name: 'app_militant')]

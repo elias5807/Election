@@ -30,7 +30,7 @@ export default class extends Controller {
 
     initMap() {
         // 'this.element' correspond à la div possédant le data-controller
-        this.map = L.map(this.element).setView([49.894, 2.302], 13);
+        this.map = L.map(this.element).setView([49.894, 2.302], 12);
         
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap'

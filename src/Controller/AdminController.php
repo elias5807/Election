@@ -12,7 +12,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 
+#[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'app_admin')]
@@ -21,12 +23,13 @@ class AdminController extends AbstractController
     {
         // 1. Récupérer TOUS les militants actifs maintenant
         $tousMilitants = $militantRepository->militantDispo();
-
+        $nbFaep = $militantRepository->nbFaep();
         $stats = $poleRepository->getGlobalStats();
         $poles = $poleRepository->findAll();
 
         return $this->render('admin/index.html.twig', [
             'militants' => $tousMilitants,
+            'nbFaep' => $nbFaep,
             'stats' => $stats,
             'poles' => $poles,
         ]);

@@ -45,4 +45,24 @@ class MilitantRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function countFaep(): int {
+        $now = new \DateTime();
+
+        return (int) $this->createQueryBuilder('m')
+            // On compte les identifiants uniques de 'm' (militant)
+            ->select('COUNT(DISTINCT m.id)')
+            
+            // Jointure nécessaire pour filtrer sur les horaires
+            ->innerJoin('m.horaires', 'h')
+            
+            // Conditions temporelles
+            ->where('h.debut <= :now')
+            ->andWhere('h.fin >= :now')
+            ->setParameter('now', $now)
+
+            ->getQuery()
+            // On récupère une valeur unique (le nombre)
+            ->getSingleScalarResult();
+    }
 }
