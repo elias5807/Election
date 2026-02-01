@@ -26,7 +26,7 @@ class AdminController extends AbstractController
         
         return $this->render('admin/index.html.twig', [
             'militantsParPole' => $this->grouperMilitants($allMilitants),
-            'poles'            => $poleRepo->findAll(),
+            'poles'            => $poleRepo->findAllOrderedCustom(),
             'searchTerm'       => null,
             'nbFaep'           => $militantRepo->countFaep(),
             'stats'            => $poleRepo->getGlobalStats(),

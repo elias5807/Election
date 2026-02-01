@@ -59,11 +59,13 @@ final class AccueilController extends AbstractController
             return new JsonResponse(['status' => 'error', 'message' => 'Formulaire invalide'], 400);
         }
 
+        $responsableGlobal = $RespoRepository->find(1);
         // E. Envoi à la Vue (Affichage initial)
         return $this->render('accueil/index.html.twig', [
             'controller_name' => 'AccueilController',
             'pole' => $pole,
             'monFormulaire' => $form->createView(),
+            'responsable' => $responsableGlobal,
         ]);
     }   
 }
