@@ -35,18 +35,6 @@
             {% endif %}
 
             <hr>
-
-            {# --- ZONE NON ASSIGNÉ (Pour remettre les gens en attente) --- #}
-            <div class="sidebar-section">
-                <h3 class="sidebar-title text-muted"><i class="fas fa-user-slash"></i> Non assignés</h3>
-                <div class="sidebar-grid unassigned-zone" 
-                    data-pole="null" 
-                    data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
-                    {% for militant in militantsParPole['sans-pole'] ?? [] %}
-                        {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                    {% endfor %}
-                </div>
-            </div>
         </aside>
 
         <main class="main-content-wrapper">
