@@ -21,6 +21,9 @@ class AdminController extends AbstractController
     #[Route('/admin', name: 'app_admin')]
     public function index(Request $request, PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
     {
+        $query = $request->query->get('q');
+        $allMilitants = $militantRepository->findBySearch($query);
+        dd($allMilitants); // Ceci va arrêter le code et afficher les résultats.
         // Récupération du terme de recherche depuis l'URL (ex: /admin?q=durand)
         $searchTerm = $request->query->get('q');
 
