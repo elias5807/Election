@@ -12,9 +12,14 @@ html, body {
 .dashboard-container {
     display: grid;
     grid-template-columns: 350px 1fr; 
-    height: calc(100vh - 60px); /* Hauteur écran MOINS la navbar */
+    /* On utilise vh pour occuper TOUT l'écran restant */
+    /* Si ta navbar est "fixe", utilise 100vh. Si elle est normale, garde le calc */
+    height: calc(100vh - 60px); 
     width: 100%;
-    overflow: hidden; /* Important : le container ne doit pas scroller lui-même */
+    
+    /* SECURITÉ : On s'assure que le container lui-même ne scrolle pas */
+    overflow: hidden; 
+    position: relative;
 }
 
 /* --- ZONE GAUCHE (SIDEBAR) --- */
@@ -34,10 +39,10 @@ html, body {
     background-color: #fff;
     padding: 30px;
     
-    /* C'est ICI que la magie opère pour le scroll des pôles */
+    /* FORCE LE SCROLL ICI */
     height: 100%; 
-    overflow-y: auto; 
-    box-sizing: border-box; /* Pour que le padding ne casse pas la hauteur */
+    overflow-y: auto !important; 
+    display: block;
 }
 
 /* Grille pour les cartes dans la zone principale (responsive) */
@@ -45,8 +50,7 @@ html, body {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 20px;
-    /* On laisse la grille s'étendre en hauteur, le parent gérera le scroll */
-    height: auto; 
+    padding-bottom: 100px; /* Ajoute de l'espace en bas pour être sûr de voir le dernier pôle */
 }
 
 /* --- ÉLÉMENTS DU DASHBOARD --- */

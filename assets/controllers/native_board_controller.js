@@ -2,67 +2,106 @@ import { Controller } from '@hotwired/stimulus';
 
 export default class extends Controller {
     
+    initialize() {
+        // Configuration de l'auto-scroll
+        this.scrollSpeed = 12;      // Vitesse de défilement (pixels)
+        this.scrollThreshold = 120; // Zone sensible (pixels depuis le bord)
+        this.autoScrollInterval = null;
+    }
+
     // Quand on commence à traîner une carte
     onDragStart(event) {
-        // On stocke l'ID de la carte déplacée
         event.dataTransfer.setData('text/plain', event.target.dataset.id);
         event.dataTransfer.effectAllowed = 'move';
-        
-        // Ajout classe visuelle
         event.target.classList.add('dragging');
     }
 
     // Quand on relâche la carte (ou qu'on annule)
     onDragEnd(event) {
         event.target.classList.remove('dragging');
+        this.stopAutoScroll(); // Sécurité : on arrête le scroll si on lâche
         
-        // Nettoyage visuel de toutes les colonnes
         this.element.querySelectorAll('.drag-over-active').forEach(el => {
             el.classList.remove('drag-over-active');
         });
     }
 
-    // OBLIGATOIRE : Autoriser le drop sur la zone
+    // Autoriser le drop ET gérer l'auto-scroll
     onDragOver(event) {
-        event.preventDefault(); // Nécessaire pour permettre le drop
+        event.preventDefault();
         event.dataTransfer.dropEffect = 'move';
+
+        // On cible le conteneur principal qui a la scrollbar (.main-content-wrapper)
+        const scrollContainer = event.currentTarget.closest('.main-content-wrapper');
+        
+        if (scrollContainer) {
+            this.handleAutoScroll(event, scrollContainer);
+        }
+
         return false;
     }
 
-    // Effet visuel quand on entre dans une colonne
+    // Logique d'auto-scroll
+    handleAutoScroll(event, container) {
+        const rect = container.getBoundingClientRect();
+        const mouseY = event.clientY;
+
+        // Calcul des distances par rapport aux bords haut et bas du container visible
+        const distTop = mouseY - rect.top;
+        const distBottom = rect.bottom - mouseY;
+
+        // On nettoie l'intervalle précédent
+        clearInterval(this.autoScrollInterval);
+        this.autoScrollInterval = null;
+
+        if (distTop < this.scrollThreshold) {
+            // Si on est près du haut -> Scroll vers le haut
+            this.autoScrollInterval = setInterval(() => {
+                container.scrollTop -= this.scrollSpeed;
+            }, 20);
+        } else if (distBottom < this.scrollThreshold) {
+            // Si on est près du bas -> Scroll vers le bas
+            this.autoScrollInterval = setInterval(() => {
+                container.scrollTop += this.scrollSpeed;
+            }, 20);
+        }
+    }
+
+    // Arrêt du scroll automatique
+    stopAutoScroll() {
+        if (this.autoScrollInterval) {
+            clearInterval(this.autoScrollInterval);
+            this.autoScrollInterval = null;
+        }
+    }
+
     onDragEnter(event) {
         event.currentTarget.classList.add('drag-over-active');
     }
 
-    // Effet visuel quand on sort d'une colonne
     onDragLeave(event) {
         event.currentTarget.classList.remove('drag-over-active');
+        // Si on quitte complètement la zone de drop, on calme le scroll
+        this.stopAutoScroll();
     }
 
-    // L'ACTION FINALE : Quand on lâche la carte
     async onDrop(event) {
-        event.stopPropagation(); // Empêche les conflits
+        event.stopPropagation();
+        this.stopAutoScroll(); // Important : arrêter le scroll au moment du drop
         event.currentTarget.classList.remove('drag-over-active');
 
-        // 1. Récupérer l'ID stocké
         const militantId = event.dataTransfer.getData('text/plain');
-        
-        // 2. Trouver l'élément HTML de la carte
         const card = document.querySelector(`.mini-card[data-id="${militantId}"]`);
-        
-        // 3. Identifier la nouvelle colonne (currentTarget est la div .dashboard-grid)
         const newColumn = event.currentTarget;
         const newPoleNom = newColumn.dataset.pole;
 
-        // 4. Déplacer visuellement la carte dans le DOM tout de suite
-        newColumn.appendChild(card);
-        
-        // 4b. Mettre à jour le texte du pôle sur la carte (optionnel mais propre)
-        const poleLabel = card.querySelector('.pole-text');
-        if (poleLabel) poleLabel.textContent = newPoleNom;
-
-        // 5. Appeler le serveur (Symfony)
-        this.savePosition(militantId, newPoleNom);
+        if (card) {
+            newColumn.appendChild(card);
+            const poleLabel = card.querySelector('.pole-text');
+            if (poleLabel) poleLabel.textContent = newPoleNom;
+            
+            this.savePosition(militantId, newPoleNom);
+        }
     }
 
     async savePosition(id, poleNom) {
@@ -74,18 +113,15 @@ export default class extends Controller {
             });
 
             if (!response.ok) {
-                // TENTATIVE DE LIRE L'ERREUR SYMFONY
                 const text = await response.text(); 
-                console.error("Erreur Symfony :", text); // Regarde la console F12
-                
-                alert('Erreur serveur (' + response.status + ') ! Regarde la console (F12) pour le détail.');
-                // window.location.reload(); // Je commente ça pour te laisser le temps de lire
+                console.error("Erreur Symfony :", text);
+                alert('Erreur lors de la sauvegarde. Vérifiez la console.');
             } else {
-                console.log("Sauvegarde réussie !");
+                console.log("Sauvegarde réussie pour le militant " + id);
             }
         } catch (e) {
             console.error(e);
-            alert('Erreur réseau ou JavaScript : ' + e.message);
+            alert('Erreur réseau : ' + e.message);
         }
     }
 }
