@@ -56,4 +56,22 @@ class MilitantRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // src/Repository/MilitantRepository.php
+    public function searchMilitants(?string $query, ?Pole $pole)
+    {
+        $qb = $this->createQueryBuilder('m');
+
+        if ($query) {
+            $qb->andWhere('m.nom LIKE :q OR m.prenom LIKE :q')
+            ->setParameter('q', '%'.$query.'%');
+        }
+
+        if ($pole) {
+            $qb->andWhere('m.pole = :pole')
+            ->setParameter('pole', $pole);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }

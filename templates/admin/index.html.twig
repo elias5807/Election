@@ -16,26 +16,58 @@
     {# ... début du fichier ... #}
     <div class="dashboard-container" data-controller="native-board">
 
-        <aside class="sidebar-wrapper">
-            {# --- PÔLE 1 (Exécutif / Fixe) --- #}
-            {% set pole1 = null %}
-            {% for pole in poles %}{% if pole.id == 1 %}{% set pole1 = pole %}{% endif %}{% endfor %}
+{# templates/admin/index.html.twig #}
 
-            {% if pole1 %}
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
-                    <div class="sidebar-grid" 
-                        data-pole="{{ pole1.nomPole }}"
-                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
-                        {% for militant in militantsParPole[1] ?? [] %}
-                            {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                        {% endfor %}
-                    </div>
+    <aside class="sidebar-wrapper">
+        {# --- PÔLE 1 (Exécutif / Fixe) --- #}
+        {% set pole1 = null %}
+        {% for pole in poles %}{% if pole.id == 1 %}{% set pole1 = pole %}{% endif %}{% endfor %}
+
+        {% if pole1 %}
+            <div class="sidebar-section">
+                <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
+                
+                {# --- BARRE DE RECHERCHE AJOUTÉE ICI --- #}
+                <div class="search-bar-container px-3 mb-3">
+                    <form action="{{ path('app_admin') }}" method="get" class="d-flex shadow-sm">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                name="q" 
+                                value="{{ searchTerm|default('') }}" 
+                                class="form-control form-control-sm border-end-0" 
+                                placeholder="Chercher un nom..."
+                                style="border-radius: 20px 0 0 20px;"
+                            >
+                            {% if searchTerm %}
+                                <a href="{{ path('app_admin') }}" class="btn btn-sm btn-white border-top border-bottom bg-white text-danger">
+                                    <i class="fas fa-times"></i>
+                                </a>
+                            {% endif %}
+                            <button class="btn btn-sm btn-primary" type="submit" style="border-radius: 0 20px 20px 0;">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            {% endif %}
 
-            <hr>
-        </aside>
+                <div class="sidebar-grid" 
+                    data-pole="{{ pole1.nomPole }}"
+                    data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
+                    
+                    {% set militantsPole1 = militantsParPole[1] ?? [] %}
+                    
+                    {% for militant in militantsPole1 %}
+                        {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                    {% else %}
+                        <p class="text-center text-muted small mt-2">Aucun résultat</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <hr>
+    </aside>
 
         <main class="main-content-wrapper">
             <div class="main-grid-layout">

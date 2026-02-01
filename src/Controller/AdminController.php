@@ -17,19 +17,26 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
+    // src/Controller/AdminController.php
     #[Route('/admin', name: 'app_admin')]
-    public function index(PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
+    public function index(Request $request, PoleRepository $poleRepository, MilitantRepository $militantRepository): Response
     {
-        // 1. Statistiques globales
+        // Récupération du terme de recherche depuis l'URL (ex: /admin?q=durand)
+        $searchTerm = $request->query->get('q');
+
+        // 1. Statistiques globales (restent inchangées)
         $nbFaep = $militantRepository->countFaep();
         $stats = $poleRepository->getGlobalStats();
-        
-        // 2. Récupération des entités
         $poles = $poleRepository->findAll();
-        // Utilisation du nom de variable correct injecté en argument
-        $allMilitants = $militantRepository->findAllMilitantsPourDashboard();
 
-        // 3. Groupement des militants par ID de pôle pour éviter l'erreur 500 sur les clés d'objets
+        // 2. Récupération filtrée ou globale
+        if ($searchTerm) {
+            $allMilitants = $militantRepository->findBySearchTerm($searchTerm);
+        } else {
+            $allMilitants = $militantRepository->findAllMilitantsPourDashboard();
+        }
+
+        // 3. Groupement (ton code actuel fonctionne toujours)
         $militantsGroupes = [];
         foreach ($allMilitants as $m) {
             $poleId = $m->getPole() ? $m->getPole()->getId() : 'sans-pole';
@@ -41,9 +48,9 @@ class AdminController extends AbstractController
             'nbFaep' => $nbFaep,
             'stats' => $stats,
             'poles' => $poles,
+            'searchTerm' => $searchTerm // On renvoie le terme pour l'afficher dans l'input
         ]);
     }
-
     /**
      * Route utilisée par le Drag & Drop pour mettre à jour le pôle
      */
