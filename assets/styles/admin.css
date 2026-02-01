@@ -3,7 +3,7 @@ html, body {
     margin: 0;
     padding: 0;
     height: 100vh; /* On fixe la hauteur à celle de l'écran */
-    overflow: hidden; /* On empêche le scroll global pour éviter le "double scroll" */
+    overflow: auto; /* On empêche le scroll global pour éviter le "double scroll" */
     font-family: sans-serif;
 }
 
