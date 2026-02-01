@@ -17,49 +17,43 @@ class MilitantRepository extends ServiceEntityRepository
     }
 
     /**
-     * Récupère les militants qui ont un créneau horaire actif maintenant.
-     * @return Militant[]
+     * Récupère tous les militants pour le Dashboard (Trello-style)
+     * Optimisé pour éviter les erreurs 500 et les ralentissements (N+1 queries)
      */
-    public function militantDispo(): array
-    {
-
-        return $this->createQueryBuilder('m')
-            // 1. Jointure OBLIGATOIRE sur les horaires pour vérifier l'heure
-            ->innerJoin('m.horaires', 'h')
-            
-            // 2. OPTIMISATION (Eager Loading) : 
-            // On sélectionne ("addSelect") les horaires et les pôles directement.
-            // Cela évite que Symfony refasse 50 requêtes SQL quand vous ferez la boucle dans le HTML.
-            ->addSelect('h') 
-            ->leftJoin('m.pole', 'p')
-            ->addSelect('p')
-            // 3. Distinction pour éviter les doublons si jointures multiples
-            ->distinct()
-
-            ->getQuery()
-            ->getResult();
-    }
-
     public function findAllMilitantsPourDashboard(): array
     {
         return $this->createQueryBuilder('m')
-            ->addSelect('p')
-            ->leftJoin('m.pole', 'p')
-            ->orderBy('p.nom_pole', 'ASC') // "nom_pole" d'après tes logs
+            ->leftJoin('m.pole', 'p') // Jointure sur la relation 'pole' de l'entité Militant
+            ->addSelect('p')           // Récupère les données du pôle en une seule requête
+            ->orderBy('p.nomPole', 'ASC') // Utilisation du nom de la PROPRIÉTÉ PHP (nomPole)
             ->addOrderBy('m.nom', 'ASC')
             ->getQuery()
             ->getResult();
     }
 
-    public function countFaep(): int {
-        $now = new \DateTime();
-
+    /**
+     * Compte le nombre total de militants (utilisé pour les stats du dashboard)
+     */
+    public function countFaep(): int 
+    {
         return (int) $this->createQueryBuilder('m')
-            // On compte les identifiants uniques de 'm' (militant)
-            ->select('COUNT(DISTINCT m.id)')
-
+            ->select('COUNT(m.id)') // Utilise l'ID tel que défini dans ton entité Militant
             ->getQuery()
-            // On récupère une valeur unique (le nombre)
             ->getSingleScalarResult();
+    }
+
+    /**
+     * Récupère les militants disponibles avec leurs horaires (si besoin de filtrer par heure)
+     */
+    public function militantDispo(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->innerJoin('m.horaires', 'h')
+            ->addSelect('h') 
+            ->leftJoin('m.pole', 'p')
+            ->addSelect('p')
+            ->distinct()
+            ->getQuery()
+            ->getResult();
     }
 }

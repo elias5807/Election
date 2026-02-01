@@ -10,17 +10,21 @@
 {% block body %}
     {% include 'partials/_navbar.html.twig' %}
     
-    {# Rafraîchissement automatique toutes les 60s #}
+    {# Rafraîchissement automatique toutes les 60s pour voir les nouveaux scores/militants #}
     <meta http-equiv="refresh" content="60">
 
     <div class="dashboard-container" data-controller="native-board">
 
         {# ================================================= #}
-        {# ZONE 1 : SIDEBAR (PÔLE 1)                         #}
+        {# ZONE 1 : SIDEBAR (PÔLE 1 - EXÉCUTIF)              #}
         {# ================================================= #}
         <aside class="sidebar-wrapper">
             {% set pole1 = null %}
-            {% for pole in poles %}{% if pole.id == 1 %}{% set pole1 = pole %}{% endif %}{% endfor %}
+            {% for pole in poles %}
+                {% if pole.id == 1 %}
+                    {% set pole1 = pole %}
+                {% endif %}
+            {% endfor %}
 
             {% if pole1 %}
                 <div class="sidebar-section">
@@ -32,8 +36,8 @@
                          data-pole="{{ pole1.nomPole }}"
                          data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
                         
-                        {# On utilise le groupement par pôle envoyé par le contrôleur #}
-                        {% for militant in militantsParPole[pole1.nomPole] ?? [] %}
+                        {# On utilise l'ID '1' pour piocher dans le tableau groupé du Controller #}
+                        {% for militant in militantsParPole[1] ?? [] %}
                             {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                         {% endfor %}
                     </div>
@@ -48,8 +52,9 @@
             <h2 class="mb-4">Flux des Pôles</h2>
 
             <div class="main-grid-layout">
-                {# On boucle sur les pôles restants #}
+                {# On boucle sur les pôles pour créer les colonnes #}
                 {% for pole in poles %}
+                    {# On exclut le pôle 1 car il est déjà dans la sidebar #}
                     {% if pole.id != 1 %}
                         <section class="pole-section card shadow-sm">
                             <div class="card-header bg-white">
@@ -61,10 +66,11 @@
                                      data-pole="{{ pole.nomPole }}"
                                      data-action="dragover->native-board#onDragOver drop->native-board#onDrop dragenter->native-board#onDragEnter dragleave->native-board#onDragLeave">
                                     
-                                    {# On affiche les militants de ce pôle via le tableau groupé #}
-                                    {% for militant in militantsParPole[pole.nomPole] ?? [] %}
+                                    {# On récupère les militants via l'ID du pôle (clé du tableau PHP) #}
+                                    {% for militant in militantsParPole[pole.id] ?? [] %}
                                         {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                                     {% endfor %}
+                                    
                                 </div>
                             </div>
                         </section>
@@ -74,12 +80,14 @@
         </main>
     </div>
 
-    {# --- SCRIPT REPAS (inchangé) --- #}
+    {# --- SCRIPT REPAS (Gestion AJAX) --- #}
     <script>
         function toggleRepas(element) {
             const url = element.dataset.url;
             const badge = element.querySelector('.badge-meal');
             const textSpan = element.querySelector('.meal-text');
+
+            if (!url) return;
 
             badge.style.opacity = '0.5';
             badge.style.cursor = 'wait';
@@ -106,9 +114,8 @@
             .catch(err => {
                 console.error(err);
                 badge.style.opacity = '1';
-                alert("Erreur de connexion");
+                alert("Erreur lors de la mise à jour du repas");
             });
         }
     </script>
-   
 {% endblock %}
