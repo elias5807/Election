@@ -1,37 +1,42 @@
 /* =========================================
-   1. VARIABLES & RESET (Unifiés)
+   1. VARIABLES & RESET
    ========================================= */
 :root {
+    /* Couleurs Institutionnelles */
     --faep-green: #1a4d2e;
+    --faep-green-light: #25613c;
+    
+    /* Couleurs d'Action */
     --primary: #3b82f6;
-    --success: #10b981;
-    --danger: #ef4444;
-    --warning: #f87171;
+    --success: #15803d; /* Vert forêt pour "Mangé" */
+    --success-bg: #dcfce7;
+    --danger: #b91c1c;  /* Rouge sombre pour "Pas Mangé" */
+    --danger-bg: #fee2e2;
+    
+    /* Neutres & Backgrounds */
     --white: #ffffff;
     --bg-page: #f4f6f9;
+    --bg-pole: #f1f5f9;
     --text-main: #1f2937;
-    --text-muted: #6b7280;
-    --border-color: #e5e7eb;
-    --radius: 12px;
-    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
 }
 
 html, body {
     margin: 0;
     padding: 0;
-    height: 100vh; /* Fixe la hauteur pour forcer le scroll interne */
+    height: 100vh;
     background-color: var(--bg-page);
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    overflow: hidden; /* Empêche le scroll global du navigateur */
+    font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    overflow: hidden; /* Empêche le scroll global, on utilise les scrolls internes */
 }
 
 body {
-    padding-top: 70px; 
-    box-sizing: border-box;
+    padding-top: 70px; /* Espace pour la Navbar fixe */
 }
 
 /* =========================================
-   2. NAVBAR
+   2. BARRE DE NAVIGATION (NAVBAR)
    ========================================= */
 nav {
     position: fixed;
@@ -49,53 +54,43 @@ nav {
 }
 
 nav h1 {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     margin: 0;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Liste des scores */
 nav ul {
     list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 20px;
+    margin: 0; padding: 0;
+    display: flex; gap: 15px;
 }
 
 nav li {
-    font-size: 0.95rem;
-    font-weight: 500;
+    font-size: 0.9rem;
     background-color: rgba(255, 255, 255, 0.1);
     padding: 6px 12px;
     border-radius: 6px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: background 0.2s;
+    display: flex; align-items: center; gap: 8px;
 }
 
 nav li.faep-item {
     background-color: var(--white);
     color: var(--faep-green);
     font-weight: bold;
-    transform: scale(1.05);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-/* Bouton Map */
 nav a {
     color: var(--white);
     text-decoration: none;
     font-weight: 600;
     border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 8px 20px;
+    padding: 8px 18px;
     border-radius: 30px;
-    transition: all 0.3s;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    transition: 0.3s;
 }
 
 nav a:hover {
@@ -104,7 +99,7 @@ nav a:hover {
 }
 
 /* =========================================
-   3. LAYOUT GLOBAL (HORIZONTAL)
+   3. LAYOUT GLOBAL (HORIZONTAL KANBAN)
    ========================================= */
 .dashboard-container {
     display: flex;
@@ -112,7 +107,7 @@ nav a:hover {
     height: calc(100vh - 70px);
 }
 
-/* Sidebar reste à gauche */
+/* Sidebar Fixe à gauche */
 .sidebar-wrapper {
     width: 320px;
     flex-shrink: 0;
@@ -120,98 +115,135 @@ nav a:hover {
     border-right: 2px solid var(--border-color);
     padding: 20px;
     overflow-y: auto;
-    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-/* Zone principale : Active le scroll horizontal */
+/* Zone principale (Scroll Horizontal) */
 .main-content-wrapper {
     flex-grow: 1;
-    overflow-x: auto; /* Permet de scroller vers la droite */
+    overflow-x: auto;
     overflow-y: hidden;
-    padding: 20px;
+    padding: 25px;
     background-color: var(--bg-page);
 }
 
-/* Grille transformée en ligne flexible */
 .main-grid-layout {
-    display: flex; /* Aligne les pôles en ligne */
+    display: flex;
     flex-direction: row;
-    gap: 20px;
+    gap: 25px;
     height: 100%;
     align-items: flex-start;
 }
 
-/* Chaque colonne (Pôle) */
+/* Colonnes (Pôles) */
 .pole-section {
-    width: 320px; /* Largeur fixe pour chaque pôle */
+    width: 320px;
     min-width: 320px;
     max-height: 100%;
-    background-color: #f9fafb;
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius);
+    background-color: var(--bg-pole);
+    border: none !important;
+    border-radius: 16px !important;
     display: flex;
     flex-direction: column;
-    padding: 15px;
-    box-sizing: border-box;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-/* La liste des militants dans chaque pôle scrolle verticalement */
-.dashboard-grid {
+.pole-title {
+    font-size: 1.1rem;
+    color: var(--text-main);
+    font-weight: 800;
+    margin: 0;
+    padding: 1.25rem;
+    border-bottom: 2px solid rgba(0,0,0,0.03);
+}
+
+/* Liste des militants interne (Scroll Vertical) */
+.dashboard-grid, .sidebar-grid {
     flex-grow: 1;
     overflow-y: auto;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    padding-right: 5px;
+    min-height: 150px; /* Crucial pour le drop dans les pôles vides */
 }
 
-/* Style de la scrollbar horizontale */
-.main-content-wrapper::-webkit-scrollbar {
-    height: 10px;
-}
-.main-content-wrapper::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 5px;
-}
-
-/* Permet de drop dans les colonnes vides */
-.dashboard-grid, .sidebar-grid {
-    min-height: 200px !important; /* Donne de l'espace même si c'est vide */
-    border: 2px solid transparent;
-    transition: all 0.2s ease;
-}
-
-/* Visuel quand on survole une colonne avec une carte */
-.drag-over-active {
-    background-color: rgba(59, 130, 246, 0.1) !important;
-    border: 2px dashed #3b82f6 !important;
-    border-radius: 8px;
-}
-
-/* Style optionnel pour la zone non-assignée */
-.unassigned-zone {
-    background-color: #f8fafc;
-    border: 1px dashed #cbd5e1;
-}
 /* =========================================
-   4. COMPOSANT : MINI CARTE
+   4. CARTES MILITANTS & BADGES
    ========================================= */
 .mini-card {
     background-color: var(--white);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border-radius: 12px;
     padding: 1rem;
     position: relative;
     border: 1px solid var(--border-color);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: grab;
+}
+
+.mini-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    border-color: var(--primary);
 }
 
 .card-name {
     font-weight: 700;
     font-size: 0.95rem;
     color: var(--text-main);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
+    padding-right: 15px;
 }
 
+.status-dot {
+    width: 10px; height: 10px;
+    background-color: var(--success);
+    border-radius: 50%;
+    position: absolute; top: 12px; right: 12px;
+    box-shadow: 0 0 0 2px white;
+}
+
+/* Badges de Repas (Vert/Rouge) */
+.badge-meal {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid transparent;
+}
+
+/* MANGÉ - VERT */
+.badge-meal.success {
+    background-color: var(--success-bg) !important;
+    color: var(--success) !important;
+    border-color: #bbf7d0 !important;
+}
+.badge-meal.success:hover {
+    background-color: var(--success) !important;
+    color: var(--white) !important;
+}
+
+/* PAS MANGÉ - ROUGE */
+.badge-meal.warning {
+    background-color: var(--danger-bg) !important;
+    color: var(--danger) !important;
+    border-color: #fecaca !important;
+}
+.badge-meal.warning:hover {
+    background-color: var(--danger) !important;
+    color: var(--white) !important;
+}
+
+/* Boutons d'action */
 .card-actions {
     margin-top: 1rem;
     display: flex; gap: 8px;
@@ -219,14 +251,46 @@ nav a:hover {
 
 .btn-mini {
     flex: 1;
-    display: inline-flex;
-    align-items: center; justify-content: center;
-    padding: 0.4rem;
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 8px;
     font-size: 0.75rem;
-    font-weight: 600;
-    border-radius: 6px;
+    font-weight: 700;
+    border-radius: 8px;
     text-decoration: none;
+    transition: 0.2s;
 }
 
-.btn-call { background: #ecfdf5; color: var(--success); border: 1px solid #d1fae5; }
-.btn-info-card { background: #f3f4f6; color: var(--text-main); border: 1px solid var(--border-color); }
+.btn-call { background: #eff6ff; color: var(--primary); border: 1px solid #dbeafe; }
+.btn-call:hover { background: var(--primary); color: white; }
+
+/* =========================================
+   5. ÉTATS DRAG & DROP
+   ========================================= */
+.dragging {
+    opacity: 0.4;
+    transform: scale(0.95);
+}
+
+.drag-over-active {
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    outline: 2px dashed var(--primary) !important;
+    outline-offset: -4px;
+    border-radius: 12px;
+}
+
+/* Zone spécifique pour les non-assignés */
+.unassigned-zone {
+    background-color: #f8fafc;
+    border: 2px dashed var(--border-color);
+}
+
+/* =========================================
+   6. RESPONSIVE
+   ========================================= */
+@media (max-width: 1024px) {
+    .dashboard-container { flex-direction: column; overflow-y: auto; }
+    .sidebar-wrapper { width: 100%; height: auto; border-right: none; border-bottom: 2px solid var(--border-color); }
+    .main-content-wrapper { overflow-x: hidden; height: auto; }
+    .main-grid-layout { flex-direction: column; align-items: stretch; }
+    .pole-section { width: 100%; min-width: 100%; }
+}
