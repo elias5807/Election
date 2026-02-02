@@ -1,28 +1,28 @@
-{# templates/admin/_dashboard_content.html.twig #}
-<div class="dashboard-container" id="all-dashboard-content">
+<div class="dashboard-container">
     
-    {# --- SIDEBAR (Pôle 1 Filtré) --- #}
+    {# --- SIDEBAR (Pôle 1) --- #}
     <aside class="sidebar-wrapper">
         {% set pole1 = null %}
         {% for p in poles %}
-            {% if p.id == 1 %}
-                {% set pole1 = p %}
-            {% endif %}
+            {% if p.id == 1 %}{% set pole1 = p %}{% endif %}
         {% endfor %}
 
         {% if pole1 %}
             <div class="sidebar-section">
                 <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                 
+                {# IMPORTANT : Le data-controller doit être ICI pour être réinitialisé après chaque recherche #}
                 <div class="search-box p-2" data-controller="search-preview">
                     <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex" data-action="submit->search-preview#onSearch">
                         <div class="input-group">
                             <input 
-                                type="text" name="q" class="form-control" 
+                                type="text" 
+                                name="q" 
+                                class="form-control" 
                                 placeholder="Rechercher..." 
                                 value="{{ searchTerm|default('') }}"
-                                data-action="input->search-preview#onSearch"
                                 data-search-preview-target="input"
+                                data-action="input->search-preview#onSearch"
                                 autofocus
                             >
                         </div>
@@ -38,17 +38,18 @@
         {% endif %}
     </aside>
 
-    {# --- BOARD PRINCIPAL (Autres pôles Filtrés) --- #}
+    {# --- BOARD PRINCIPAL (Autres pôles) --- #}
     <main class="main-content-wrapper">
         <div class="main-grid-layout">
             {% for pole in poles %}
-                {# ICI : On sépare bien le if du for #}
                 {% if pole.id != 1 %}
                     <section class="pole-section card shadow-sm">
                         <div class="card-header bg-white border-0">
                             <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
                         </div>
-                        <div class="card-body bg-light dashboard-grid" data-pole="{{ pole.nomPole }}" data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
+                        <div class="card-body bg-light dashboard-grid" 
+                             data-pole="{{ pole.nomPole }}" 
+                             data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
                             {% for militant in militantsParPole[pole.id] ?? [] %}
                                 {% include 'partials/_militant_card.html.twig' %}
                             {% endfor %}

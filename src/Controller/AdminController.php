@@ -35,22 +35,28 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
-        // Recherche QueryBuilder
-        $militantsResults = $militantRepo->createQueryBuilder('m')
-            ->leftJoin('m.pole', 'p')
-            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
-            ->setParameter('t', '%' . $searchTerm . '%')
-            ->getQuery()
-            ->getResult();
+        if (!empty($searchTerm)) {
+            $militantsResults = $militantRepo->createQueryBuilder('m')
+                ->leftJoin('m.pole', 'p')
+                ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
+                ->setParameter('t', '%' . $searchTerm . '%')
+                ->getQuery()
+                ->getResult();
+        } else {
+            // Si la recherche est vide, on réaffiche tout
+            $militantsResults = $militantRepo->findAllMilitantsPourDashboard();
+        }
 
         $params = [
-            'poles' => $poleRepo->findAllOrderedCustom(),
+            'poles'            => $poleRepo->findAllOrderedCustom(),
             'militantsParPole' => $this->grouperMilitants($militantsResults),
-            'searchTerm' => $searchTerm,
+            'searchTerm'       => $searchTerm,
+            'nbFaep'           => $militantRepo->countFaep(),
+            'stats'            => $poleRepo->getGlobalStats(),
         ];
 
-        if ($request->isXmlHttpRequest()) {
-            // On renvoie le fragment qui contient SIDEBAR + BOARD
+        // Vérification AJAX robuste
+        if ($request->isXmlHttpRequest() || $request->headers->get('X-Requested-With') === 'XMLHttpRequest') {
             return $this->render('admin/_dashboard_content.html.twig', $params);
         }
 
