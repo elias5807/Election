@@ -1,7 +1,7 @@
 {# templates/admin/_board.html.twig #}
 <div class="main-grid-layout">
     {% for pole in poles %}
-        {# On vérifie l'ID à l'intérieur de la boucle, pas sur la même ligne #}
+        {# On exclut strictement l'ID 1 ici car il est déjà dans la sidebar #}
         {% if pole.id != 1 %}
             <section class="pole-section card shadow-sm">
                 <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center">
@@ -19,6 +19,7 @@
                         {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                     {% endfor %}
                     
+                    {# Zone d'aide au drop si le pôle est vide #}
                     {% if (militantsParPole[pole.id] ?? []) is empty %}
                         <div class="empty-drop-zone text-muted small text-center p-3" style="border: 2px dashed #ccc; border-radius: 8px;">
                             Déposer ici

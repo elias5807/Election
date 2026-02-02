@@ -15,16 +15,16 @@
     {% endif %}
 
     <div class="dashboard-container" data-controller="native-board">
-        
+
         {# --- SIDEBAR (Pôle 1 & Recherche) --- #}
         <aside class="sidebar-wrapper">
-            {% set pole1 = poles|filter(p => p.id == 1)|first %}
+            {% set pole1 = null %}
+            {% for p in poles %}{% if p.id == 1 %}{% set pole1 = p %}{% endif %}{% endfor %}
 
             {% if pole1 %}
                 <div class="sidebar-section">
                     <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                     
-                    {# Recherche avec Stimulus #}
                     <div class="search-box p-2" data-controller="search-preview">
                         <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex" data-action="submit->search-preview#onSearch">
                             <div class="input-group">
@@ -41,22 +41,24 @@
                     </div>
 
                     <div class="sidebar-grid" 
-                         data-pole="{{ pole1.nomPole }}"
-                         data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
+                        data-pole="{{ pole1.nomPole }}"
+                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
                         {% for militant in militantsParPole[1] ?? [] %}
-                            {% include 'partials/_militant_card.html.twig' %}
+                            {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
                         {% endfor %}
                     </div>
                 </div>
             {% endif %}
+            <hr>
         </aside>
 
-        {# --- BOARD PRINCIPAL (Zone rafraîchie par AJAX) --- #}
+        {# --- CONTENU PRINCIPAL (Les autres pôles) --- #}
         <main class="main-content-wrapper" id="search-results">
             {% include 'admin/_board.html.twig' %}
         </main>
-
     </div>
+
+    {# --- SCRIPT REPAS --- #}
     <script>
         document.addEventListener('click', function(e) {
             const mealBtn = e.target.closest('.meal-indicator');
@@ -66,13 +68,15 @@
             const badge = mealBtn.querySelector('.badge-meal');
             const textSpan = mealBtn.querySelector('.meal-text');
 
-            badge.classList.add('opacity-50', 'pe-none');
+            badge.style.opacity = '0.5';
+            badge.style.cursor = 'wait';
 
             fetch(url, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
                 .then(res => res.json())
                 .then(data => {
-                    badge.classList.remove('opacity-50', 'pe-none', 'success', 'warning');
-                    badge.classList.add(data.aMange ? 'success' : 'warning');
+                    badge.style.opacity = '1';
+                    badge.style.cursor = 'pointer';
+                    badge.className = 'badge-meal ' + (data.aMange ? 'success' : 'warning');
                     textSpan.innerText = data.aMange ? "a Mangé" : "Pas Mangé";
                 })
                 .catch(() => alert("Erreur réseau"));
