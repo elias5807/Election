@@ -26,17 +26,9 @@ class HashPasswordsCommand extends Command
         $io = new SymfonyStyle($input, $output);
         
         // Ta liste de mots de passe à convertir
-        $passwords = ['agorae123',
-'campusud123',
-'campusiut123',
-'campusstaps123',
-'campuscitadelle123',
-'campusscience123',
-'campusart123',
-'campusapradis123',
-'campusifmk123',
-'campuscathedrale123',
-'deloc123'];
+        $passwords = ['les2chatdemattheo',
+'chtipaniers',
+'Crous2026!FAEP'];
         
         $io->title('Génération des Hashs pour l\'entité Respo');
 
