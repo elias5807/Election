@@ -38,30 +38,28 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
-        // Si la recherche est vide, on redirige vers l'accueil admin
-        if (empty($searchTerm)) {
-            return $this->redirectToRoute('app_admin');
-        }
-
-        $poles=$poleRepo->findAllOrderedCustom();
-
-        // On effectue la recherche
-        $results = $militantRepo->createQueryBuilder('m')
+        $militantsResults = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
-            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
+            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
             ->setParameter('t', '%' . $searchTerm . '%')
             ->getQuery()
             ->getResult();
 
-        // On réutilise le même template pour afficher les résultats filtrés
-        return $this->render('admin/index.html.twig', [
-            'militantsParPole' => $this->grouperMilitants($results),
-            'poles'            => $poles,
-            'searchTerm'       => $searchTerm,
-            'nbFaep'           => $militantRepo->countFaep(),
-            'stats'            => $poleRepo->getGlobalStats(),
-        ]);
+        $params = [
+            'poles'      => $poleRepo->findAllOrderedCustom(),
+            'militants'  => $militantsResults,
+            'searchTerm' => $searchTerm,
+            'stats'      => $poleRepo->getGlobalStats(),
+        ];
+
+        // Si c'est une requête AJAX (Stimulus), on ne rend que le board
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('admin/_board.html.twig', $params);
+        }
+
+        // Sinon, on rend la page complète (cas où on appuie sur Entrée)
+        return $this->render('admin/index.html.twig', $params);
     }
 
     /**

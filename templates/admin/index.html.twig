@@ -10,113 +10,72 @@
 {% block body %}
     {% include 'partials/_navbar.html.twig' %}
     
-    {# Rafraîchissement auto désactivé si on recherche quelqu'un #}
     {% if not searchTerm %}
         <meta http-equiv="refresh" content="60">
     {% endif %}
 
     <div class="dashboard-container" data-controller="native-board">
-
+        
+        {# --- SIDEBAR (Pôle 1 & Recherche) --- #}
         <aside class="sidebar-wrapper">
-            {% set pole1 = null %}
-            {% for pole in poles %}{% if pole.id == 1 %}{% set pole1 = pole %}{% endif %}{% endfor %}
+            {% set pole1 = poles|filter(p => p.id == 1)|first %}
 
             {% if pole1 %}
                 <div class="sidebar-section">
                     <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                     
-                    {# --- BARRE DE RECHERCHE --- #}
-                    <div class="search-box p-2">
-                        {# On pointe vers 'app_admin_search' au lieu de 'app_admin' #}
-                        <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex">
+                    {# Recherche avec Stimulus #}
+                    <div class="search-box p-2" data-controller="search-preview">
+                        <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex" data-action="submit->search-preview#onSearch">
                             <div class="input-group">
                                 <input 
-                                    type="text" 
-                                    name="q" 
-                                    class="form-control" 
+                                    type="text" name="q" class="form-control" 
                                     placeholder="Rechercher un militant..." 
-                                    value="{{ searchTerm }}"
+                                    value="{{ searchTerm|default('') }}"
+                                    data-action="input->search-preview#onSearch"
+                                    data-search-preview-target="input"
                                 >
-                                <button type="submit" class="btn btn-primary">OK</button>
-                                
-                                {# Bouton pour annuler et revenir au dashboard complet #}
-                                {% if searchTerm %}
-                                    <a href="{{ path('app_admin') }}" class="btn btn-outline-secondary">X</a>
-                                {% endif %}
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
                             </div>
                         </form>
                     </div>
 
                     <div class="sidebar-grid" 
-                        data-pole="{{ pole1.nomPole }}"
-                        data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
+                         data-pole="{{ pole1.nomPole }}"
+                         data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
                         {% for militant in militantsParPole[1] ?? [] %}
-                            {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
+                            {% include 'partials/_militant_card.html.twig' %}
                         {% endfor %}
                     </div>
                 </div>
             {% endif %}
-            <hr>
         </aside>
 
-        <main class="main-content-wrapper">
-            <div class="main-grid-layout">
-                {% for pole in poles %}
-                    {% if pole.id != 1 %}
-                        <section class="pole-section card shadow-sm">
-                            <div class="card-header bg-white border-0">
-                                <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
-                            </div>
-                            <div class="card-body bg-light dashboard-grid" 
-                                 data-pole="{{ pole.nomPole }}"
-                                 data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
-                                {% for militant in militantsParPole[pole.id] ?? [] %}
-                                    {% include 'partials/_militant_card.html.twig' with {'militant': militant} %}
-                                {% endfor %}
-                            </div>
-                        </section>
-                    {% endif %}
-                {% endfor %}
-            </div>
+        {# --- BOARD PRINCIPAL (Zone rafraîchie par AJAX) --- #}
+        <main class="main-content-wrapper" id="search-results">
+            {% include 'admin/_board.html.twig' %}
         </main>
+
     </div>
-
-    {# --- SCRIPT REPAS (Gestion AJAX) --- #}
     <script>
-        function toggleRepas(element) {
-            const url = element.dataset.url;
-            const badge = element.querySelector('.badge-meal');
-            const textSpan = element.querySelector('.meal-text');
+        document.addEventListener('click', function(e) {
+            const mealBtn = e.target.closest('.meal-indicator');
+            if (!mealBtn) return;
 
-            if (!url) return;
+            const url = mealBtn.dataset.url;
+            const badge = mealBtn.querySelector('.badge-meal');
+            const textSpan = mealBtn.querySelector('.meal-text');
 
-            badge.style.opacity = '0.5';
-            badge.style.cursor = 'wait';
+            badge.classList.add('opacity-50', 'pe-none');
 
-            fetch(url, {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                badge.style.opacity = '1';
-                badge.style.cursor = 'pointer';
-
-                if (data.aMange === true) {
-                    badge.classList.remove('warning');
-                    badge.classList.add('success');
-                    textSpan.innerText = "a Mangé";
-                } else {
-                    badge.classList.remove('success');
-                    badge.classList.add('warning');
-                    textSpan.innerText = "Pas Mangé";
-                }
-            })
-            .catch(err => {
-                console.error(err);
-                badge.style.opacity = '1';
-                alert("Erreur lors de la mise à jour du repas");
-            });
-        }
+            fetch(url, { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(res => res.json())
+                .then(data => {
+                    badge.classList.remove('opacity-50', 'pe-none', 'success', 'warning');
+                    badge.classList.add(data.aMange ? 'success' : 'warning');
+                    textSpan.innerText = data.aMange ? "a Mangé" : "Pas Mangé";
+                })
+                .catch(() => alert("Erreur réseau"));
+        });
     </script>
 {% endblock %}
