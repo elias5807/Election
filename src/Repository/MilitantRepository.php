@@ -37,7 +37,9 @@ class MilitantRepository extends ServiceEntityRepository
     public function countFaep(): int 
     {
         return (int) $this->createQueryBuilder('m')
-            ->select('COUNT(m.id)') // Utilise l'ID tel que défini dans ton entité Militant
+            ->select('COUNT(m.id)')
+            ->where('m.pole != :poleId')
+            ->setParameter('poleId', 1)
             ->getQuery()
             ->getSingleScalarResult();
     }
