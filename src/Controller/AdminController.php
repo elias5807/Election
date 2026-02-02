@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Militant;
-use App\Entity\Pole;
 use App\Repository\PoleRepository;
 use App\Repository\MilitantRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,11 +16,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class AdminController extends AbstractController
 {
-    // src/Controller/AdminController.php
     #[Route('/admin', name: 'app_admin')]
     public function index(PoleRepository $poleRepo, MilitantRepository $militantRepo): Response
     {
-        // Affichage normal (tous les militants)
         $allMilitants = $militantRepo->findAllMilitantsPourDashboard();
         
         return $this->render('admin/index.html.twig', [
@@ -38,6 +35,11 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
+        // Si vide, on redirige vers l'index normal
+        if (empty($searchTerm)) {
+            return $this->redirectToRoute('app_admin');
+        }
+
         $militantsResults = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
             ->addSelect('p')
@@ -46,25 +48,22 @@ class AdminController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        // REPARATION : On groupe les résultats pour le template
         $params = [
-            'poles'      => $poleRepo->findAllOrderedCustom(),
-            'militants'  => $militantsResults,
-            'searchTerm' => $searchTerm,
-            'stats'      => $poleRepo->getGlobalStats(),
+            'poles'            => $poleRepo->findAllOrderedCustom(),
+            'militantsParPole' => $this->grouperMilitants($militantsResults), // On utilise la même fonction !
+            'searchTerm'       => $searchTerm,
+            'nbFaep'           => $militantRepo->countFaep(), // Optionnel mais évite les erreurs si le template l'utilise
+            'stats'            => $poleRepo->getGlobalStats(),
         ];
 
-        // Si c'est une requête AJAX (Stimulus), on ne rend que le board
         if ($request->isXmlHttpRequest()) {
             return $this->render('admin/_board.html.twig', $params);
         }
 
-        // Sinon, on rend la page complète (cas où on appuie sur Entrée)
         return $this->render('admin/index.html.twig', $params);
     }
 
-    /**
-     * Petite fonction utilitaire pour éviter de répéter le foreach du groupement
-     */
     private function grouperMilitants(array $militants): array
     {
         $groupes = [];
@@ -74,47 +73,27 @@ class AdminController extends AbstractController
         }
         return $groupes;
     }
-    
-    /**
-     * Route utilisée par le Drag & Drop pour mettre à jour le pôle
-     */
+
     #[Route('/militant/{id}/change-pole', name: 'app_militant_change_pole', methods: ['POST'])]
-    public function changePole(
-        Militant $militant, 
-        Request $request, 
-        PoleRepository $poleRepository, 
-        EntityManagerInterface $em
-    ): JsonResponse {
+    public function changePole(Militant $militant, Request $request, PoleRepository $poleRepository, EntityManagerInterface $em): JsonResponse 
+    {
         $data = json_decode($request->getContent(), true);
         $nouveauNomPole = $data['poleNom'] ?? null;
+        if (!$nouveauNomPole) return new JsonResponse(['status' => 'error'], 400);
 
-        if (!$nouveauNomPole) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Nom du pôle manquant'], 400);
-        }
-
-        // On cherche par 'nomPole' (le nom de la propriété dans ton entité Pole)
         $nouveauPole = $poleRepository->findOneBy(['nomPole' => $nouveauNomPole]);
-
-        if (!$nouveauPole) {
-            return new JsonResponse(['status' => 'error', 'message' => 'Pôle introuvable'], 404);
-        }
+        if (!$nouveauPole) return new JsonResponse(['status' => 'error'], 404);
 
         $militant->setPole($nouveauPole);
         $em->flush();
-
         return new JsonResponse(['status' => 'success']);
     }
 
-    /**
-     * Route pour cocher/décocher le repas en AJAX
-     */
     #[Route('/admin/militant/{id}/toggle-repas', name: 'app_admin_toggle_repas', methods: ['POST'])]
     public function toggleRepas(Militant $militant, EntityManagerInterface $em): JsonResponse
     {
-        // On inverse l'état actuel
         $militant->setAMange(!$militant->isAMange());
         $em->flush();
-        
         return new JsonResponse(['aMange' => $militant->isAMange()]);
     }  
 }
