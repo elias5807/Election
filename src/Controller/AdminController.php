@@ -35,35 +35,28 @@ class AdminController extends AbstractController
     {
         $searchTerm = trim($request->query->get('q', ''));
 
-        // Si vide, on redirige vers l'index normal
-        if (empty($searchTerm)) {
-            return $this->redirectToRoute('app_admin');
-        }
-
+        // Recherche QueryBuilder
         $militantsResults = $militantRepo->createQueryBuilder('m')
             ->leftJoin('m.pole', 'p')
-            ->addSelect('p')
-            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t OR m.tel LIKE :t')
+            ->where('m.nom LIKE :t OR m.prenom LIKE :t OR m.mail LIKE :t')
             ->setParameter('t', '%' . $searchTerm . '%')
             ->getQuery()
             ->getResult();
 
-        // REPARATION : On groupe les résultats pour le template
         $params = [
-            'poles'            => $poleRepo->findAllOrderedCustom(),
-            'militantsParPole' => $this->grouperMilitants($militantsResults), // On utilise la même fonction !
-            'searchTerm'       => $searchTerm,
-            'nbFaep'           => $militantRepo->countFaep(), // Optionnel mais évite les erreurs si le template l'utilise
-            'stats'            => $poleRepo->getGlobalStats(),
+            'poles' => $poleRepo->findAllOrderedCustom(),
+            'militantsParPole' => $this->grouperMilitants($militantsResults),
+            'searchTerm' => $searchTerm,
         ];
 
         if ($request->isXmlHttpRequest()) {
-            return $this->render('admin/_board.html.twig', $params);
+            // On renvoie le fragment qui contient SIDEBAR + BOARD
+            return $this->render('admin/_dashboard_content.html.twig', $params);
         }
 
         return $this->render('admin/index.html.twig', $params);
     }
-
+    
     private function grouperMilitants(array $militants): array
     {
         $groupes = [];
