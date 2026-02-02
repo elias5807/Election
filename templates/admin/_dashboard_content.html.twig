@@ -3,12 +3,17 @@
     
     {# --- SIDEBAR (Pôle 1 Filtré) --- #}
     <aside class="sidebar-wrapper">
-        {% set pole1 = poles|filter(p => p.id == 1)|first %}
+        {% set pole1 = null %}
+        {% for p in poles %}
+            {% if p.id == 1 %}
+                {% set pole1 = p %}
+            {% endif %}
+        {% endfor %}
+
         {% if pole1 %}
             <div class="sidebar-section">
                 <h3 class="sidebar-title"><i class="fas fa-crown"></i> {{ pole1.nomPole }}</h3>
                 
-                {# On ré-inclut l'input de recherche ici pour qu'il ne disparaisse pas au remplacement #}
                 <div class="search-box p-2" data-controller="search-preview">
                     <form action="{{ path('app_admin_search') }}" method="GET" class="d-flex" data-action="submit->search-preview#onSearch">
                         <div class="input-group">
@@ -18,7 +23,7 @@
                                 value="{{ searchTerm|default('') }}"
                                 data-action="input->search-preview#onSearch"
                                 data-search-preview-target="input"
-                                autofocus {# Garde le focus après le rechargement AJAX #}
+                                autofocus
                             >
                         </div>
                     </form>
@@ -36,17 +41,20 @@
     {# --- BOARD PRINCIPAL (Autres pôles Filtrés) --- #}
     <main class="main-content-wrapper">
         <div class="main-grid-layout">
-            {% for pole in poles if pole.id != 1 %}
-                <section class="pole-section card shadow-sm">
-                    <div class="card-header bg-white border-0">
-                        <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
-                    </div>
-                    <div class="card-body bg-light dashboard-grid" data-pole="{{ pole.nomPole }}" data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
-                        {% for militant in militantsParPole[pole.id] ?? [] %}
-                            {% include 'partials/_militant_card.html.twig' %}
-                        {% endfor %}
-                    </div>
-                </section>
+            {% for pole in poles %}
+                {# ICI : On sépare bien le if du for #}
+                {% if pole.id != 1 %}
+                    <section class="pole-section card shadow-sm">
+                        <div class="card-header bg-white border-0">
+                            <h4 class="pole-title m-0">{{ pole.nomPole }}</h4>
+                        </div>
+                        <div class="card-body bg-light dashboard-grid" data-pole="{{ pole.nomPole }}" data-action="dragover->native-board#onDragOver drop->native-board#onDrop">
+                            {% for militant in militantsParPole[pole.id] ?? [] %}
+                                {% include 'partials/_militant_card.html.twig' %}
+                            {% endfor %}
+                        </div>
+                    </section>
+                {% endif %}
             {% endfor %}
         </div>
     </main>
